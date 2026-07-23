@@ -11,20 +11,30 @@
           "CanCollide": true,
           "Color": [31, 35, 48],
           "Material": "Slate",
-          "Position": [0, 0, 0],
-          "Size": [60, 1, 60]
+          "Position": [0, -1, 0],
+          "Size": [80, 1, 80]
         }
       },
       "SpawnLocation": {
         "$className": "SpawnLocation",
         "$properties": {
           "Anchored": true,
-          "CanCollide": true,
+          "CanCollide": false,
           "Duration": 0,
           "Neutral": true,
-          "Position": [0, 4, 0],
-          "Size": [6, 1, 6]
+          "Position": [0, 8, 0],
+          "Size": [6, 1, 6],
+          "Transparency": 1
         }
+      }
+    },
+    "Lighting": {
+      "$className": "Lighting",
+      "$properties": {
+        "Brightness": 2.5,
+        "ClockTime": 14,
+        "Ambient": [0.4, 0.42, 0.5],
+        "OutdoorAmbient": [0.5, 0.52, 0.6]
       }
     },
     "ReplicatedStorage": {
@@ -37,6 +47,13 @@
     "ServerScriptService": {
       "$className": "ServerScriptService",
       "Chess": { "$path": "src/server" }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "Chess": { "$path": "src/client" }
+      }
     }
   }
 }

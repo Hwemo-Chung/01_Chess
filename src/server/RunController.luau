@@ -40,7 +40,12 @@ end
 function RunController.requestReroll(self, playerUserId: number): boolean
 	local state = self.runs[playerUserId]
 	assert(state ~= nil, "no active run for player " .. tostring(playerUserId))
+	assert(not state.runOver, "run is over")
 	return state:reroll()
+end
+
+function RunController.restart(self, playerUserId: number, roster: { string })
+	self:start(playerUserId, roster)
 end
 
 function RunController.snapshot(self, playerUserId: number)

@@ -29,6 +29,7 @@ function RunState.new(roster: { string }, seed: number, config: any)
 		invulnerable = false,
 		level = 1,
 		enemies = {},
+		runOver = false,
 	}, RunState)
 end
 
@@ -144,6 +145,7 @@ local function findEnemyAt(enemies, position)
 end
 
 function RunState.applyPlayerMove(self, destination: BoardRules.Position)
+	assert(not self.runOver, "run is over")
 	assert(self.activePiece ~= nil, "no active piece assigned")
 	local legal = self:legalMovesForActive()
 	local isLegal = false
@@ -218,6 +220,7 @@ function RunState.applyPlayerMove(self, destination: BoardRules.Position)
 	if self.activeHealth <= 0 then
 		if #self.roster == 0 then
 			result.runOver = true
+			self.runOver = true
 		else
 			self:assignRandomPiece()
 			local safeSquare = SpawnRules.farthestSafeSquare(self._config.BOARD_SIZE, self.enemies)
@@ -234,7 +237,33 @@ function RunState.applyPlayerMove(self, destination: BoardRules.Position)
 	return result
 end
 
+local function copyEnemies(enemies)
+	local result = {}
+	for index, enemy in ipairs(enemies) do
+		result[index] = {
+			x = enemy.x,
+			z = enemy.z,
+			health = enemy.health,
+			maxHealth = enemy.maxHealth,
+			attack = enemy.attack,
+		}
+	end
+	return result
+end
+
+local function copyPositions(positions)
+	local result = {}
+	for index, position in ipairs(positions) do
+		result[index] = { x = position.x, z = position.z }
+	end
+	return result
+end
+
 function RunState.snapshot(self)
+	local legalMoves = {}
+	if self.activePiece ~= nil and not self.runOver then
+		legalMoves = copyPositions(self:legalMovesForActive())
+	end
 	return {
 		roster = copyArray(self.roster),
 		activePiece = self.activePiece,
@@ -243,7 +272,11 @@ function RunState.snapshot(self)
 		activePosition = { x = self.activePosition.x, z = self.activePosition.z },
 		invulnerable = self.invulnerable,
 		level = self.level,
-		enemies = copyArray(self.enemies),
+		enemies = copyEnemies(self.enemies),
+		legalMoves = legalMoves,
+		rerollsRemaining = math.max(0, self._config.REROLL_LIMIT - self.rerollsUsed),
+		runOver = self.runOver,
+		phase = if self.runOver then "GameOver" else "Turn",
 	}
 end
 

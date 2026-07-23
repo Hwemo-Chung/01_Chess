@@ -179,6 +179,20 @@ case("applyPlayerMove / death with pieces remaining redraws via safe respawn", f
 	expectEqual(after.invulnerable, true, "the redrawn piece is invulnerable for its first turn")
 end)
 
+case("snapshot / exposes legalMoves, phase, and rerollsRemaining", function()
+	local state = RunState.new({ "Pawn" }, 1, Config)
+	state:assignRandomPiece()
+	state:_debugSetEnemies({})
+	local snapshot = state:snapshot()
+	assert(
+		type(snapshot.legalMoves) == "table" and #snapshot.legalMoves > 0,
+		"expected legal moves"
+	)
+	expectEqual(snapshot.phase, "Turn", "fresh run is Turn phase")
+	expectEqual(snapshot.rerollsRemaining, 1, "one reroll available after assign")
+	expectEqual(snapshot.runOver, false, "run is not over")
+end)
+
 return function()
 	for _, entry in ipairs(cases) do
 		local ok, err = pcall(entry.body)

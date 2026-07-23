@@ -82,6 +82,15 @@ case(
 	end
 )
 
+case("validateRestart / accepts only during GameOver phase", function()
+	local clock = fixedClock()
+	local guard = RemoteGuard.new(clock)
+	local bad = guard:validateRestart(1, { argc = 0, args = {} }, { phase = "Turn" })
+	assert(not bad.accepted and bad.reason == "wrong_phase", "restart during Turn must fail")
+	local ok = guard:validateRestart(1, { argc = 0, args = {} }, { phase = "GameOver" })
+	assert(ok.accepted, "restart during GameOver must succeed")
+end)
+
 return function()
 	for _, entry in ipairs(cases) do
 		local ok, err = pcall(entry.body)

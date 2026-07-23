@@ -6,6 +6,7 @@ RemoteGuard.__index = RemoteGuard
 
 local MOVE_LIMIT = 4
 local REROLL_LIMIT = 1
+local RESTART_LIMIT = 1
 local WINDOW_SECONDS = 1
 
 local function result(accepted: boolean, reason: string)
@@ -48,6 +49,7 @@ function RemoteGuard.new(clock: () -> number)
 		_clock = clock,
 		_moveWindows = {},
 		_rerollWindows = {},
+		_restartWindows = {},
 	}, RemoteGuard)
 end
 
@@ -77,6 +79,27 @@ function RemoteGuard.validateReroll(self, playerUserId: number, wire, snapshot)
 	end
 	if
 		not acceptedAt(self._clock, self._rerollWindows, playerUserId, REROLL_LIMIT, WINDOW_SECONDS)
+	then
+		return result(false, "rate_limited")
+	end
+	return result(true, "ok")
+end
+
+function RemoteGuard.validateRestart(self, playerUserId: number, wire, snapshot)
+	if not exactArgs(wire, 0) then
+		return result(false, "bad_arguments")
+	end
+	if type(snapshot) ~= "table" or snapshot.phase ~= "GameOver" then
+		return result(false, "wrong_phase")
+	end
+	if
+		not acceptedAt(
+			self._clock,
+			self._restartWindows,
+			playerUserId,
+			RESTART_LIMIT,
+			WINDOW_SECONDS
+		)
 	then
 		return result(false, "rate_limited")
 	end

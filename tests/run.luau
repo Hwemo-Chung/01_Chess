@@ -33,6 +33,9 @@ local suites = {
 	EnemyAI = function()
 		return require("./EnemyAI.spec")
 	end,
+	BoardLayout = function()
+		return require("./BoardLayout.spec")
+	end,
 }
 
 local total = 0
