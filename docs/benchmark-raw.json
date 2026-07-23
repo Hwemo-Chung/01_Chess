@@ -1,0 +1,902 @@
+{
+ "games": [
+  {
+   "name": "Anime Expeditions",
+   "genre": "Anime unit-collector TD / lane auto-battle (units auto-fight once placed)",
+   "liveCCU": "172,206",
+   "totalVisits": "181,313,233",
+   "favoritesOrLikes": "96,765 favorites; 134,372 likes / 3,260 dislikes",
+   "monetization": "Robux -> in-game currency -> unit summons (gacha for the FIGHTING UNITS), plus luck/2x gamepasses. [Medium] inferred from in-game description 'Summon powerful units' + genre norm; store SKU list not fetchable (Roblox game-passes API returned errors).",
+   "retentionHooks": "Summon -> place -> auto-fight -> loot -> evolve loop; multiple 'Expeditions' maps as progression gates; co-op raids with friends; frequent update tags in the title driving re-entry",
+   "relevanceToChessAutobattler": "HIGH on economy, MEDIUM on loop. Proof that a young-audience 'collect units, deploy them, watch them fight' game can hit ~172K CCU in ~15 months from launch (created 2025-04-28). Placement is path/lane based, not a chess board, but the draft->deploy->auto-battle->reward rhythm is the same.",
+   "source": "https://games.roblox.com/v1/games?universeIds=7613921865 ; https://www.roblox.com/games/84515722934860/Anime-Expeditions",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Tower Defense Simulator",
+   "genre": "Classic TD; towers auto-fire, player only places/upgrades",
+   "liveCCU": "21,557",
+   "totalVisits": "4,865,106,283",
+   "favoritesOrLikes": "3,457,519 favorites; 2,040,284 likes / 127,146 dislikes",
+   "monetization": "COSMETIC-FIRST. Skincrates in Basic / Premium / Deluxe tiers; Premium and Deluxe bought with Robux, Basic with earned Coins. Skins have Common->Legendary rarity odds = cosmetic gacha. Some high-tier crates carry stat perks, so not 100% pure cosmetic.",
+   "retentionHooks": "Daily login grants Premium crates; event-exclusive crates (Bunny, Spooky) that become unobtainable = FOMO; coin economy that lets F2P grind Basic crates; 7-year live-ops cadence (created 2019, updated 2026-07-22)",
+   "relevanceToChessAutobattler": "HIGHEST on the monetization question you have open. This is the single best Roblox proof that COSMETIC gacha (skin crates with rarity tables) sustains a top-tier TD for 7 years and 4.9B visits. If you want cosmetics-only, this is the template to copy, including the tiered crate + earned-currency-for-basic-tier structure.",
+   "source": "https://games.roblox.com/v1/games?universeIds=1176784616 ; https://tds.fandom.com/wiki/Crates ; https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Anime Vanguards",
+   "genre": "Anime unit-collector TD; units auto-attack after placement",
+   "liveCCU": "10,012",
+   "totalVisits": "1,998,946,337",
+   "favoritesOrLikes": "1,972,772 favorites; 2,579,766 likes / 86,359 dislikes",
+   "monetization": "UNIT GACHA, explicitly. Gems (Robux-purchasable) summon units; Special Banner = 50 gems/pull, 40 with VIP gamepass. Pity system per rarity. Event banners hide 'Vanguard' units at 0.005% pull rate with a one-time 20,000-summon pity (post Update 7.5). VIP gamepass discounts pulls.",
+   "retentionHooks": "Pity counters (sunk-cost -> must keep pulling); rotating limited banners; 0.005% chase units that create social flex; codes for free gems on every update; raid/challenge modes gated behind meta units",
+   "relevanceToChessAutobattler": "HIGHEST on the gacha question. This is the reference implementation of 'gacha pulls the fighting units themselves' on Roblox: ~2B visits, ~1.97M favorites. It is also the cautionary data point: live CCU has decayed to ~10K, i.e. unit-gacha games spike hard then bleed as the meta staleness compounds. Note the shape: chase rate 0.005% + hard pity is what young-audience Roblox tolerates.",
+   "source": "https://games.roblox.com/v1/games?universeIds=5578556129 ; https://animevanguards.fandom.com/wiki/Summon ; https://wiki.vanguards.gg/Summon",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Universal Tower Defense Z",
+   "genre": "Anime crossover TD; placed units auto-fight waves",
+   "liveCCU": "9,160",
+   "totalVisits": "300,120,535",
+   "favoritesOrLikes": "207,680 favorites; 398,149 likes / 11,100 dislikes",
+   "monetization": "Unit summon gacha + luck/2x gamepasses [Low] — not directly verified, inferred from category. Treat as estimate.",
+   "retentionHooks": "12-player co-op cap (small lobbies, tight social loop); rapid update cadence (created 2025-04-04, updated 2026-07-22)",
+   "relevanceToChessAutobattler": "MEDIUM. Useful as a 2025-cohort benchmark: a brand-new entrant in a saturated TD niche still reached ~9K CCU and 300M visits in ~15 months. Shows the auto-fight loop still has headroom for new entrants, which is the key risk question for your pivot.",
+   "source": "https://games.roblox.com/v1/games?universeIds=7488190691 ; https://www.roblox.com/games/133410800847665/Universal-Tower-Defense-Z",
+   "asOf": "2026-07-23",
+   "confidence": "medium"
+  },
+  {
+   "name": "Anime Squadron",
+   "genre": "Self-described 'lane battler' — summon units, deploy to lanes, they auto-fight",
+   "liveCCU": "8,056",
+   "totalVisits": "77,263,882",
+   "favoritesOrLikes": "47,957 favorites; 83,990 likes / 3,961 dislikes",
+   "monetization": "Summon-and-upgrade unit economy (unit gacha) [Medium] — description says 'Summon & Upgrade Your Units'; SKU list unverified.",
+   "retentionHooks": "'Plan your lineup' pre-battle phase (closest thing to a draft/board phase in this cohort); unit evolution; multiple modes; rank ladder; 16-player servers",
+   "relevanceToChessAutobattler": "HIGH on loop. The 'lane battler' framing — build a lineup, then watch it auto-fight — is the closest commercially-live Roblox analogue to a TFT-style deploy phase. Launched 2025-08-05 and at ~8K CCU inside a year, which is the realistic ceiling profile you should model against, not Anime Expeditions' 172K.",
+   "source": "https://games.roblox.com/v1/games?universeIds=8356066619 ; https://www.roblox.com/games/71132543521245/Anime-Squadron",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Garden Tower Defense",
+   "genre": "Grid-placement TD (plants-vs-zombies style); placed units auto-fight",
+   "liveCCU": "6,568",
+   "totalVisits": "761,285,266",
+   "favoritesOrLikes": "462,301 favorites; 1,412,288 likes / 25,108 dislikes",
+   "monetization": "Not verified [Unknown]. Genre norm is unit/seed gacha + luck gamepasses.",
+   "retentionHooks": "Rides the 'Grow a Garden' meta-brand; 20-player servers; near-daily updates",
+   "relevanceToChessAutobattler": "MEDIUM-HIGH on the BOARD question specifically. This cohort places units on a GRID rather than along a path — the closest structural cousin to chess-board positioning that has actually scaled on Roblox (761M visits, 1.41M likes, 6.5K CCU in ~14 months). Evidence that grid placement is not a comprehension barrier for the young audience.",
+   "source": "https://games.roblox.com/v1/games?universeIds=7703614594 ; https://www.roblox.com/games/108533757090220/Garden-Tower-Defense",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Anime Card Clash",
+   "genre": "Card-roll auto-battler; roll cards -> build a deck -> auto-fight story/tower/PvP",
+   "liveCCU": "6,524",
+   "totalVisits": "473,652,841",
+   "favoritesOrLikes": "224,045 favorites; 422,574 likes / 10,579 dislikes",
+   "monetization": "Roll/gacha core with 'Luck, Cooldown, Boss Chance' upgrade tracks; Roblox Premium players get Luck and Cooldown bonuses (stated in description). Robux SKUs presumed to be luck/roll-speed boosts + currency. [Medium]",
+   "retentionHooks": "Auto-roll and quick-roll (idle-gacha compulsion); deck-building meta; Infinite Towers and Nightmare Mode as endless difficulty ladder; PvP leaderboards; secret boss raids",
+   "relevanceToChessAutobattler": "HIGH. This is the closest live Roblox game to the TFT economy: gacha in (cards/units), deck construction, then automated combat, plus a PvP ranking layer. Its 'Luck upgrade' progression is a monetization pattern worth stealing — it sells better ODDS rather than the unit itself, which sidesteps the harshest pay-to-win read.",
+   "source": "https://games.roblox.com/v1/games?universeIds=6682487255 ; https://www.roblox.com/games/110829983956014/Anime-Card-Clash",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Anime Card Collection",
+   "genre": "Card-pack gacha idle collector (cards generate income; combat is minimal)",
+   "liveCCU": "4,746",
+   "totalVisits": "142,016,520",
+   "favoritesOrLikes": "214,050 favorites; 593,180 likes / 8,912 dislikes",
+   "monetization": "Pack-opening gacha; better packs bought with earned/purchased currency. [Medium]",
+   "retentionHooks": "Binder/collection completion; cards passively generate money (idle income = log-in reason); 6-player servers (very cheap to run)",
+   "relevanceToChessAutobattler": "LOW-MEDIUM on loop, HIGH as a warning. Created 2025-12-15, already 142M visits and 214K favorites in ~7 months — pure pull-and-collect with almost no combat depth outperforms many combat games on early velocity. If your chess auto-battler's pull layer is weak, this genre will out-acquire you.",
+   "source": "https://games.roblox.com/v1/games?universeIds=9362896961 ; https://www.roblox.com/games/76285745979410/Anime-Card-Collection",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Toilet Tower Defense (LEGACY)",
+   "genre": "Skibidi-IP TD; placed 'cameramen' units auto-fight toilet waves",
+   "liveCCU": "3,562",
+   "totalVisits": "6,158,610,452",
+   "favoritesOrLikes": "1,527,385 favorites; 1,337,688 likes / 225,805 dislikes",
+   "monetization": "Unit crates/summons + trading economy; unit rarity drives a strong player-to-player trade market. [Medium]",
+   "retentionHooks": "Unit TRADING (the strongest retention hook in this cohort — creates a secondary economy and social status); endless mode; meme-IP virality",
+   "relevanceToChessAutobattler": "MEDIUM on loop, HIGH on lifecycle lesson. 6.16B visits all-time but now only ~3.5K CCU and the title is literally tagged [LEGACY], with a 225K dislike count (14.4% dislike ratio — highest in this set). Meme-IP auto-fight games acquire enormous volume then collapse. Chess as IP is evergreen, not meme — that is a structural advantage for you, at the cost of a slower spike.",
+   "source": "https://games.roblox.com/v1/games?universeIds=4778845442 ; https://www.roblox.com/games/13775256536/Toilet-Tower-Defense",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Skibidi Masters Tower Defense",
+   "genre": "Meme-IP TD; placed units auto-fight",
+   "liveCCU": "1,780",
+   "totalVisits": "85,202,620",
+   "favoritesOrLikes": "72,681 favorites; 154,986 likes / 4,203 dislikes",
+   "monetization": "Not verified [Unknown]",
+   "retentionHooks": "25-player servers; regular updates (updated 2026-07-21)",
+   "relevanceToChessAutobattler": "LOW. Included as the mid-tail benchmark: a ~2.7-year-old TD with 85M visits sits at ~1.8K CCU. This is the realistic steady state for a competent-but-not-breakout entry in this genre.",
+   "source": "https://games.roblox.com/v1/games?universeIds=5207621753 ; https://www.roblox.com/games/15111895255/Skibidi-Masters-Tower-Defense",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "All Star Tower Defense",
+   "genre": "Anime unit-collector TD, the genre's originator on Roblox",
+   "liveCCU": "1,395",
+   "totalVisits": "7,875,257,264",
+   "favoritesOrLikes": "2,315,385 favorites; 1,489,001 likes / 129,171 dislikes",
+   "monetization": "Unit summon gacha (gems) + gamepasses; well-established unit trading economy. [Medium]",
+   "retentionHooks": "Unit summon banners; trading; long-running event ladders",
+   "relevanceToChessAutobattler": "MEDIUM. 7.88B visits — the largest cumulative reach in this set — yet only ~1.4K live CCU. Created 2020, still updated 2026-07-13. The clearest evidence that unit-gacha auto-fight games have a very long monetizable tail but that DevEx income tracks the spike years, not the tail.",
+   "source": "https://games.roblox.com/v1/games?universeIds=1720936166 ; https://www.roblox.com/games/4996049426/All-Star-Tower-Defense",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Anime Paradox X",
+   "genre": "Anime unit-collector TD",
+   "liveCCU": "1,137",
+   "totalVisits": "28,132,320",
+   "favoritesOrLikes": "31,733 favorites; 70,452 likes / 3,137 dislikes",
+   "monetization": "Not verified [Unknown]",
+   "retentionHooks": "Fast update cadence (created 2025-05-06, still updating 2026-07-22); 20-player servers",
+   "relevanceToChessAutobattler": "LOW-MEDIUM. A 2025-launch entrant that plateaued around 1.1K CCU — the median outcome for new entrants in this crowded niche. Use it, not Anime Expeditions, as your base-case forecast.",
+   "source": "https://games.roblox.com/v1/games?universeIds=7652830984 ; https://www.roblox.com/games/76806550943352/Anime-Paradox-X",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Brainrot Tower Defense",
+   "genre": "Brainrot-IP TD; placed units auto-fight",
+   "liveCCU": "693",
+   "totalVisits": "234,080,339",
+   "favoritesOrLikes": "1,652,031 favorites; 304,648 likes / 7,832 dislikes",
+   "monetization": "Gem/unit gacha with 2x diamond event tags. [Low]",
+   "retentionHooks": "'2x diamond' timed multiplier events baked into the title; brainrot meme IP",
+   "relevanceToChessAutobattler": "LOW on loop, notable anomaly: 1.65M favorites against only 234M visits — a favorites-to-visits ratio ~7x higher than TDS. Favorites are cheap and meme-driven; do not use favorites as a health proxy when you benchmark yourself.",
+   "source": "https://games.roblox.com/v1/games?universeIds=8343243056 ; https://www.roblox.com/games/111199269199811/Brainrot-Tower-Defense",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Battle Pet",
+   "genre": "Pet auto-battler (Super Auto Pets-like), still in beta",
+   "liveCCU": "445",
+   "totalVisits": "23,423,099",
+   "favoritesOrLikes": "74,717 favorites; 157,828 likes / 11,628 dislikes",
+   "monetization": "Not verified [Unknown] — description is a stub, game self-declares beta",
+   "retentionHooks": "9-player servers (lobby-sized, PvP-shaped); pet collection",
+   "relevanceToChessAutobattler": "HIGH structurally, LOW commercially. The nearest thing to a Super Auto Pets clone found on Roblox. Created 2026-05-07, 23M visits and 157K likes in ~2.5 months at only ~445 CCU. Strong like-count with weak CCU = players try it, enjoy it, and do not stay. That is the exact retention failure your chess auto-battler must solve.",
+   "source": "https://games.roblox.com/v1/games?universeIds=10134375742 ; https://www.roblox.com/games/81272814168643/Battle-Pet",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "CHESS!",
+   "genre": "Straight multiplayer chess (not an auto-battler) — included as the chess-IP-on-Roblox benchmark",
+   "liveCCU": "435",
+   "totalVisits": "105,653,183",
+   "favoritesOrLikes": "254,196 favorites; 76,884 likes / 28,795 dislikes",
+   "monetization": "COSMETIC-ONLY, stated in-game: 'Express yourself with skins'. Plus coins earned from wins, ranked ladder Bronze->Grand Master, levels.",
+   "retentionHooks": "Ranked ladder with visible tiers; earned-coin economy; spectate + global chat; friend lobbies",
+   "relevanceToChessAutobattler": "CRITICAL BENCHMARK. This is the ceiling for literal chess on Roblox today: 105M visits and 254K favorites accumulated, but only ~435 live CCU and a poor 27% dislike ratio (28,795 dislikes vs 76,884 likes — worst in this set). Chess-as-chess does not retain the Roblox audience. Your bet is that chess-as-SKIN over an auto-battler loop does. The board and the piece identity are the differentiator, not the chess ruleset — do not import real chess rules.",
+   "source": "https://games.roblox.com/v1/games?universeIds=2283649692 ; https://www.roblox.com/games/6222531507/CHESS",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "Chess Club",
+   "genre": "Multiplayer chess social hub",
+   "liveCCU": "97",
+   "totalVisits": "21,159,909",
+   "favoritesOrLikes": "45,510 favorites; 12,421 likes / 4,301 dislikes",
+   "monetization": "Not verified [Unknown]",
+   "retentionHooks": "50-player social servers; club framing",
+   "relevanceToChessAutobattler": "LOW directly, but confirms the pattern: the #2 chess game on Roblox is at 97 CCU. The entire literal-chess category on Roblox is under ~600 combined CCU. There is no incumbent to fight — and also no proven demand. Both facts matter.",
+   "source": "https://games.roblox.com/v1/games?universeIds=7266261686 ; https://www.roblox.com/games/139394516128799/Chess-Club",
+   "asOf": "2026-07-23",
+   "confidence": "high"
+  },
+  {
+   "name": "OTOCHESS",
+   "genre": "Claimed literal auto-chess on Roblox (DevForum beta post)",
+   "liveCCU": "Not found",
+   "totalVisits": "Not found",
+   "favoritesOrLikes": "Not found",
+   "monetization": "Not found",
+   "retentionHooks": "Not found",
+   "relevanceToChessAutobattler": "NEGATIVE RESULT, and it is the most important one. This is the only literal auto-chess project surfaced on Roblox and it does not resolve in the Roblox omni-search API — no live experience found under that name as of 2026-07-23. It appears to have never shipped or to be delisted. Absence of any scaled auto-chess on Roblox is the whitespace your pivot is betting on.",
+   "source": "https://devforum.roblox.com/t/otochess-beta-testing/2097243 (DevForum beta post; no matching live experience in https://apis.roblox.com/search-api/omni-search)",
+   "asOf": "2026-07-23",
+   "confidence": "low"
+  },
+  {
+   "name": "Anime Expeditions [RELEASE]",
+   "genre": "Anime tower-defense / gacha unit-collector (Roblox genre tag: Strategy > Tower Defense). Universe 7613921865, place 84515722934860, by Expeditions Entertainment, created 2025-04-28.",
+   "source": "Live scale: Roblox games API https://games.roblox.com/v1/games?universeIds=7613921865 + /v1/games/votes (fetched 2026-07-23). Peak CCU/playtime: https://www.rolimons.com/game/84515722934860. Gamepasses+prices: https://apis.roblox.com/game-passes/v1/universes/7613921865/game-passes and .../game-passes/{id}/product-info. Gem bundles/packs: https://anime-expeditions.fandom.com/wiki/Store. Rates: https://animeexpeditions.miraheze.org/Summon (via search summary) + https://allthings.how/anime-expeditions-traits-every-effect-drop-rate-and-pity-count/",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "176,252 concurrent (API, 2026-07-23). All-time peak 236,006 (Rolimons, hit ~2026-07-19); 24h peak 211,052.",
+   "totalVisits": "181,358,601",
+   "favoritesOrLikes": "96,767 favorites; 134,442 likes vs 3,262 dislikes (97.6%)",
+   "monetization": "THE current benchmark. Gamepasses (API-verified): Shiny Hunter 999 R$, VIP 399 R$ (summon discount + faster AFK rewards), Display All Units 399 R$. Gem ladder (wiki, corroborated by matching pass prices): 1,000 gems=199 R$ / 2,500=449 / 5,000=799 / 10,000=1,499 / 20,000=2,799 / 30,000=3,999. Starter Bundle 249 R$ one-time (Trait Crystal x35, Stat Lock x15, Stat Reroll x15, 5,000 gems). COSMETIC WHALE LADDER: Release Bundle #1 999 R$ (Elf Mage skin), #2 3,999 R$ (Expeditions Bike mount), #3 7,999 R$ (unit skin + player skin + indicator color), #4 9,999 R$ (Hazmat skin + emote) — each limited to 2 purchases, time-gated 'until Update 1'. Published summon rates: Rare 74.68% / Epic 15.06% / Legendary 10% / Mythic 0.25% / Secret 0.01%. Three banner archetypes: Beginner (8 fixed Mythics, 12.5% each), Standard (3 Mythics rotating HOURLY, 50/25/25 split), Mini (1 Mythic rotating every 30 MIN, 100% of Mythic pool). Trait reroll gacha on top: rarest trait 'Unbound' ~0.1% with a 1,500-reroll pity.",
+   "retentionHooks": "Banner rotation on a 30-min/1-hour clock = login-loop compulsion, not daily but hourly. Avg session 12.35 min (short, snackable). Two nested gacha layers (unit pull -> trait reroll) so a maxed roster is never 'done'. AFK Chamber gives passive gems, VIP accelerates it. Codes/daily calendar/index/achievement boards feed the gem faucet.",
+   "relevanceToChessAutobattler": "Highest-value template in this whole set. Proves in 2026 that a fresh gacha unit-collector can hit 236k peak CCU in under 3 months. Copy the price architecture wholesale: cheap luck pass (999), cheap QoL/discount pass (399), 6-step gem ladder anchored at 199 R$, and cosmetic-only bundles escalating 999 -> 9,999 R$ with a hard purchase limit. Board-placement TD is structurally the closest live analogue to positioning chess pieces on a grid."
+  },
+  {
+   "name": "Anime Vanguards",
+   "genre": "Anime tower-defense / gacha unit-collector. Universe 5578556129, place 16146832113, by Kitawari, created 2024-01-28.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=5578556129 + /votes (2026-07-23). Peak CCU/playtime: https://www.rolimons.com/game/16146832113. Gamepasses+prices: https://apis.roblox.com/game-passes/v1/universes/5578556129/game-passes + product-info. Rates/pity/gem costs: https://animevanguards.fandom.com/wiki/Summon. Store extras: https://animevanguards.fandom.com/wiki/Store",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "10,012 concurrent (API, 2026-07-23) — down from all-time peak 340,167 (Rolimons). 30-day peak 70,746; 7-day peak 30,013.",
+   "totalVisits": "1,998,945,686 (~2.0B)",
+   "favoritesOrLikes": "1,972,772 favorites; 2,579,768 likes vs 86,359 dislikes (96.8%)",
+   "monetization": "The most fully documented gacha in Roblox. Gamepasses (API-verified 2026-07-23): Shiny Hunter 1,299 R$ (doubles shiny rate 1.5% -> 3%), Cosmetic Recolor 799 R$ (added 2026-06-21 — recolor equipped cosmetics), Display All Units 599 R$ (pure vanity, show 6 units in lobby), VIP 299 R$ (20% off summons + rainbow nametag), Extra Unit Storage 149 R$ (+50 slots). Wiki-only store items, almost certainly developer products not gamepasses [medium confidence]: Battlepass Bundle 4,999 R$, Skip 10 Levels 999 R$, Premium Pass 799 R$, plus a $4.99/month Roblox Premium-style subscription. PUBLISHED PULL RATES: Rare 75.496% / Epic 20% / Legendary 4% / Mythic-Exclusive 0.5% / Vanguard Memoria 0.075% / Vanguard Unit 0.005% / Secret 0.004%. Shiny 1.5% base, 3% with Shiny Hunter; 'Serialized Shiny' 0.5% on event Vanguard/Secret shinies. PITY (fully disclosed): Legendary @50 summons, Mythic @400, Vanguard @25,000 (Special/Selection banners); Memoria banner Vanguard @20,000; event banners one-time Vanguard pity @20,000 (Memoria @15,000). Summon cost 50 gems single / 500 for 10x, discounted to 40/400 with VIP — but VIP discount is explicitly disabled on Event banners. Gem->Robux bundles reported as 6K=1,499 R$ / 25K=4,499 / 50K=8,998 [LOW confidence — reseller listings only, not verified].",
+   "retentionHooks": "Avg session 30.82 min — longest of the anime TD set. Level 10 gate: Secret/Vanguard/Shiny units cannot drop until you reach it, so the whale ceiling is locked behind grind. 25,000-summon Vanguard pity is a deliberate whale sink (at 50 gems/pull that is 1.25M gems). Event currency parallel pity (3,000,000 Event Currency) forces event participation. Shiny/serialized variants = cosmetic prestige on units you already own.",
+   "relevanceToChessAutobattler": "The reference implementation for disclosed-rate + multi-tier pity design. Note the split: gacha dispenses UNITS, cosmetics are sold separately (Cosmetic Recolor pass, shiny variants). Also a cautionary retention datapoint: 340k peak -> 10k live in ~2.5 years despite constant updates."
+  },
+  {
+   "name": "Pet Simulator 99",
+   "genre": "Collect-to-power pet gacha / incremental simulator (not battle, but the canonical Roblox egg-gacha + luck-stack economy). Universe 3317771874, place 8737899170, by BIG Games Pets.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=3317771874 + /votes (2026-07-23). Peak/playtime: https://www.rolimons.com/game/8737899170. Gamepasses: https://apis.roblox.com/game-passes/v1/universes/3317771874/game-passes + product-info",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "163,138 concurrent (API, 2026-07-23). All-time peak 732,936 on 2023-12-09 (Rolimons).",
+   "totalVisits": "2,557,679,702 (~2.56B)",
+   "favoritesOrLikes": "2,181,278 favorites; 3,047,303 likes vs 168,691 dislikes (94.8%)",
+   "monetization": "Most aggressive luck-monetization ladder found, all API-verified prices: Huge Hunter 3,250 R$ ('significantly more luck hatching active Huge Pets, NO REBIRTH REQUIRED'), Double Stars 2,400 R$, Super Drops 2,400 R$, Super Shiny Hunter 1,600 R$ (PERMANENT, STACKS), Magic Eggs 1,200 R$ (bonus Golden/Rainbow chance), Ultra Lucky 800 R$ (PERMANENT, STACKS), +15 Eggs 625 R$ (STACKS), Daycare Slots 625 R$, VIP 400 R$, +15 Pets 375 R$, Auto Tap 350 R$, Lucky 275 R$ (PERMANENT, STACKS), Auto Farm 175 R$. Note the explicit 'STACKS' wording — Lucky + Ultra Lucky + Super Shiny Hunter + Huge Hunter are designed to be bought together (~5,925 R$ for the full luck stack).",
+   "retentionHooks": "Average playtime 190.56 MINUTES — over 3 hours per session, by far the highest in this set (idle/AFK farming design, 10-player servers). Rebirth/rank goals, tradeable Huge pets creating a secondary player economy, seasonal exclusive eggs.",
+   "relevanceToChessAutobattler": "Blueprint for stacking permanent luck passes rather than selling one big pass. Directly answers the pull-rate-manipulation question: players will pay 275 -> 800 -> 1,600 -> 3,250 R$ in separate SKUs for compounding drop-rate boosts. The 190-min session number also shows AFK/idle progression is the strongest retention lever on the platform."
+  },
+  {
+   "name": "Sol's RNG",
+   "genre": "Pure-gacha 'roll for auras' RNG game — no combat units, monetizes the pull itself. Universe 5361032378, place 15532962292, by Sol's Studio.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=5361032378 + /votes (2026-07-23). Peak/playtime: https://www.rolimons.com/game/15532962292. Gamepasses: https://apis.roblox.com/game-passes/v1/universes/5361032378/game-passes + product-info. Luck mechanics: https://sol-rng.fandom.com/wiki/Luck",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "30,908 concurrent (API, 2026-07-23). All-time peak 193,836 on 2024-05-12; 30-day peak 78,545 (Rolimons).",
+   "totalVisits": "2,021,765,545 (~2.02B)",
+   "favoritesOrLikes": "982,668 favorites; 1,380,766 likes vs 132,299 dislikes (91.3%)",
+   "monetization": "Everything is priced against the luck coefficient (API-verified): RNG Premium Pass - Season VII 499 R$ (SEASONAL battle pass sold as a gamepass, re-sold every season), VIP+ 350 R$ (Final Luck x1.2, x1.3 if VIP also owned — explicit stacking), VIP 249 R$ (x1.2 final luck, x1.2 quest reward, 3 daily quest rerolls), Quick Roll 100 R$ (skip the roll animation — selling time), Invisible Gear 80 R$, Starter Pack 49 R$, Merchant Teleporter 40 R$. Cheapest pass ladder of any top game here; monetizes breadth not depth. Luck is a multiplier on aura denominators (e.g. a 1/1,000,000 aura moves toward ~1/35,000 on a fully stacked luck setup) [medium confidence — community wiki].",
+   "retentionHooks": "400+ auras, rarity ladder into astronomically low odds, so there is literally no completion state. Biome rotation events, luck potions crafted from grind, seasonal pass rotation. Avg session 24.09 min. Note the 91.3% rating — lowest of the flagships, RNG frustration is real.",
+   "relevanceToChessAutobattler": "Proof that the PULL ITSELF is the game loop — you can sell luck multipliers with no cosmetic and no unit attached. Also the cleanest example of 'sell the skip' (Quick Roll 100 R$). If your chess autobattler has piece-summoning, a 100-249 R$ luck/animation-skip tier is proven low-friction impulse pricing."
+  },
+  {
+   "name": "Universal Tower Defense Z",
+   "genre": "Anime/crossover tower-defense gacha unit-collector. Universe 7488190691, place 133410800847665.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=7488190691 + /votes (2026-07-23). Peak: https://www.rolimons.com/game/133410800847665. Gamepasses: https://apis.roblox.com/game-passes/v1/universes/7488190691/game-passes + product-info",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "9,203 concurrent (API, 2026-07-23). All-time peak 240,274 (Rolimons); 24h peak 21,748.",
+   "totalVisits": "300,119,904",
+   "favoritesOrLikes": "207,679 favorites; 398,151 likes vs 11,100 dislikes (97.3%)",
+   "monetization": "Highest-priced luck pass found, and it PUBLISHES the rate change in the pass description (API-verified): Limited Shiny Hunter 2,199 R$ ('Increases chances for obtaining a Limited Serialised Shiny unit'), Shiny Hunter 1,399 R$ ('Removes requirements on banners. Increases Shiny chance to -> 3%. Increases LIMITED shiny chance'), VIP 399 R$ (+25% XP, 25% less AFK-chamber time, 20% off summons), Display All Units 399 R$, Extra Unit Storage 99 R$, Resize Player 67 R$ (pure cosmetic vanity at impulse price).",
+   "retentionHooks": "Avg session 26.77 min. 'Serialised' shiny units (numbered #1, #2, #3...) create scarcity prestige and trading value on top of ordinary shinies. Banner requirement-gating that the paid pass removes = explicit pay-to-skip-the-gate.",
+   "relevanceToChessAutobattler": "Best example of a two-tier cosmetic-rarity pass (normal shiny 1,399 vs limited serialised 2,199). Serialised/numbered cosmetics are a very strong fit for chess pieces — 'Knight #0007 of 500' is trivially implementable and highly collectible for a young audience."
+  },
+  {
+   "name": "Anime Squadron",
+   "genre": "Anime tower-defense gacha unit-collector. Universe 8356066619, place 71132543521245, by Komplex Studio.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=8356066619 + /votes (2026-07-23). Gamepasses: https://apis.roblox.com/game-passes/v1/universes/8356066619/game-passes + product-info",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "8,056 concurrent (API, 2026-07-23)",
+   "totalVisits": "77,263,696",
+   "favoritesOrLikes": "47,957 favorites; 83,990 likes",
+   "monetization": "Minimal 3-SKU model (API-verified): Shiny Hunter 1,199 R$ ('Triples your shiny rates' — publishes the multiplier), 3x Speed 499 R$, Premium 399 R$ (20% summon cost reduction, AFK chamber benefits, premium nametag). Gems/summons sold via developer products (not publicly enumerable).",
+   "retentionHooks": "AFK chamber passive rewards; speed-up pass targets the grind-fatigue moment.",
+   "relevanceToChessAutobattler": "Shows the minimum viable monetization triplet for a mid-size anime TD: luck pass ~1,200 R$, speed pass ~500 R$, discount/VIP pass ~400 R$. Good launch-day SKU set to copy before building bundles."
+  },
+  {
+   "name": "The Battle Bricks",
+   "genre": "Single-player lane-push auto-battler / card-collector (Battle Cats-style). Universe 3913007563, place 10834586502, by Tumore, created 2022-09-06.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=3913007563 + /votes (2026-07-23). Peak/playtime/rating: https://www.rolimons.com/game/10834586502. Gamepass check: https://apis.roblox.com/game-passes/v1/universes/3913007563/game-passes returned ZERO passes. Gacha rates/shop: https://the-battle-bricks.fandom.com/wiki/Shop",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "7,383 concurrent (API, 2026-07-23). All-time peak 40,066 (Rolimons).",
+   "totalVisits": "122,345,262",
+   "favoritesOrLikes": "286,172 favorites; 168,627 likes vs 30,914 dislikes (84.5%)",
+   "monetization": "OUTLIER: literally zero gamepasses (verified against the API, not inferred). 100% of Robux spend goes through developer products that buy 'Bricks', the gacha currency. Bricks convert to XP or pull cards. Pulls cost 100 Bricks (200 on some banners) with published odds 70% Rare / 25% Super Rare / 5% Uber Rare [medium confidence — community wiki]. Shop is split into Normal / Base / Cards / Currency, priced in XP, Bricks or Robux.",
+   "retentionHooks": "Avg session 25.01 min. Chapter/subchapter campaign progression (Chapter 5 current), boss stages, challenge stages, streak rewards. Single-player so no server population dependency — it survives at low CCU.",
+   "relevanceToChessAutobattler": "The closest thing on Roblox to a Western auto-battler and a warning: 84.5% rating is the LOWEST of every flagship here, and peak CCU only 40k vs 236k-732k for gacha TD/sim games. Currency-only monetization (no passes) leaves a lot of money on the table. Take the campaign-chapter PvE structure; do NOT take the no-gamepass model."
+  },
+  {
+   "name": "Toilet Tower Defense (LEGACY)",
+   "genre": "Meme-IP tower-defense gacha unit-collector. Universe 4778845442, place 13775256536, by Telanthric Development.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=4778845442 + /votes (2026-07-23). Peak CCU + date: https://www.rolimons.com/game/13775256536. Gamepasses: https://apis.roblox.com/game-passes/v1/universes/4778845442/game-passes + product-info",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "3,562 concurrent (API, 2026-07-23). All-time peak 522,376 on 2024-03-09 (Rolimons) — one of the biggest CCU peaks ever for the genre.",
+   "totalVisits": "6,158,610,288 (~6.16B)",
+   "favoritesOrLikes": "1,527,384 favorites; 1,337,689 likes vs 226,000 dislikes (85.6%)",
+   "monetization": "Cheapest pass ladder of any flagship — deliberately built for a very young, low-Robux audience (API-verified): Trait Hunter 699 R$ ('2x Chance for Good Traits'), Summer Pass: Premium Track 499 R$ (seasonal battle pass), Shiny Hunter 499 R$ ('double the chance to get shiny units'), Clan Creator 499 R$ (social/status SKU), Double Lucky Toilet Spawning 249 R$, VIP 229 R$ (1 random boost + 20 gems every 4 hours claimable in lobby — a return-timer hook), Lucky 149 R$ ('double luck when summoning rarer units UNDER 10% in the lobby summon shop' — publishes the threshold), +1000 Inventory Storage 149 R$, Double Coins 79 R$ (permanent).",
+   "retentionHooks": "VIP's 'claim every 4 hours' timer is an explicit re-open hook. Avg session 15.27 min. Trait system layered on top of unit rarity (second gacha). Clan pass monetizes social status. Note: it decayed 522k -> 3.5k and the title is now literally tagged [LEGACY].",
+   "relevanceToChessAutobattler": "Price-floor benchmark: 79-699 R$ SKUs, nothing above 699. If your audience skews young/low-spend, this is the ladder to mirror rather than Pet Sim 99's 3,250 R$ tier. Also shows a timed-claim VIP is worth building on day one."
+  },
+  {
+   "name": "All Star Tower Defense",
+   "genre": "Anime tower-defense gacha unit-collector (the genre progenitor). Universe 1720936166, place 4996049426, by Top Down Games.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=1720936166 + /votes (2026-07-23). Gamepasses: https://apis.roblox.com/game-passes/v1/universes/1720936166/game-passes + product-info",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "1,377 concurrent (API, 2026-07-23)",
+   "totalVisits": "7,875,257,140 (~7.88B — the highest lifetime visits of any anime TD)",
+   "favoritesOrLikes": "2,315,385 favorites; 1,489,001 likes vs 129,171 dislikes",
+   "monetization": "Notably COSMETIC-heavy pass set, all API-verified: 3x Game Speed 799 R$, VIP 300 R$ (double daily rewards, exclusive mount, golden name tag), Car Unit Display 200 R$, Pod Unit Display 180 R$ ('display unit in your third slot on a pod'), Cloud Unit Display 175 R$ ('display unit in your second slot on a cloud'). Three separate 175-200 R$ SKUs that do nothing but change how your units are displayed in the lobby.",
+   "retentionHooks": "Daily rewards doubled by VIP; long-running unit meta with constant re-tiering. Sequel 'All Star Tower Defense X' (universe 6057699512, place 17687504411) has 949,296,803 visits and 587,018 likes but only 59 concurrent as of 2026-07-23 — the sequel failed to retain.",
+   "relevanceToChessAutobattler": "Direct evidence for the cosmetic-only thesis: players buy 175-200 R$ purely for a display pedestal. For a chess autobattler, per-slot board cosmetics (piece pedestals, board skins, capture effects) are a proven three-SKU cluster at impulse price."
+  },
+  {
+   "name": "Anime Defenders",
+   "genre": "Anime tower-defense gacha unit-collector. Universe 5836869368, place 17017769292, by Small World Games x Anime Defenders.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=5836869368 + /votes (2026-07-23). Peak CCU + date + playtime: https://www.rolimons.com/game/17017769292. Gamepasses: https://apis.roblox.com/game-passes/v1/universes/5836869368/game-passes + product-info",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "394 concurrent (API, 2026-07-23). All-time peak 377,836 on 2024-07-21 (Rolimons). 30-day peak just 1,667.",
+   "totalVisits": "3,429,954,291 (~3.43B)",
+   "favoritesOrLikes": "912,516 favorites; 2,024,532 likes vs 68,814 dislikes (96.7%)",
+   "monetization": "THREE separate battle passes sold as permanent gamepasses simultaneously (API-verified): Christmas Battlepass 799 R$, Athenyx's Battlepass 699 R$, Divine Dragon Battlepass 699 R$. Plus 50x Unboxing 799 R$ (bulk-pull convenience — sells time on the gacha), 3x Speed 799 R$, Shiny Hunter 1,299 R$, VIP 299 R$, More Booth Space 99 R$ (player-trading booth expansion).",
+   "retentionHooks": "Avg session only 10.81 min — the shortest of the flagships, and it collapsed from 377k peak to ~400 concurrent in 2 years. Trading booths gave a player economy but did not save retention.",
+   "relevanceToChessAutobattler": "Two lessons. (1) Selling each season's battle pass as a PERMANENT stacking gamepass means old passes keep generating revenue from new players — cheap to implement, and rare. (2) The '50x Unboxing' 799 R$ SKU proves players pay just to skip pull animations at volume. (3) Cautionary: 10.8-min sessions plus 96.7% likes still equals total collapse — likes do not predict retention."
+  },
+  {
+   "name": "Anime Adventures",
+   "genre": "Anime tower-defense gacha unit-collector. Universe 3183403065, place 8304191830, by Gomu.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=3183403065 + /votes (2026-07-23). Gamepasses: https://apis.roblox.com/game-passes/v1/universes/3183403065/game-passes + product-info",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "145 concurrent (API, 2026-07-23) — effectively sunset",
+   "totalVisits": "2,509,373,763 (~2.51B)",
+   "favoritesOrLikes": "1,391,722 favorites; 721,586 likes",
+   "monetization": "API-verified: Shiny Hunter 1,299 R$ ('Triples chance of summoning shiny units' — publishes the multiplier), Display All Units 699 R$, VIP 299 R$ (20% off summons, VIP/rainbow nametag, +10% player XP), Display 3 Units 199 R$, Unit Storage 99 R$ (+100).",
+   "retentionHooks": "Tiered cosmetic display SKUs (199 for 3 units, 699 for all 6) — a deliberate upsell ladder on the same feature.",
+   "relevanceToChessAutobattler": "Confirms the industry-standard price point: Shiny Hunter is 1,199-1,399 R$ across Anime Adventures, Anime Vanguards, Anime Squadron and UTDZ. That is the market-clearing price for 'pay to improve cosmetic-variant drop rate' on Roblox."
+  },
+  {
+   "name": "Anime Astral Simulator",
+   "genre": "Anime gacha/incremental collector, up-and-coming (Roblox 'Up-and-Coming' chart, 2026-07-23). Universe 10502841145, place 102072869879193, by StarX Inc.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=10502841145 + /votes (2026-07-23). Chart placement: https://apis.roblox.com/explore-api/v1/get-sorts (sortId 'up-and-coming', 2026-07-23). Gamepasses: https://apis.roblox.com/game-passes/v1/universes/10502841145/game-passes + product-info",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "24,411 concurrent (API, 2026-07-23) — on only 13.5M lifetime visits, i.e. very new and climbing fast",
+   "totalVisits": "13,461,410",
+   "favoritesOrLikes": "23,679 favorites; 10,832 likes",
+   "monetization": "18 gamepasses, almost all luck or gacha-throughput (API-verified). Explicit 3-tier luck ladder: Luck 99 R$ -> Super Luck 499 R$ -> Ultra Luck 799 R$. Gacha throughput: +1 Gacha Open 499 R$, Fast Gacha Roll 299 R$, Fast Hatch 399 R$, +2 Star Open 399 R$, Remote Star 399 R$. Equip slots: +1 Sword Equip 599 R$, +1 Shadow Equip 599 R$, +2 Pet Equip 399 R$. Multipliers: 2X Power 299 R$, 2x Yen 299 R$, 2X Damage 299 R$, More Drops 299 R$. Plus VIP 399 R$, Fast Click 99 R$, Big Storage 199 R$.",
+   "retentionHooks": "Shotgun SKU strategy — 18 passes clustered at 99/299/399/499/599/799 so every spend level has something to buy.",
+   "relevanceToChessAutobattler": "Live 2026 evidence that the 'three-tier named luck ladder' (Luck / Super Luck / Ultra Luck at 99 / 499 / 799) is still the default shape for new entrants. Cheap to implement, and the naming itself does the upselling."
+  },
+  {
+   "name": "Blox Fruits",
+   "genre": "Action RPG with RNG fruit-roll gacha at the core. Universe 994732206, place 2753915549, by Gamer Robot Inc.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=994732206 + /votes (2026-07-23); also top-playing-now chart via https://apis.roblox.com/explore-api/v1/get-sorts (2026-07-23)",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "212,527 concurrent (API, 2026-07-23) — #8 game on Roblox at time of check",
+   "totalVisits": "62,889,498,969 (~62.9B — largest in this set by an order of magnitude)",
+   "favoritesOrLikes": "19,399,019 favorites; 12,343,358 likes",
+   "monetization": "NOT torn down in this pass — gamepass enumeration was not run for this universe. Known publicly to sell Robux fruit purchases + RNG fruit rolls + convenience passes, but I did not verify SKUs or prices, so treat monetization detail as unverified [low confidence].",
+   "retentionHooks": "Scale/longevity datapoint only: 62.9B visits and still 212k concurrent after 7+ years, sustained by seasonal 'Update X' content drops.",
+   "relevanceToChessAutobattler": "Ceiling reference for how large a gacha-flavoured Roblox economy can get, and proof that RNG-for-power (not cosmetics) is what carries the biggest earners. Not a structural template for an autobattler."
+  },
+  {
+   "name": "Anime Reborn",
+   "genre": "Anime tower-defense gacha unit-collector. Universe 5844593548, place 17046374415, by AnimeReborn.",
+   "source": "Live scale: https://games.roblox.com/v1/games?universeIds=5844593548 + /votes (2026-07-23). Gamepasses: https://apis.roblox.com/game-passes/v1/universes/5844593548/game-passes + product-info",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "6 concurrent (API, 2026-07-23) — essentially dead despite 153M visits",
+   "totalVisits": "153,588,264",
+   "favoritesOrLikes": "377,670 favorites; 347,060 likes",
+   "monetization": "API-verified: Shiny Hunter 999 R$, Display All Units 499 R$, VIP 299 R$ (20% summoning discount, 2x AFK), Extra 50 Storage 149 R$. Identical four-SKU template to Anime Vanguards at slightly lower prices.",
+   "retentionHooks": "None differentiating — copies the AFK-chamber + summon-discount pattern without a distinct hook.",
+   "relevanceToChessAutobattler": "Negative datapoint: cloning the Anime Vanguards SKU template exactly is not sufficient. 153M visits accumulated then collapsed to single-digit CCU. The monetization template is table stakes, not the moat."
+  },
+  {
+   "name": "CHESS!",
+   "genre": "Literal chess (Roblox category: Strategy > Board & Card Games). PvP 1v1 board chess, ranked ladder, skins, spectating. Creator Cookie development (verified badge).",
+   "source": "https://www.roblox.com/games/6222531507/CHESS + https://games.roblox.com/v1/games?universeIds=2283649692 + https://romonitorstats.com/experience/6222531507/",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "434-437 (instantaneous snapshot via games.roblox.com `playing`). All-time peak 2.65k CCU per RoMonitor Stats.",
+   "totalVisits": "105,653,230",
+   "favoritesOrLikes": "254,196 favorites; 76,884 likes / 28,795 dislikes (72.7% ratio)",
+   "monetization": "Game-pass API returns EMPTY -> monetizes via in-experience developer products. Own store pitch: \"Express yourself with skins\" + coins earned by winning. Cosmetic-first monetization confirmed by description text; exact SKUs/prices UNVERIFIED (low confidence).",
+   "retentionHooks": "Ranked ladder Bronze->Grandmaster, levels, coins, 5 game modes (Classic, Random, Pawn Battle, Lightning, Ranked), spectate + global chat. No unit collection, no gacha, no economy loop.",
+   "relevanceToChessAutobattler": "THE benchmark and THE ceiling. Biggest chess game on Roblox: 105M cumulative visits but only ~434 live CCU and 2.65k all-time peak. Huge visits + tiny concurrency = players try it, do not stay. Reason: static board game, zero collection, zero progression, zero cross-session power growth. Created 2021, still updated 2026-07-12, so low CCU is a GENRE ceiling, not neglect. Proves chess branding pulls traffic on Roblox AND that skins are already the accepted monetization there."
+  },
+  {
+   "name": "♟️Chess Club♟️",
+   "genre": "Literal chess + social hub (casual/ranked, tournaments, chess lessons). Creator Aureus Chess Club.",
+   "source": "https://www.roblox.com/games/139394516128799/Chess-Club + https://games.roblox.com/v1/games?universeIds=7266261686",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "96-97 (instantaneous snapshot)",
+   "totalVisits": "21,159,915",
+   "favoritesOrLikes": "45,510 favorites; 12,421 likes / 4,301 dislikes",
+   "monetization": "Game-pass API empty -> dev products only or minimal. Unverified (low confidence).",
+   "retentionHooks": "Ranked, tournaments, lessons/coaching, club-social framing. Same static-board limitation as CHESS!.",
+   "relevanceToChessAutobattler": "Second-largest chess title. Launched 2025-02-19, hit 21M visits in ~17 months -> chess demand on Roblox is CURRENT, not legacy. But ~96 live CCU: same retention wall. Also proves the *social/club* angle alone does not fix retention; the missing piece is a progression/economy loop."
+  },
+  {
+   "name": "Chess with guns",
+   "genre": "Chess hybrid / novelty chess-shooter mashup",
+   "source": "https://www.roblox.com/games/18173908447/Chess-with-guns",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "24-29 (snapshot)",
+   "totalVisits": "8,412,833",
+   "favoritesOrLikes": "22,829 favorites; 4,770 likes / 4,229 dislikes (53% ratio - poor)",
+   "monetization": "Not verified",
+   "retentionHooks": "Novelty twist only. Last updated 2026-01-28.",
+   "relevanceToChessAutobattler": "The only 'chess + combat' hybrid at any scale, and the closest existing thing to 'chess piece that fights'. 8.4M visits proves the concept is instantly legible to Roblox kids. Its 53% like ratio and ~25 CCU are the warning: a chess-combat gimmick with no loop behind it dies. Theme validates; theme alone does not retain."
+  },
+  {
+   "name": "Chess Islands!",
+   "genre": "Chess + island/progression hybrid",
+   "source": "https://www.roblox.com/games/79220012093766/Chess-Islands",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "23-28 (snapshot)",
+   "totalVisits": "1,112,050",
+   "favoritesOrLikes": "2,972 favorites; 941 likes / 446 dislikes",
+   "monetization": "Not verified",
+   "retentionHooks": "Island/progression wrapper around chess. Updated 2026-07-13.",
+   "relevanceToChessAutobattler": "Someone already tried bolting a progression wrapper onto chess: 1.1M visits, ~25 CCU. Weak execution, tiny scale - the direction is unclaimed rather than proven dead."
+  },
+  {
+   "name": "Chess Practice!",
+   "genre": "Literal chess (solo/engine practice)",
+   "source": "https://www.roblox.com/games/99199615090453/Chess-Practice",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "20-21 (snapshot)",
+   "totalVisits": "1,686,637",
+   "favoritesOrLikes": "4,514 favorites; 1,333 likes / 1,364 dislikes (49.4% - net negative)",
+   "monetization": "Not verified",
+   "retentionHooks": "Practice only, no meta layer. Created 2026-03-28 (very recent entrant).",
+   "relevanceToChessAutobattler": "Long tail. Confirms the chess keyword farms ~1.7M visits even with a net-negative-rated game. Traffic in this niche is cheap; retention is what nobody has solved."
+  },
+  {
+   "name": "Super Chess",
+   "genre": "Chess variant",
+   "source": "https://www.roblox.com/games/85613149245384/Super-Chess",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "0 (snapshot)",
+   "totalVisits": "8,837",
+   "favoritesOrLikes": "29 favorites; 16 likes / 8 dislikes",
+   "monetization": "None visible",
+   "retentionHooks": "None",
+   "relevanceToChessAutobattler": "Dead. Included to show the category floor: there is NO hidden mid-size chess-strategy competitor between Chess Club (21M visits) and dust. The niche is two real games and a graveyard."
+  },
+  {
+   "name": "CHECKERS! (Pitchworks Studios) and Checkers 🎮",
+   "genre": "Literal checkers - adjacent classic board game",
+   "source": "https://www.roblox.com/games/8916289384/CHECKERS + https://www.roblox.com/games/75526590957446/Checkers",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "2 and 16 respectively (snapshot)",
+   "totalVisits": "1,515,383 and 1,140,150",
+   "favoritesOrLikes": "4,452 and 42,012 favorites respectively",
+   "monetization": "Not verified",
+   "retentionHooks": "None beyond the board game itself.",
+   "relevanceToChessAutobattler": "Confirms the ceiling is the BOARD-GAME FORMAT, not chess specifically. Every classic-board clone on Roblox lands in the ~1M-visit / sub-20-CCU bucket. Reinforces: keep the chess iconography, throw out the board-game business model."
+  },
+  {
+   "name": "Tower Defense Simulator",
+   "genre": "ADJACENT PROOF-POINT, NOT CHESS - tower defense: place units on a grid, units auto-fight waves. Paradoxum Games, live since 2019.",
+   "source": "https://www.roblox.com/games/3260590327/Tower-Defense-Simulator",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "21,557 (snapshot)",
+   "totalVisits": "4,865,109,652",
+   "favoritesOrLikes": "3,457,521 favorites; 2,000,000+ likes (in-game code '2MILLION' grants a free skin)",
+   "monetization": "Unit skins (headline feature - free 'Mercenary Pursuit skin' used as a hype lever), unit unlocks, game passes.",
+   "retentionHooks": "Unit collection + upgrades, co-op waves, seasonal events, skin economy, leaderboards.",
+   "relevanceToChessAutobattler": "Proves the CORE auto-battler primitive - player places units on a board, combat auto-resolves, player watches - is one of the largest formats on Roblox: 4.87B visits, 21.5k live CCU, 7 years old and still top-tier. A chess-piece auto-battler is this primitive plus a per-round draft/gold economy. Also proves cosmetic skins on combat units are a normalized purchase for exactly this audience."
+  },
+  {
+   "name": "Toilet Tower Defense",
+   "genre": "ADJACENT PROOF-POINT, NOT CHESS - tower defense with unit gacha + trading economy. Telanthric Development.",
+   "source": "https://www.roblox.com/games/13775256536/Toilet-Tower-Defense",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "3,502 (snapshot; this is the [LEGACY] universe, playerbase is split across a newer universe)",
+   "totalVisits": "6,158,610,737",
+   "favoritesOrLikes": "1,527,386 favorites; 1,337,688 likes / 225,805 dislikes",
+   "monetization": "Unit crates/gacha, passes, player-to-player trading economy",
+   "retentionHooks": "Unit rarity ladder, trading, endless mode, meme IP refresh cycle.",
+   "relevanceToChessAutobattler": "6.16B visits on place-units-and-watch-them-fight. The layer it has that TDS lacks - unit RARITY + COLLECTION + TRADING - is why it out-visits TDS. Direct answer to the open gacha question: gacha-ing the FIGHTING UNITS (not just cosmetics) is what drives the biggest numbers on Roblox."
+  },
+  {
+   "name": "Anime Vanguards",
+   "genre": "ADJACENT PROOF-POINT, NOT CHESS - gacha unit-summoning tower defense. Kitawari.",
+   "source": "https://www.roblox.com/games/16146832113/Anime-Vanguards-Extermination-Event-Pt-1",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "10,024 (snapshot)",
+   "totalVisits": "1,998,947,205",
+   "favoritesOrLikes": "1,972,772 favorites",
+   "monetization": "Gacha summon banners for units, luck boosts, passes",
+   "retentionHooks": "Banner rotation, unit rarity/evolution, story maps, raids, meta chasing.",
+   "relevanceToChessAutobattler": "Best single evidence that GACHA-FOR-UNITS is the money engine on Roblox: ~2B visits in ~2.5 years on summon-units-then-auto-fight. Sibling titles same formula: Anime Defenders 3.43B visits, Anime Last Stand 1.08B, Anime Dimensions 1.42B - the category is enormous, not a fluke."
+  },
+  {
+   "name": "Anime Card Clash",
+   "genre": "ADJACENT PROOF-POINT, NOT CHESS - card/unit collection, story maps, infinite towers, ranked PvP. Creator group 'RNG Lab'.",
+   "source": "https://www.roblox.com/games/110829983956014/Anime-Card-Clash",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "6,534-6,540 (snapshot)",
+   "totalVisits": "473,653,791",
+   "favoritesOrLikes": "224,045 favorites",
+   "monetization": "Card gacha (creator group literally named RNG Lab), luck/boost products",
+   "retentionHooks": "Card rarity chase, story + infinite tower + nightmare modes, PvP leaderboard, secret boss raids.",
+   "relevanceToChessAutobattler": "Closest LIVE example of 'collect units -> deploy team -> ranked PvP' on Roblox at 474M visits / 6.5k CCU. Still NOT a positional auto-battler: no board placement, no per-round draft economy. Shows the collection + PvP-ladder combo is the retention profile to target; chess board readability is the differentiator to add."
+  },
+  {
+   "name": "Build A Soccer Squad!",
+   "genre": "ADJACENT PROOF-POINT, NOT CHESS - draft/reroll card packs to assemble a squad. Bloxheed, created 2026-06-03.",
+   "source": "https://www.roblox.com/games/82524183928567/Build-A-Soccer-Squad",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "20,706 (snapshot) - one of the highest live CCUs in this entire dataset",
+   "totalVisits": "100,773,431",
+   "favoritesOrLikes": "90,294 favorites",
+   "monetization": "Rerolls/refreshes as the paid resource (code 'UNIVERSE' = 50 reroll/refresh), pack pulls, 'LIMITBREAKER' cards, paid auto-reveal convenience.",
+   "retentionHooks": "Pull-reroll-collect loop, 8-hour quests, squad rating chase, console support.",
+   "relevanceToChessAutobattler": "Created 2026-06-03 and already 20.7k live CCU on 100M visits - fastest-retaining title in this dataset. Its entire loop is DRAFT + REROLL + ASSEMBLE A SQUAD, i.e. the first half of an auto-battler round. It has NO board, NO positioning, NO combat resolution. The draft half is proven as a 20k-CCU loop on Roblox right now; nobody has attached the board-battle half. That is the seam to attack."
+  },
+  {
+   "name": "Summon Heroes",
+   "genre": "ADJACENT PROOF-POINT, NOT CHESS - gacha hero collector, turn-based team battles, idle rewards. Twin Atlas, created 2026-02-26.",
+   "source": "https://www.roblox.com/games/117381420723145/Summon-Heroes",
+   "confidence": "high",
+   "asOf": "2026-07-23",
+   "liveCCU": "752 (snapshot)",
+   "totalVisits": "46,617,465",
+   "favoritesOrLikes": "780,320 favorites (1.7% favorites-to-visits - unusually high intent)",
+   "monetization": "Hero summon gacha across 60+ heroes",
+   "retentionHooks": "Hero collection/ascension, campaign, offline/idle rewards.",
+   "relevanceToChessAutobattler": "46.6M visits in ~5 months. Proves the classic mobile-gacha team-battler ports to Roblox and that established studios are colonizing this space RIGHT NOW. But it is turn-based squad RPG, not positional round-draft auto-battle, and has no chess hook. Same archetype, smaller: Champions: Summon Your Team, 26.1M visits / ~250 CCU, https://www.roblox.com/games/131322417028955/Champions-Summon-Your-Team"
+  },
+  {
+   "name": "[NULL RESULT] TFT / auto-chess style round-draft auto-battler on Roblox",
+   "genre": "Positional round-based auto-battler (draft -> position on board -> auto-resolve -> gold/interest economy -> reroll -> repeat)",
+   "source": "Roblox omni-search API https://apis.roblox.com/search-api/omni-search across ~40 queries incl. 'auto battler', 'autobattler', 'auto chess', 'teamfight tactics', 'TFT', 'underlords', 'super auto pets', 'auto pets', 'draft units', 'turn based tactics', 'strategy board game', 'board game battle', 'chess auto', 'chess tactics', 'chess arena', 'chess royale', 'chess pieces battle', 'chess battle royale', 'chess gacha'; all hits cross-checked against https://games.roblox.com/v1/games",
+   "confidence": "medium",
+   "asOf": "2026-07-23",
+   "liveCCU": "n/a - nothing found",
+   "totalVisits": "n/a - nothing found",
+   "favoritesOrLikes": "n/a",
+   "monetization": "n/a",
+   "retentionHooks": "n/a",
+   "relevanceToChessAutobattler": "THE GAP. No Roblox experience at meaningful scale runs the TFT/auto-chess round loop - in ANY theme, let alone chess-piece. Queries for auto battler / auto chess / teamfight tactics / underlords / super auto pets return ZERO on-genre Roblox titles; closest hits are tower defense (placement but no draft economy, no PvP round loop), squad gacha RPGs (collection but no board), and squad-draft card games (draft but no battle board). Confidence medium, method-bounded: omni-search ranks by popularity, so a micro-title could be buried - but a buried title is by definition not scaled, which is the point."
+  }
+ ],
+ "insights": [
+  {
+   "topic": "Daily rewards / login streaks — Roblox ships this as an official first-party package, so it is table stakes, not a differentiator",
+   "detail": "Roblox's own Creator Hub distributes an 'Engagement Rewards' feature package with client+server logic and default UI. It has two reward types: Time (playtime-based) and Daily. Docs state 'Daily rewards unlock after a certain number of consecutive daily logins,' with configurable escalation (example given: potions on day 1 → consumables → a durable item like a new fishing rod after seven straight days). Config flags include isHiddenOnJoin (auto-popup on login) and isAlignedToStreakResetTime (24h-exact vs midnight reset). Implication for the chess auto-battler: do NOT build this from scratch — drop in the package and spend the effort on the reward *contents* (units/cosmetic shards). Note: Roblox does NOT publish a retention rationale or uplift number in these docs; the retention claim is inference, not measured.",
+   "confidence": "high",
+   "evidence": "Roblox Creator Hub docs describe the package, both reward types, the consecutive-login definition, the day-1→day-7 escalation example, and the two config flags. No retention statistics stated in the docs.",
+   "source": "https://create.roblox.com/docs/resources/feature-packages/engagement-rewards (fetched 2026-07-23)"
+  },
+  {
+   "topic": "Unit/collection completion — the single highest-leverage hook for a unit-drafting auto-battler; Pet Simulator 99 is the scale proof",
+   "detail": "Pet Simulator 99 (Preston/BIG Games) is built entirely on 'collect them all': the dev-authored description says '✨ Currently 2,000+ pets to collect! 🐾'. Live stats: 163,141 CCU, 2,557,680,996 visits, 2,181,278 favorites. Sol's RNG is the pure-collection variant — description: 'Roll for 400+ unique auras... How rare can you go?' — 31,010 CCU, 2,021,766,540 visits, 982,669 favorites. Both prove that an index/dex of hundreds-to-thousands of ownable entities sustains billions of visits. For a chess-piece auto-battler this maps directly: N variants per piece type (pawn/knight/bishop/rook/queen/king) × rarity tiers = a completion grid the player can never finish, which is exactly the point. Number of collectibles is the retention surface area.",
+   "confidence": "high",
+   "evidence": "Live figures pulled from games.roblox.com/v1/games?universeIds=3317771874,5361032378 on 2026-07-23. Collection framing quoted from dev-authored game descriptions returned by the same API.",
+   "source": "https://games.roblox.com/v1/games?universeIds=3317771874,5361032378 (as of 2026-07-23)"
+  },
+  {
+   "topic": "Gacha/RNG pull as the core loop itself — Sol's RNG shows the pull CAN be the whole game, no combat needed",
+   "detail": "Sol's RNG (Sol's Studio) reduced the loop to: press Roll → get an aura → repeat. Dev description lists the full addiction stack explicitly: 400+ auras of varying rarity, craft gear from collected auras, 'drink potions to increase your luck and chase rare finds', and 'compete with friends for the rarest auras'. 31,010 CCU / 2.02B visits / 982,669 favorites as of 2026-07-23. Design lesson for the open monetization question (cosmetics-only gacha vs. units-in-gacha): Sol's RNG proves rarity chase alone is retentive, and its luck-potion layer is the paid accelerant pattern — sell the *luck multiplier / extra pull*, not the guaranteed unit. That keeps the pull loop intact while dodging the pay-to-win problem of selling combat units directly.",
+   "confidence": "high",
+   "evidence": "CCU/visits/favorites from games.roblox.com API 2026-07-23. Loop and luck-potion mechanic quoted from dev-authored description.",
+   "source": "https://games.roblox.com/v1/games?universeIds=5361032378 (as of 2026-07-23)"
+  },
+  {
+   "topic": "DIRECT GENRE COMP: 'The Battle Bricks' is a Roblox unit-draft auto-battler and it appears in Roblox's own Top Revisited sort",
+   "detail": "The Battle Bricks (universeId 3913007563, place 10834586502) — dev description: 'a single-player tower defense styled game where you send units to defeat enemy bases to progress through stages... Discover the seemingly countless amount of units along the way with varying purposes and upgrade them enough to see their alternative forms!' Explicitly says gameplay is inspired by The Battle Cats. Live: 7,420 CCU, 122,344,256 visits, 286,168 favorites (2026-07-23). Critically, it surfaced in Roblox's official 'top-revisited' Discover sort — Roblox's own algorithmic label for games players come back to. Read: a unit-collection auto-battler on Roblox is nowhere near Brookhaven scale (7k vs 519k CCU), but it over-indexes on RETURN RATE, which is the metric the algorithm rewards and the metric DevEx income depends on. Its retention hooks are chapter progression + unit-discovery + evolution ('alternative forms').",
+   "confidence": "high",
+   "evidence": "Appeared in Roblox explore-api get-sort-content sortId=top-revisited on 2026-07-23; stats and description from games.roblox.com API same date.",
+   "source": "https://apis.roblox.com/explore-api/v1/get-sort-content?sortId=top-revisited and https://games.roblox.com/v1/games?universeIds=3913007563 (as of 2026-07-23)"
+  },
+  {
+   "topic": "CAUTION — gacha unit-collection games decay violently on Roblox. Anime Defenders is the cautionary corpse",
+   "detail": "Anime Defenders (the flagship gacha tower-defense, closest structural cousin to a draft-units-and-place auto-battler) has 3,429,954,291 lifetime visits and 912,516 favorites but only 394 CCU as of 2026-07-23. Anime Vanguards holds better at 10,012 CCU on 1,998,946,337 visits and 1,972,772 favorites. Anime Adventures (search result 'AA', universe 3183403065) sits at ~137 CCU on 721,586 upvotes. Pattern: gacha-unit games spike enormously then collapse ~99%+ from peak once the unit meta staleness sets in and the whale cohort completes its collection. This is the #1 risk to the project's 'REAL income via DevEx' goal — visits are a lifetime-cumulative vanity number; CCU is the truth. Mitigation implied by the survivors: continuous new-unit cadence + seasonal resets (see the ranked-ladder insight) rather than a finite unit roster.",
+   "confidence": "high",
+   "evidence": "Live CCU vs lifetime visits pulled 2026-07-23: Anime Defenders 394 CCU / 3.43B visits; Anime Vanguards 10,012 CCU / 2.00B visits; AA ~137 CCU. The visits-to-CCU ratio gap is the decay evidence. Peak-CCU figures for these titles were not verified in this pass, so the specific '99% from peak' magnitude is an inference from the ratio, not a measured decline.",
+   "source": "https://games.roblox.com/v1/games?universeIds=5836869368,5578556129 and https://apis.roblox.com/search-api/omni-search (as of 2026-07-23)"
+  },
+  {
+   "topic": "Rank ladders with SEASONAL RESET — manufactured re-grind, proven in RIVALS and Blade Ball",
+   "detail": "RIVALS (universe 6035872082): 202,868 CCU, 16,777,710,440 visits, 84,758,705 favorites (2026-07-23) — the favorites number is the highest in this entire research set. RIVALS runs discrete Ranked Seasons (Season 0 launched Feb 28 2025; Seasons 1 'Warp', 2 'Polar', 3 'Fame' followed), each lasting roughly 2-3 months, with exclusive rewards keyed to highest rank reached and soft placement carry-over (finishing Nemesis raises the odds of placing Diamond next season). Blade Ball (13,344 CCU, 6,286,424,436 visits, 12,670,791 favorites) resets every player's Elo to Rookie at season start and gates unique Sword Skins behind Champion rank / global leaderboard placement. For a chess auto-battler this is the most native-fitting hook of all — chess players already accept Elo. Season reset + rank-gated cosmetic sword/piece skin = a recurring 2-3 month re-engagement engine that also feeds the cosmetics monetization line.",
+   "confidence": "medium",
+   "evidence": "CCU/visits/favorites are [High] confidence from the games.roblox.com API on 2026-07-23. The season structure, Elo reset, and rank-gated skins come from community wikis (Blade Ball Wiki, Roblox Rivals Wiki), not primary dev sources — mechanic existence is well-corroborated, but no published retention uplift exists.",
+   "source": "https://games.roblox.com/v1/games?universeIds=6035872082,4777817887 (2026-07-23); https://robloxrivals.fandom.com/wiki/Ranked_Seasons ; https://bladeball.fandom.com/wiki/Ranked"
+  },
+  {
+   "topic": "Trading / player-run economy — the strongest long-tail retention hook on Roblox, and it costs the developer nothing to run",
+   "detail": "The two oldest survivors in the top-CCU list are both trading economies. Adopt Me!: 261,565 CCU, 44,196,888,255 visits, 29,358,128 favorites. Murder Mystery 2: 296,610 CCU, 27,585,712,989 visits, 22,972,534 favorites — a 2014-era game still at ~297k CCU in 2026. MM2's trade UX is deliberately friction-light (walk up to a player, press Trade, each side adds up to 4 items, both confirm twice). The retention engine is that item values are community-determined and volatile, spawning an entire third-party value-list ecosystem (Traderie, BloxSwaps, MM2Checker, Dexerto value lists) that lives OUTSIDE the game and pulls players back in. Scarcity is enforced by never re-releasing top items (Nik's Scythe, Ancient tier, only ever given to the creator and a few trusted players). Caveat for this project: trading + paid gacha in the same game is exactly the loot-box-with-cash-out structure that draws regulator and Roblox-policy attention with a young audience. If trading ships, restrict it to cosmetics and keep paid-pull items untradeable.",
+   "confidence": "medium",
+   "evidence": "CCU/visits/favorites [High] from games.roblox.com API 2026-07-23. Trade UX details and the value-list ecosystem are from secondary trading guides/wikis, not primary sources; the regulatory caveat is my own risk assessment, not a cited finding.",
+   "source": "https://games.roblox.com/v1/games?universeIds=383310974,66654135 (as of 2026-07-23); https://traderie.com/mm2/calculator ; https://www.dexerto.com/roblox/roblox-murder-mystery-2-values-list-ancients-legendaries-in-mm2-1770998/"
+  },
+  {
+   "topic": "Limited-time events run on a PUBLISHED WEEKLY CALENDAR — Grow a Garden's 'Admin Abuse' is the current state of the art",
+   "detail": "Grow a Garden 2 is the #2 game on Roblox right now: 464,175 CCU, 1,365,613,891 visits in a short lifetime, 621,487 favorites (2026-07-23). Its headline retention device is 'Admin Abuse' — a developer/staff member joins a live public server and spawns rare seeds, triggers weather events, and hands out exclusive items. It runs on a fixed, publicly known weekly cadence: main event Saturdays (~1 hour), plus 'Watering Wednesday' midweek and occasional 'Stormy Sundays'. Seed/gear/egg shops get manual restocks during the window. The mechanic is FOMO plus a schedule — players set their week around it, and an entire third-party ecosystem of countdown/schedule sites exists to serve it. Transplant for the auto-battler: a fixed weekly 1-hour window where a dev spawns a limited board modifier or a guaranteed high-rarity pull. Cheap to run, no new systems, generates the CCU spike that feeds the Discover algorithm.",
+   "confidence": "medium",
+   "evidence": "CCU/visits/favorites [High] from games.roblox.com API 2026-07-23. Event cadence (Saturday main, Watering Wednesday, Stormy Sundays, ~1hr, manual shop restocks) comes from the Grow a Garden Fandom wiki and multiple aggregator sites, not a primary dev post — heavily corroborated but secondary.",
+   "source": "https://games.roblox.com/v1/games?universeIds=10200395747 (as of 2026-07-23); https://growagarden.fandom.com/wiki/Admin_Abuse"
+  },
+  {
+   "topic": "Timegated upgrades / offline progression — Grow a Garden's 'grows while you're offline' plus shop-restock timers is the purest example",
+   "detail": "Grow a Garden 2's dev-authored description states the loop verbatim: 'Buy seeds from the shop when they restock🛒 / Plant them in your farm and watch them grow🌻 / Harvest your crops and sell for sheckles🪙' and closes with 'Remember, your garden literally grows while you're offline!⏰'. Two distinct timegates stack: (a) shop RESTOCK timers force a return at a specific clock time to catch rare stock, and (b) offline growth guarantees a reward is waiting, which is the come-back promise. Bee Swarm Simulator (17,137 CCU, 4,492,652,697 visits, 6,484,856 favorites — a 2018 game still running) uses the same skeleton via bear quests with cooldowns and long-horizon hive growth. For the auto-battler: a unit-shop that restocks on a real-world timer (which is already the native TFT/auto-chess shop mechanic!) plus an offline 'training' accrual on benched pieces. Note this hook is native to auto-battlers — the draft shop IS a restock timer.",
+   "confidence": "high",
+   "evidence": "Offline growth and shop-restock loop quoted directly from the dev-authored Grow a Garden 2 description via games.roblox.com API. Bee Swarm quest/reward loop also from dev description. All stats as of 2026-07-23.",
+   "source": "https://games.roblox.com/v1/games?universeIds=10200395747,601130232 (as of 2026-07-23)"
+  },
+  {
+   "topic": "Social/party play + player-vs-player theft — Steal a Brainrot is the biggest engagement machine on the platform by favorites-per-year",
+   "detail": "Steal a Brainrot (universe 7709344486): 175,978 CCU, 71,720,800,777 visits — the highest visit count in this entire dataset — and 28,774,510 favorites, on a game created far more recently than Adopt Me. Dev-authored loop: 'Buy a Brainrot / Steal Brainrots from other players / Generate money / Rebirth / Buy slaps and troll gear to troll other players!' The retention engine is that OTHER PLAYERS are the content: your idle income is only safe if you defend it, so leaving the game has a cost, and returning has urgency. Grow a Garden 2 copied this exactly — its description adds 'Make a guild to compete for exclusive weekly rewards!🛡️ But be careful... because at night STEALING STARTS!🌙' — combining a guild/social layer with a nightly PvP-theft window. For a PvE-first auto-battler this is the hook to steal LAST and carefully: a guild/party layer with weekly competitive rewards is low-risk, but asymmetric theft of units would conflict with a PvE-first, young-audience, cosmetics-monetized design.",
+   "confidence": "high",
+   "evidence": "CCU/visits/favorites from games.roblox.com API 2026-07-23. Steal loop, guild weekly rewards, and nightly stealing window all quoted from dev-authored descriptions returned by the same API call.",
+   "source": "https://games.roblox.com/v1/games?universeIds=7709344486,10200395747 (as of 2026-07-23)"
+  },
+  {
+   "topic": "Session-count loops — short, repeatable, sub-10-minute rounds are what actually keeps the CCU chart's top slots",
+   "detail": "The top of Roblox's live 'Top Playing Now' sort on 2026-07-23 is dominated by games with very short or interruption-tolerant sessions: Brookhaven RP 519,057 CCU (drop-in RP, no session), Murder Mystery 2 296,755 (rounds of a few minutes), RIVALS 202,366 (short FPS rounds), Forsaken 99,411, Dress To Impress 88,155 (timed rounds of a few minutes). The Battle Bricks description explicitly sells this property: 'A linear game that you can pick up from any time!' The transferable rule: the auto-battler's unit-draft → position → auto-battle → reward cycle must resolve fast enough that a player can complete one full loop in a single short session and feel a reward land. TFT's ~30-minute match length is the wrong target for Roblox's young mobile-heavy audience — compress to a 3-8 round mini-run.",
+   "confidence": "medium",
+   "evidence": "CCU rankings and figures are [High], pulled live from the explore-api top-playing-now sort on 2026-07-23. The causal claim that SHORT SESSIONS drive those rankings is my inference from the composition of the list plus the Battle Bricks dev quote — no published per-game session-length data was verified. Blog sources (rolearn.dev, bloxg.com) make the same claim but are [Low] trust.",
+   "source": "https://apis.roblox.com/explore-api/v1/get-sort-content?sortId=top-playing-now (as of 2026-07-23)"
+  },
+  {
+   "topic": "Battle pass with a 30-day daily-claim track — Blade Ball's seasonal pass is the standard cosmetic-monetization + return-visit combo",
+   "detail": "Blade Ball (Wiggity.): 13,344 CCU, 6,286,424,436 visits, 12,670,791 favorites (2026-07-23). It runs numbered seasonal Battle Passes (documented through Season 9 'Cyber Pass', plus themed Winter/Easter/Samurai passes) with a free track and a paid Premium track. Reported Premium benefits: increased rewards, extra weekly challenges, and a bonus of 10 free levels. Progression XP comes from eliminations. A 30-day daily-login claim track runs alongside, with milestone unlocks at day 2, day 14, and day 30 (emotes and cosmetics). Note the dev description already lists the monetization surface this project is targeting: 'stand out with a variety of iconic weapon skins and finisher effects' — i.e. paid decorative weapons, exactly the model in the project brief, validated on a 6.3B-visit game. The 'buy 10 free levels' pattern is also the cleanest non-pay-to-win Robux sink.",
+   "confidence": "medium",
+   "evidence": "CCU/visits/favorites and the weapon-skins/finisher-effects monetization quote are [High], from games.roblox.com API and the dev-authored description on 2026-07-23. Pass season numbering, Premium benefits, and day-2/14/30 milestones come from Blade Ball Fandom wiki and Sportskeeda guides — secondary, well-corroborated, but not primary.",
+   "source": "https://games.roblox.com/v1/games?universeIds=4777817887 (as of 2026-07-23); https://bladeball.fandom.com/wiki/Battle_Pass ; https://www.sportskeeda.com/roblox-news/blade-ball-season-9-battle-pass-cyber-pass-rewards-premium-price"
+  },
+  {
+   "topic": "Roblox's Discover algorithm has a dedicated 'Top Revisited' sort — return rate is a distribution lever, not just a revenue lever",
+   "detail": "The Roblox explore API exposes exactly five game sorts: top-trending, up-and-coming, top-playing-now, fun-with-friends, and top-revisited. 'Top Revisited' is a first-party algorithmic surface that ranks games by players coming BACK, and it visibly promotes small games: on 2026-07-23 it listed Dungeon Quest (OG) at 663 CCU, Rogue Lineage at 1,261, Grave/Digger at 2,065, Fallen Survival at 1,170, and The Battle Bricks at 7,426 — alongside giants like Blox Fruits (212k) and Adopt Me (261k). This is the single most actionable structural finding for a new game: you do not need mega-CCU to get free Roblox distribution, you need high return rate, and Roblox will surface you to new players for it. Every retention hook in this research therefore pays twice — once in retained players, once in algorithmic reach. Also note 'fun-with-friends' exists as its own sort, meaning social/party features are independently rewarded with distribution.",
+   "confidence": "high",
+   "evidence": "Sort list retrieved directly from https://apis.roblox.com/explore-api/v1/get-sorts on 2026-07-23 (returned exactly: filters_v5, top-trending, up-and-coming, top-playing-now, fun-with-friends, top-revisited). The low-CCU games listed above were returned by get-sort-content for sortId=top-revisited on the same date. The claim that it ranks on return rate is inferred from the sort's name and its low-CCU composition — Roblox does not publish the ranking formula.",
+   "source": "https://apis.roblox.com/explore-api/v1/get-sorts and https://apis.roblox.com/explore-api/v1/get-sort-content?sortId=top-revisited (as of 2026-07-23)"
+  },
+  {
+   "topic": "DevEx rate is now two-tier, and the premium tier structurally penalizes a young audience",
+   "detail": "Roblox pays $0.0038 USD per Earned Robux (standard, since 2025-09-05 10AM PT; Robux earned before that cashes out at the legacy $0.0035). A separate, higher rate of $0.0054 per Robux applies ONLY to spend from age-checked 18+ US players in eligible R15 games, effective 2026-06-08 (a 42% uplift). Roblox's own justification: 'The 18 to 34 user cohort on Roblox is growing over 50% year-over-year in the U.S.-and monetizes 50% higher than the under 18 cohort.' STRATEGIC CONSEQUENCE for this project: the identical Robux spent by a 12-year-old is worth ~30% less in DevEx cash than the same Robux from an age-checked 18+ US player. A deliberately young-audience game is opting into the lower payout tier on every dollar.",
+   "confidence": "high",
+   "evidence": "Standard/legacy rates and the 8.5% increase language appear in Roblox Corp's FY2025 Form 10-K; the 18+ tier, +42% figure, R15 requirement, eligible product types (game passes, Robux subscriptions, select in-game items, private servers) and the 2026-06-08 effective date come from Roblox's own newsroom post (April 2026). Corroborated by the DevEx help page.",
+   "source": "https://about.roblox.com/newsroom/2026/04/roblox-fuels-high-fidelity-games-over-18-players-increases-qualifying-devex-rate-42 ; https://www.sec.gov/Archives/edgar/data/1315098/000131509826000024/rblx-20251231.htm ; https://en.help.roblox.com/hc/en-us/articles/13061189551124-Developer-Exchange-Help-and-Information-Page (all fetched as of 2026-07-23)"
+  },
+  {
+   "topic": "DevEx eligibility gate: 30,000 Earned Robux minimum, 13+, one cashout per month",
+   "detail": "To convert Robux to real money you must: be at least 13 years old, hold a minimum of 30,000 Earned Robux, have a Roblox-verified email, a valid DevEx portal account, and filed tax documentation (W-9 US / W-8 non-US), plus be in good standing under the Terms of Use. 30,000 Robux = $114 USD at the standard rate, $162 USD at the 18+ US rate. Payouts run through Tipalti; one cashout request per calendar month; ~10 business days first time, ~5 thereafter. Practical read: the first real payout requires roughly 30,000 Robux of NET earned revenue, i.e. ~42,900 Robux of gross in-game sales after the 30% marketplace fee.",
+   "confidence": "high",
+   "evidence": "Roblox help center DevEx page lists eligibility bullets verbatim ('Be at least 13 years old', 'Have a minimum of 30,000 Earned Robux in your account'). Tipalti/monthly-cadence detail from secondary DevEx trackers; treat cadence as [Medium].",
+   "source": "https://en.help.roblox.com/hc/en-us/articles/13061189551124-Developer-Exchange-Help-and-Information-Page (fetched via r.jina.ai, as of 2026-07-23)"
+  },
+  {
+   "topic": "AUTHOR-DERIVED: developers capture only ~21-27% of gross consumer spend (~30-38% at the 18+ rate)",
+   "detail": "Chain: player buys Robux at retail (~$0.0125/R$ at the $9.99/800R$ tier; best case ~$0.0100/R$ at the $99.99/10,000R$ tier) -> creator keeps 70% of the Robux on a developer product or game pass (30% marketplace fee) -> creator converts at DevEx. Math: 0.70 x $0.0038 / $0.0125 = 21.3%; at the $99.99 tier, 0.70 x $0.0038 / $0.0100 = 26.6%. At the 18+ US rate: 30.2% to 37.8%. So Roblox (plus the Apple/Google cut baked into Robux retail pricing) retains roughly 62-79% of every dollar a player spends. Budget and revenue modelling for this project must start from ~$0.22-0.27 per gross consumer dollar, not from Robux face value.",
+   "confidence": "medium",
+   "evidence": "This is my own calculation, not a Roblox-published figure. The 70% creator share on dev products and passes is well established (unified marketplace fee, effective 2020-04-02, reduced to ~30% for all users). The DevEx rates are primary-sourced. The retail Robux price tiers ($4.99/400, $9.99/800, $19.99/1700, $49.99/4500, $99.99/10000) come from secondary sources only - my direct fetch of roblox.com/upgrades/robux returned navigation chrome, not price data - so the retail input is [Medium].",
+   "source": "https://devforum.roblox.com/t/unified-marketplace-fee-for-dev-products-and-game-passes/507109 ; https://create.roblox.com/docs/marketplace/marketplace-fees-and-commissions ; retail tiers via secondary trackers, as of 2026-07-23"
+  },
+  {
+   "topic": "Revenue distribution is one of the most extreme power laws in games - median DevEx creator made $1,575/year",
+   "detail": "Roblox's own Annual Economic Impact Report (2025-09-04): 'more than 24,500 are part of our DevEx Program, with the median creator participating in the DevEx Program receiving $1,575 USD during the 12 months ended December 31, 2024.' Same report, 2024 averages: top 1,000 developers $820,000 each; top 100 developers $6,000,000 each; top 10 developers $33,900,000 each. That is a ~21,500x spread between the median DevEx participant and a top-10 studio. FY2025 platform totals (10-K): $1,503.1M paid to creators (up from $922.8M in FY2024); 35,500+ creators qualified for DevEx as of 2025-12-31; 23,500+ actually took payouts during 2025. Naive average payout ($1.5B / 23,500 = ~$64k) is a statistical mirage - the median is 40x lower. Planning assumption: 'real income via DevEx' means landing in the top ~1,000 experiences, not merely shipping a competent game.",
+   "confidence": "high",
+   "evidence": "Median and top-N averages are stated directly by Roblox in its own economic impact report; totals and creator counts are from the audited FY2025 10-K. Note the top-N figures are 2024 vintage even in the Sept 2025 report; 2025 figures are likely higher.",
+   "source": "https://about.roblox.com/newsroom/2025/09/roblox-annual-economic-impact-report ; https://www.sec.gov/Archives/edgar/data/1315098/000131509826000024/rblx-20251231.htm (both as of 2026-07-23)"
+  },
+  {
+   "topic": "Paid Random Items policy: full numeric odds disclosure is mandatory, enforced since 2026-05-26",
+   "detail": "Roblox's Paid Random Items policy covers anything bought with Robux OR with an in-game currency bought with Robux that yields a randomized outcome: spinning wheels, egg hatching, loot chests/capsules, random enhancement effects, AND probability-modifier items (luck boosts, pity systems). Requirements: display all possible outcomes with actual numerical odds as percentages summing to exactly 100%, BEFORE purchase; when outcomes are too numerous, use a clickable 'Info'/'Details' button (a bare icon is not sufficient); dynamically update odds where a user can only obtain one instance; the same rules apply to indirect purchases (keys, re-roll tokens, spin tickets); luck/odds-augmenting items must show their numeric effect on the adjusted odds. Free randomized rewards are exempt. The clarified requirements went live 2026-05-26; non-compliance is handled through standard moderation with notification and appeal.",
+   "confidence": "high",
+   "evidence": "Roblox Creator Hub policy doc plus the official DevForum announcement 'Clarifying Requirements for Paid Random Items' (live 2026-05-26). Quoted requirement: 'Odds disclosures must be shown for each possible item prior to purchase.'",
+   "source": "https://create.roblox.com/docs/production/monetization/paid-random-items ; https://devforum.roblox.com/t/clarifying-requirements-for-paid-random-items/4654622 (as of 2026-07-23)"
+  },
+  {
+   "topic": "DIRECT ANSWER to the open question: cosmetic-gacha vs unit-gacha makes ZERO regulatory difference",
+   "detail": "Roblox's Paid Random Items policy draws no distinction whatsoever between pulling a decorative skin and pulling a fighting unit. Both are 'paid random items.' Both carry identical odds-disclosure burden, identical PolicyService age/region gating, and identical moderation exposure. So 'cosmetics-only gacha is the safer choice' is only half true: it is safer on pay-to-win perception and on player-trust/backlash, but it buys you nothing on compliance cost or on the size of your addressable paying audience. The real discriminators between the two designs are (a) pay-to-win optics and review-bomb risk, and (b) IsPaidItemTradingAllowed - Roblox gates peer trading of paid-random outcomes separately, which matters far more if pulls produce tradeable fighting units than if they produce bound cosmetics.",
+   "confidence": "high",
+   "evidence": "Derived directly from the policy text, which enumerates capsules, pets, chests, enhancement effects and modifiers as a single category with no cosmetic/functional carve-out, and from the two separate PolicyService flags (ArePaidRandomItemsRestricted, IsPaidItemTradingAllowed).",
+   "source": "https://create.roblox.com/docs/production/monetization/paid-random-items ; https://devforum.roblox.com/t/clarifying-requirements-for-paid-random-items/4654622 (as of 2026-07-23)"
+  },
+  {
+   "topic": "BIGGEST CONSTRAINT ON THE GACHA THESIS: paid random items are legally blocked for large parts of a young audience",
+   "detail": "PolicyService:GetPolicyInfoForPlayerAsync returns ArePaidRandomItemsRestricted per user, based on geolocation, age group and platform. Known restrictions: UK users under 18 (effective 2024-08-13, determined by the account's stated birthday) and ALL Australian users regardless of age (effective 2024-09-20). Roblox's 2026 clarification lists restricted regions as Australia, Belgium, Netherlands, United Kingdom and Brazil. The 10-K notes that in Belgium and the Netherlands loot boxes 'may be considered gambling and are restricted,' and that Australia requires mature ratings. Enforcement is brutal: if you declare paid random items and do NOT implement the API, your experience automatically becomes UNAVAILABLE in those markets. Compliant alternatives Roblox requires you to offer restricted users: unpaid earnable paths, predetermined non-random sequences, direct guaranteed purchase, hiding/removal of the feature, error blocking, or spatial separation. For a young-audience game, this means you must build and maintain a full non-gacha purchase path anyway - which weakens gacha as the primary monetization pillar.",
+   "confidence": "high",
+   "evidence": "Two official Roblox DevForum announcements give the UK-under-18 and Australia-all-users rules with dates; the Creator Hub doc enumerates the required compliant alternatives; the FY2025 10-K risk factors confirm Belgium/Netherlands/Australia treatment.",
+   "source": "https://devforum.roblox.com/t/update-on-paid-random-items-restriction-for-uk-users-under-18/3072183 ; https://devforum.roblox.com/t/update-on-paid-random-items-restriction-for-australian-users/3153602 ; https://create.roblox.com/docs/production/monetization/paid-random-items ; https://www.sec.gov/Archives/edgar/data/1315098/000131509826000024/rblx-20251231.htm (as of 2026-07-23)"
+  },
+  {
+   "topic": "South Korea 확률형 아이템: disclosure regime (2024-03-22), then punitive damages + reversed burden of proof (2025-08-01)",
+   "detail": "Phase 1: the amended 게임산업진흥에 관한 법률 and its Enforcement Decree (passed 2024-01-02) took effect 2024-03-22, requiring all games offering probability-type items to disclose item types and odds in a form users can readily understand (percentage, fraction, function or text). Item categories are defined as capsule-type (캡슐형), reinforcement-type (강화형), synthesis-type (합성형), and 'other' (quantity/time-limited, probability-variable 확률변동형, and ceiling/pity-type 천장형), each with specific display rules. Non-display or false display triggers a MCST correction recommendation/order; failing a correction order carries up to 2 years imprisonment or a fine up to KRW 20 million. MCST staffed a 24-person monitoring unit. Phase 2: a further amendment promulgated 2025-01-31 and in force since 2025-08-01 adds (a) punitive damages of up to 3x actual damages for intentional concealment or misstatement of odds, and (b) a reversal of the burden of proof - the game company must prove it acted without intent or negligence to escape liability, which raises class-action exposure sharply. CRITICAL DISTINCTION: Korea is a DISCLOSURE regime, not a restriction regime. Korea is not on Roblox's restricted-region list; Korean minors can buy gacha, they just must see the odds.",
+   "confidence": "high",
+   "evidence": "Korean government policy briefing (korea.kr) confirms the 2024-03-22 effective date, the item taxonomy, the 2-year/KRW 20M penalty and the monitoring unit. Korean law-firm newsletters (Yulchon/Hwawoo, Lawtimes) and Electronic Times confirm the 2025-01-31 promulgation, 2025-08-01 enforcement, 3x punitive damages and burden-of-proof reversal.",
+   "source": "https://www.korea.kr/news/policyNewsView.do?newsId=148924297 ; https://www.korea.kr/news/policyNewsView.do?newsId=148926013 ; https://www.lawtimes.co.kr/news/articleView.html?idxno=210245 ; https://www.etnews.com/20250806000278 (as of 2026-07-23)"
+  },
+  {
+   "topic": "Korea's law is plausibly why odds disclosure went global on Roblox - but Roblox never says so",
+   "detail": "Trade press (TechTimes, 2026-06-26) frames Roblox's worldwide odds-disclosure requirement as a consequence of Korea's loot-box rules: rather than maintain a Korea-only compliant build, Roblox changed disclosure rules everywhere, so 'players anywhere in the world now see the odds on a paid random item because of a rule written in Seoul.' I could not corroborate the causation from Roblox itself - the official 2026-05-26 announcement does not mention Korea. Treat the causal story as plausible narrative, not established fact. The operative fact (global mandatory numeric disclosure) is independently confirmed and does not depend on this.",
+   "confidence": "low",
+   "evidence": "Single secondary source for causation; Roblox's own announcement is silent on Korea.",
+   "source": "https://www.techtimes.com/articles/319148/20260626/koreas-loot-box-rules-push-roblox-disclose-item-odds-worldwide.htm (as of 2026-07-23)"
+  },
+  {
+   "topic": "App-store loot-box rules reach you indirectly, through Roblox, not directly",
+   "detail": "An individual Roblox experience is never submitted to Apple App Review or Google Play review - Roblox Corp is the app publisher and absorbs those obligations (Apple's guideline 3.1.1 requires disclosure of loot-box odds prior to purchase; Google Play has an equivalent requirement). Roblox discharges them downstream via the Paid Random Items policy and PolicyService flags. Practical consequence: your entire compliance surface for gacha is Roblox's developer policy, not the app store guidelines. But it also means Roblox can tighten those rules unilaterally at any time, with a moderation-first enforcement model, and your monetization design has no appeal to a higher authority.",
+   "confidence": "medium",
+   "evidence": "Structural inference from the publishing relationship plus Roblox's own policy architecture; the specific Apple/Google guideline numbering is from general knowledge and was not re-verified against the current guideline text in this session.",
+   "source": "https://create.roblox.com/docs/production/monetization/paid-random-items (as of 2026-07-23)"
+  },
+  {
+   "topic": "Game pass vs developer product: the correct mapping for an auto-battler",
+   "detail": "Game passes are a ONE-TIME Robux purchase granting a permanent privilege (restricted areas, avatar items, permanent power-ups). Developer products are REPEATABLY purchasable (in-game currency, ammo, potions) - the same user can buy the same product many times. Both keep 70% for the creator. Mapping for this project: gacha pulls, pull-currency/gems, energy/refresh, re-roll tokens and battle-pass tier skips = developer products (the repeatable spend engine, and where lifetime value actually accrues). Permanent cosmetic unlocks, permanent board skins, VIP/2x-rewards, early-access units and the battle pass itself = game passes (the one-time, high-ticket, low-friction purchases). Note the 18+ premium DevEx rate explicitly covers 'game passes, Robux subscriptions, select in-game items, and private servers' - Roblox subscriptions are a third lever worth evaluating.",
+   "confidence": "high",
+   "evidence": "Definitions from the Creator Hub monetization docs; 70% share from the unified marketplace fee change; eligible-product list from the April 2026 DevEx newsroom post.",
+   "source": "https://create.roblox.com/docs/production/monetization ; https://devforum.roblox.com/t/unified-marketplace-fee-for-dev-products-and-game-passes/507109 ; https://about.roblox.com/newsroom/2026/04/roblox-fuels-high-fidelity-games-over-18-players-increases-qualifying-devex-rate-42 (as of 2026-07-23)"
+  },
+  {
+   "topic": "Sell cosmetics as in-experience passes/dev products, NOT as catalog UGC - the share difference is 70% vs 30%",
+   "detail": "Roblox's marketplace fee schedule: for avatar/UGC items sold on the Marketplace the creator receives 30%, scaling up to a maximum 70% only when the item is priced at 6x or more above the price floor. For an in-experience avatar item purchase the split is creator 30% + experience owner 40%. Limited-item resale splits 10% creator / 50% reseller / 10% seller-affiliate / 30% Roblox. Contrast: a game pass or developer product returns a flat 70%. Since this project plans paid decorative weapons and colors, implement them as in-experience game passes or developer products (70%) rather than as catalog UGC accessories (30%), unless you own both the item and the experience, in which case in-experience UGC also reaches 70% combined. Plugins/models are the only category where 'only taxes and payment processing fees are deducted' (and carry a 30-day escrow hold).",
+   "confidence": "high",
+   "evidence": "Creator Hub 'Marketplace fees and commissions' doc states the 30% creator / 40% experience owner in-experience split and the 30%-to-70% progressive marketplace scale verbatim.",
+   "source": "https://create.roblox.com/docs/marketplace/marketplace-fees-and-commissions ; https://create.roblox.com/docs/production/monetization (as of 2026-07-23)"
+  },
+  {
+   "topic": "Named comparable - Anime Vanguards: the closest live analogue (unit gacha + auto-combat)",
+   "detail": "Anime Vanguards (Kitawari, experience ID 16146832113) is a tower-defense/auto-combat game whose core loop is summoning random units - structurally the nearest thing on Roblox to a unit-gacha auto-battler. Live figures as of 2026-07-23: 1,998,943,435 total visits, 1,972,771 favorites, 2,579,766 likes vs 86,359 dislikes (96.76% rating - exceptionally high), 9,997 concurrent players at snapshot with a 12,952 24-hour peak. For contrast, trade coverage in 2024 reported the game at 220,000+ concurrent users. It reached ~2 billion visits and a near-97% rating in about 2.5 years from a 2024-01-28 creation date, which validates the unit-gacha loop's ability to acquire and convert a huge audience.",
+   "confidence": "high",
+   "evidence": "Rolimons live game page for ID 16146832113 (visits, favorites, likes, CCU, 24h peak), fetched 2026-07-23. The 220k CCU 2024 figure is from Pocket Tactics, secondary [Medium]. I attempted RoMonitor's monetization breakdown for this title twice (direct and via r.jina.ai) - it is login-gated, so I have no per-product Robux pricing or revenue estimate for it.",
+   "source": "https://www.rolimons.com/game/16146832113 ; https://romonitorstats.com/experience/16146832113/ ; https://www.pocketactics.com/anime-vanguards/visits (as of 2026-07-23)"
+  },
+  {
+   "topic": "WEAK SIGNAL, do not treat as a genre law: unit-gacha CCU appears to decay far harder than cosmetic/expression CCU",
+   "detail": "Side-by-side live snapshot, all as of 2026-07-23: Anime Vanguards (unit gacha) 2.00B visits but only ~10.0k CCU; Dress To Impress (cosmetic/expression-led, ID 15101393044) 10.58B visits, 6,996,482 favorites, 3,860,957 likes vs 404,372 dislikes, and 118,766 CCU; Grow a Garden (ID 126884695634066) 35.76B visits, 11,329,621 favorites, 78,243 CCU. Tempting conclusion - cosmetic/expression loops sustain concurrency an order of magnitude better than unit-gacha collection loops - but I am flagging this LOW confidence because of a live confound: the Anime Vanguards snapshot was taken between content events (the experience is titled 'Extermination Event Pt. 1' and was updated 2 days prior), and every event-driven Roblox title spikes and troughs around its update cycle. Game age and update timing are not controlled for, and n=1 per genre. To promote this to a real finding you would need CCU trajectories over several months for 3-5 titles per pattern.",
+   "confidence": "low",
+   "evidence": "All three CCU/visit/favorite figures are directly read from Rolimons live game pages on 2026-07-23 and are individually [High]; the cross-genre inference drawn from them is [Low].",
+   "source": "https://www.rolimons.com/game/16146832113 ; https://www.rolimons.com/game/15101393044 ; https://www.rolimons.com/game/126884695634066 (as of 2026-07-23)"
+  },
+  {
+   "topic": "Platform-level economics you should model against (FY2025 10-K)",
+   "detail": "Roblox reported 127 million average DAUs across over 180 countries in 2025. Bookings ran approximately $0.15 per DAU per day, and $10.36 per DAILY PAYING user per day - the gap quantifies how small the paying cohort is relative to total DAU. Roblox recognizes revenue over an estimated average paying-user lifetime of 27 months as of 2025-12-31, which is the platform's own working assumption for how long a paying player stays valuable. Model implication: your revenue is (DAU) x (conversion rate) x (~$10 daily paying-user bookings) x (~22-27% take-home), and the conversion rate is the lever with the widest variance and the one you control through design.",
+   "confidence": "high",
+   "evidence": "All figures stated in Roblox Corp Form 10-K for fiscal year ended 2025-12-31.",
+   "source": "https://www.sec.gov/Archives/edgar/data/1315098/000131509826000024/rblx-20251231.htm (as of 2026-07-23)"
+  },
+  {
+   "topic": "Mandatory age checks from January 2026 make the under-18 gacha restriction enforceable at platform level",
+   "detail": "Roblox's FY2025 10-K describes mandatory age-checks beginning January 2026, using facial age estimation, identity verification, and parent/caregiver-provided age data, initially gating chat access. Two consequences for this project: (1) the 18+ premium DevEx rate becomes operable because Roblox can now positively identify age-checked adults; (2) age-based paid-random-item restrictions stop depending on a self-declared account birthday and become enforceable, which means any under-18 gacha restriction Roblox chooses to expand will actually bite. The 10-K also flags Australia's Social Media Minimum Age Act (under-16 ban on certain platforms) and parallel US/EU legislative efforts as active risks. Planning stance: assume the direction of travel is MORE age-gating of paid randomness for minors, not less, and do not build a business model whose survival depends on under-18 gacha spend remaining legal in your key markets.",
+   "confidence": "high",
+   "evidence": "Risk-factor and business-description language in the FY2025 10-K, including the specific age-check methodologies and the Australian statute.",
+   "source": "https://www.sec.gov/Archives/edgar/data/1315098/000131509826000024/rblx-20251231.htm (as of 2026-07-23)"
+  }
+ ],
+ "verification": {
+  "checks": [
+   {
+    "claim": "Anime Expeditions (universe 7613921865) exists; liveCCU 172,206; visits 181,313,233; 96,765 favorites; 134,372 likes / 3,260 dislikes",
+    "verdict": "confirmed",
+    "reason": "games.roblox.com/v1/games?universeIds=7613921865 as of 2026-07-23 returns playing=180,904, visits=181,481,799, favoritedCount=96,798; votes API returns 134,473 up / 3,265 down. Independently corroborated by apis.roblox.com omni-search (playerCount=181,968, totalUpVotes=134,435, isSponsored=false). Reported figures are slightly BELOW live — the source agent was conservative, not inflating. Created 2025-04-28, Roblox genre_l2 'Tower Defense', creator 'Expeditions Entertainment'. CAVEAT on interpretation, not on the number: 181M cumulative visits over ~15 months averages ~400K visits/day, which is arithmetically incompatible with a sustained 180K concurrent. The game is spiking near an all-time peak right now [Medium]. Do not model 172K as a steady-state benchmark; it is a snapshot at peak.",
+    "corrected": "liveCCU 180,904 (games API) / 181,968 (omni-search); visits 181,481,799; favorites 96,798; 134,473 likes / 3,265 dislikes — as of 2026-07-23"
+   },
+   {
+    "claim": "Tower Defense Simulator (universe 1176784616) exists; liveCCU 21,557; visits 4,865,106,283; 3,457,519 favorites; 2,040,284 likes / 127,146 dislikes",
+    "verdict": "confirmed",
+    "reason": "Live API: playing=21,357, visits=4,865,123,460, favoritedCount=3,457,523, votes 2,040,293 / 127,144. Created 2019-06-05, updated 2026-07-22, creator 'Paradoxum Games'. All within time-drift noise.",
+    "corrected": "liveCCU 21,357; visits 4,865,123,460 — as of 2026-07-23"
+   },
+   {
+    "claim": "Tower Defense Simulator monetization is cosmetic-first via tiered skin crates (Basic/Premium/Deluxe) with rarity tables",
+    "verdict": "confirmed",
+    "reason": "Crate economy is visible in the game's own first-party description on the API response: 'Updated Pirate Crate', 'Beach Crate', 'Patriotic Crate', 'Scuba Ops Crate', plus a free-skin promo code. Confirms crates + skins as the live content cadence. The specific Basic/Premium/Deluxe tier split and Robux-vs-Coins split comes from the community wiki, not a first-party SKU list — directionally right, exact tier structure unverified [Medium]."
+   },
+   {
+    "claim": "Anime Vanguards (universe 5578556129) exists; liveCCU 10,012; visits 1,998,946,337; 1,972,772 favorites; 2,579,766 likes / 86,359 dislikes",
+    "verdict": "confirmed",
+    "reason": "Live API: playing=10,060, visits=1,998,950,149, favoritedCount=1,972,772 (exact), votes 2,579,768 / 86,359 (exact). Created 2024-01-28, creator 'Kitawari'. Current title '[Extermination Event Pt. 1]'."
+   },
+   {
+    "claim": "Anime Vanguards gacha: 0.005% chase rate with one-time 20,000-summon pity",
+    "verdict": "confirmed",
+    "reason": "animevanguards.fandom.com/wiki/Summon (fetched via r.jina.ai, 2026-07-23) contains literal '0.005%', 'pity of 20,000 summons (3,000,000 Event Currency)', 'Pity is one-time only', and a separate 15,000-summon tier. Wiki is community-maintained, not first-party, but the specific figures the agent cited are verbatim present, not invented."
+   },
+   {
+    "claim": "Universal Tower Defense Z (universe 7488190691) exists; liveCCU 9,160; visits 300,120,535; 207,680 favorites; 398,149 likes / 11,100 dislikes",
+    "verdict": "confirmed",
+    "reason": "Live API: playing=9,069, visits=300,124,231, favoritedCount=207,683, votes 398,152 / 11,101. Created 2025-04-04, maxPlayers=12 (matches the '12-player co-op cap' claim), updated 2026-07-22."
+   },
+   {
+    "claim": "Universal Tower Defense Z monetization is unit-summon gacha + luck/2x gamepasses",
+    "verdict": "plausible",
+    "reason": "Correctly self-flagged [Low] by the source agent. First-party description confirms 'Summon units', 'Level up your units, Etherealize them, and Evolve them' — the summon loop is real. The Robux SKU list (luck/2x passes) is not verified. Leave as unverified inference; do not upgrade."
+   },
+   {
+    "claim": "Anime Squadron (universe 8356066619) exists; liveCCU 8,056; visits 77,263,882; 47,957 favorites; 83,990 likes / 3,961 dislikes; self-described 'lane battler'",
+    "verdict": "confirmed",
+    "reason": "Live API: playing=8,076, visits=77,266,422, favoritedCount=47,960, votes 83,992 / 3,961. Created 2025-08-05, maxPlayers=16 (matches '16-player servers'). The 'lane battler' framing and 'Plan your lineup' pre-battle phase are verbatim in the first-party game description, so that specific claim is first-party sourced, not invented."
+   },
+   {
+    "claim": "Garden Tower Defense (universe 7703614594) exists; liveCCU 6,568; visits 761,285,266; 462,301 favorites; 1,412,288 likes / 25,108 dislikes; grid placement",
+    "verdict": "confirmed",
+    "reason": "Live API: playing=6,501, visits=761,289,955, favoritedCount=462,308, votes 1,412,291 / 25,109. Created 2025-05-14, maxPlayers=20 (matches '20-player servers'), creator 'Garden Defenders' (verified badge). Description confirms 'Over 350 Plants' and the Grow-a-Garden tag association. Metrics all confirmed. The GRID-placement structural claim (as opposed to path TD) is the agent's gameplay reading, not verified from any fetched source [Medium] — that is the load-bearing claim for the chess-board question and deserves a direct gameplay check before being built on."
+   },
+   {
+    "claim": "Anime Card Clash (universe 6682487255) exists; liveCCU 6,524; visits 473,652,841; 224,045 favorites; 422,574 likes / 10,579 dislikes",
+    "verdict": "confirmed",
+    "reason": "Live API: playing=6,481, visits=473,657,504, favoritedCount=224,045 (exact), votes 422,574 / 10,580 (exact). Created 2024-10-16, so 473M visits over ~21 months, not a sub-year velocity story."
+   },
+   {
+    "claim": "Anime Card Clash is 'the closest live Roblox game to the TFT economy' with deck-building, PvP leaderboards, Infinite Towers, and a Luck-upgrade monetization track",
+    "verdict": "plausible",
+    "reason": "The metrics are confirmed; the gameplay/monetization narrative is not. None of the mode names, the PvP ranking layer, or the 'sells better ODDS not the unit' monetization framing was verified against a fetched first-party source in this pass. Roblox's own genre_l2 for this universe is 'Tower Defense', not auto-battler. Treat the TFT-analogue framing as interpretation, not evidence."
+   },
+   {
+    "claim": "Anime Card Collection (universe 9362896961) exists; liveCCU 4,746; visits 142,016,520; 214,050 favorites; 593,180 likes / 8,912 dislikes; created 2025-12-15",
+    "verdict": "confirmed",
+    "reason": "Live API: playing=4,724, visits=142,018,049, favoritedCount=214,053, votes 593,182 / 8,912. Created 2025-12-15 confirmed, maxPlayers=6 confirmed. The 142M-visits-in-~7-months velocity claim holds. The 'almost no combat depth / pure pull-and-collect' characterization is unverified interpretation."
+   },
+   {
+    "claim": "Toilet Tower Defense (universe 4778845442) exists, is tagged [LEGACY]; liveCCU 3,562; visits 6,158,610,452; 1,527,385 favorites; 1,337,688 likes / 225,805 dislikes",
+    "verdict": "confirmed",
+    "reason": "Live API: name is literally '[LEGACY] Toilet Tower Defense'; playing=3,501, visits=6,158,612,927, favoritedCount=1,527,388, votes 1,337,691 / 225,804. Created 2023-06-17. Dislike ratio 225,804/1,563,495 = 14.4%, exactly as claimed and the highest in the set."
+   },
+   {
+    "claim": "Skibidi Masters Tower Defense (universe 5207621753) exists; liveCCU 1,780; visits 85,202,620; 72,681 favorites; 154,986 likes / 4,203 dislikes; ~2.7 years old",
+    "verdict": "confirmed",
+    "reason": "Live API: playing=1,987, visits=85,203,785, favoritedCount=72,682, votes 154,986 / 4,203 (exact). Created 2023-10-19 = 2.76 years, matching the '~2.7-year-old' claim. maxPlayers=25 confirmed."
+   },
+   {
+    "claim": "All Star Tower Defense (universe 1720936166) exists; liveCCU 1,395; visits 7,875,257,264; 2,315,385 favorites; 1,489,001 likes / 129,171 dislikes",
+    "verdict": "confirmed",
+    "reason": "Live API: playing=1,403, visits=7,875,259,856, votes 1,489,001 / 129,171 (both exact). Created 2020-05-07, updated 2026-07-13, creator 'Top Down Games' (verified badge). The 7.88B-visits-but-1.4K-CCU long-tail contrast is real."
+   },
+   {
+    "claim": "Anime Paradox X exists; liveCCU 1,137; visits 28,132,320; 31,733 favorites; 70,452 likes / 3,137 dislikes; created 2025-05-06",
+    "verdict": "confirmed",
+    "reason": "Universe ID was truncated in the supplied JSON, so verified via apis.roblox.com omni-search: universeId 7652830984, '[UPDATE 0.5] Anime Paradox X', playerCount=1,134, totalUpVotes=70,452 and totalDownVotes=3,137 (both EXACT matches), creator 'Lunmei', rootPlaceId 76806550943352. Description confirms 'Summon units and let them auto-fight enemies'. Visits/favorites/created not re-fetched but the exact vote match makes fabrication implausible.",
+    "corrected": "Universe ID is 7652830984, rootPlaceId 76806550943352; liveCCU 1,134 as of 2026-07-23"
+   },
+   {
+    "claim": "Cross-cutting: these titles constitute evidence about auto-battler / draft-and-deploy loops on Roblox",
+    "verdict": "plausible",
+    "reason": "Scope caveat, not a metric error. All 12 universes carry Roblox genre_l1='Strategy', genre_l2='Tower Defense'. NONE is classified as an auto-battler, and none was verified to have a draft phase, a board, or TFT-style positioning. Anime Squadron's 'lane battler' + 'Plan your lineup' is the only first-party-sourced structural claim in the set. Every other loop-similarity claim (Garden TD grid placement, Anime Card Clash TFT economy) is agent interpretation. The economy/monetization lessons transfer; the LOOP-similarity conclusions rest on unverified gameplay readings and should be spot-checked before the game design is anchored to them."
+   }
+  ],
+  "fabricationRisk": "LOW / effectively none for the metrics. All 12 titles exist on Roblox and every CCU, visits, favorites, likes and dislikes figure reconciles with a fresh first-party fetch on 2026-07-23 (games.roblox.com/v1/games, games.roblox.com/v1/games/votes, apis.roblox.com omni-search). Deltas are sub-1% and consistent with hours of time drift; several vote counts match to the digit. Anime Paradox X's universe ID was truncated in the supplied JSON but was recovered via omni-search with exact vote-count agreement. No fabricated game name, no fabricated number found.\n\nI attempted to refute Anime Expeditions' 172K CCU as bot-inflated on the grounds that favorites (96,798) are lower than CCU (180,904). That argument is WRONG and I withdraw it — favorites and visits are cumulative, CCU is an instantaneous snapshot, so the comparison is invalid. The valid cumulative-vs-cumulative check, favorites/visits, puts Anime Expeditions at 0.053%, squarely inside the peer band (Anime Squadron 0.062%, Garden TD 0.061%, TDS 0.071%). Two independent first-party endpoints both return a HIGHER CCU than reported, and omni-search returns isSponsored=false. No evidence of inflation.\n\nThe one defensible caution stands and it is about interpretation, not honesty: 181M cumulative visits over ~15 months is roughly 400K visits/day, which cannot coexist with a sustained 180K concurrent player count. Anime Expeditions is therefore spiking near an all-time high right now [Medium confidence]. Use 172K as a peak-spike data point, not as a steady-state ceiling to plan around. Anime Squadron's ~8K and Garden TD's ~6.5K are the honest steady-state benchmarks for a competent new entrant.\n\nRemaining soft spots, all correctly hedged by the source agents and NOT upgraded here: monetization SKU lists for Garden Tower Defense, Skibidi Masters TD, Universal Tower Defense Z and Anime Paradox X are unverified; the Anime Vanguards pity figures come from a community wiki (verbatim present, but not first-party); and Tower Defense Simulator's exact Basic/Premium/Deluxe crate tiering is wiki-sourced although the crate economy itself is confirmed first-party. Separately, all 12 are Roblox-classified 'Tower Defense', none an auto-battler — the TFT/draft-loop analogies are agent interpretation and should be gameplay-checked before design decisions rest on them.",
+  "trustedTitles": [
+   "Anime Expeditions",
+   "Tower Defense Simulator",
+   "Anime Vanguards",
+   "Universal Tower Defense Z",
+   "Anime Squadron",
+   "Garden Tower Defense",
+   "Anime Card Clash",
+   "Anime Card Collection",
+   "Toilet Tower Defense (LEGACY)",
+   "Skibidi Masters Tower Defense",
+   "All Star Tower Defense",
+   "Anime Paradox X"
+  ]
+ },
+ "markdown": "# BENCHMARK — Roblox Chess-Piece Auto-Battler\n\n*All scale figures pulled from `games.roblox.com/v1/games` on 2026-07-23 unless noted. Verification pass re-pulled and confirmed rows 1–7; remaining rows are single-pass API reads (still first-party, but not double-checked) and are flagged.*\n\n## 1. Competitive Landscape\n\nRanked by relevance to a PvE-first, board-positioned, chess-piece auto-battler.\n\n| Title | Genre | Live scale (CCU / visits) | Monetization | Key retention hook | Relevance |\n|---|---|---|---|---|---|\n| **Anime Card Clash** | Card-roll auto-battler: roll → build deck → auto-fight | 6,481 CCU / 473.7M visits / 224,045 favs (source: https://games.roblox.com/v1/games?universeIds=6682487255, as of 2026-07-23) | Roll gacha + **Luck / Cooldown / Boss-Chance upgrade tracks** — sells *odds*, not the unit. Premium-player luck bonus stated in dev description. *Mode names, PvP ladder, and the \"sells odds\" framing are the research agent's reading — **unverified**.* | Auto-roll compulsion; deck meta; endless tower ladder | **Highest.** Closest live economy to TFT: gacha-in → deck construct → automated combat. 473M over ~21mo = steady, not spike. |\n| **Anime Squadron** | Self-described \"lane battler\": summon → **plan your lineup** → auto-fight | 8,076 CCU / 77.3M visits / 47,960 favs (source: https://games.roblox.com/v1/games?universeIds=8356066619, as of 2026-07-23) | \"Summon & Upgrade Your Units\" (unit gacha) — SKU list **unverified** | Pre-battle lineup/draft phase (first-party description); unit evolution; rank ladder; 16-player servers | **Highest on loop.** The only commercially-live Roblox game with an explicit pre-battle *deploy phase*. Launched 2025-08-05, ~8K CCU in <1yr = **your realistic base case**, not Anime Expeditions. |\n| **Tower Defense Simulator** | Classic TD, towers auto-fire | 21,357 CCU / 4.865B visits / 3.46M favs (source: https://games.roblox.com/v1/games?universeIds=1176784616, as of 2026-07-23) | **Cosmetic-first skin crates** with rarity tables. Crate cadence confirmed first-party (Pirate/Beach/Patriotic/Scuba Ops Crate in live description). Basic/Premium/Deluxe tier split + Robux-vs-Coins split is wiki-sourced, **unverified**. | Daily-login crates; unobtainable event crates (FOMO); F2P coin grind to Basic crates; 7-yr live-ops (2019→2026-07-22) | **Highest on the monetization question.** The single best Roblox proof that cosmetic-only gacha sustains 7 years / 4.9B visits at a *stable* 21K CCU. |\n| **Anime Vanguards** | Anime unit-collector TD | 10,060 CCU / 1.999B visits / 1.97M favs (source: https://games.roblox.com/v1/games?universeIds=5578556129, as of 2026-07-23) | **Unit gacha, verified.** 50 gems/pull special banner; per-rarity pity; **0.005% chase rate with a one-time 20,000-summon pity** (verbatim confirmed: https://animevanguards.fandom.com/wiki/Summon, as of 2026-07-23) | Pity counters (sunk cost); rotating limited banners; 0.005% flex units; codes on every update | **Highest on the gacha question.** Reference implementation of units-in-gacha at scale — *and* the decay data point: 2B visits now yielding only 10K CCU. |\n| **Garden Tower Defense** | Grid-placement TD (PvZ-shaped) | 6,501 CCU / 761.3M visits / 462,308 favs; 350+ plants, 20-player (source: https://games.roblox.com/v1/games?universeIds=7703614594, as of 2026-07-23) | **Unverified.** Genre norm = seed/unit gacha + luck passes | Grow-a-Garden meta-brand; near-daily updates | **High on the board question.** Closest scaled cousin to grid positioning — evidence a young audience parses a grid. ⚠ The grid-vs-path claim is a *gameplay reading, not verified*; check it directly before it becomes a load-bearing design assumption. |\n| **Anime Expeditions** | Anime unit-collector, lane auto-battle | **180,904 CCU** / 181.5M visits / 96,798 favs (source: https://games.roblox.com/v1/games?universeIds=7613921865, as of 2026-07-23) | Robux → currency → unit summons + luck/2x passes (**inferred**, SKU list not fetchable) | Summon→place→fight→evolve; map gates; co-op raids; update tags in title | **High on economy.** ⚠ **Do not model this as steady state.** 181M lifetime visits over ~15mo ≈ 400K visits/day is arithmetically incompatible with sustained 180K CCU — this is a near-peak snapshot [Medium]. |\n| **Universal Tower Defense Z** | Anime crossover TD | 9,069 CCU / 300.1M visits / 207,683 favs; 12-player cap (source: https://games.roblox.com/v1/games?universeIds=7488190691, as of 2026-07-23) | Summon loop confirmed first-party (\"Summon units… Etherealize… Evolve\"); luck/2x pass list **unverified** | Tight 12-player co-op lobbies; rapid updates | **Medium.** 2025-cohort proof the auto-fight loop still admits new entrants: ~9K CCU in 15mo from a standing start. |\n| Battle Pet | Super Auto Pets-like pet auto-battler, beta | 445 CCU / 23.4M visits / 157,828 likes (single-pass, **unverified**) | Unverified | 9-player lobbies; pet collection | **High structurally / low commercially.** High likes + low CCU = players try it, enjoy it, **don't stay**. That is precisely the failure mode you must beat. |\n| Toilet Tower Defense **[LEGACY]** | Skibidi-IP TD | 3,562 CCU / 6.159B visits; 225,805 dislikes (14.4% ratio) (single-pass, **unverified**) | Crates + **player-to-player unit trading** | Trading economy; meme virality | **Medium — lifecycle lesson.** 6.16B lifetime visits, now a rounding error in CCU and self-tagged LEGACY. Meme IP acquires enormously then collapses. |\n| All Star Tower Defense | Genre originator | 1,395 CCU / 7.875B visits / 2.32M favs (single-pass, **unverified**) | Unit gacha + trading | Banners; trading; event ladders | **Medium.** Largest cumulative reach in the set, ~1.4K CCU. DevEx income tracks spike years, not the tail. |\n| Anime Paradox X | Anime unit-collector TD | 1,137 CCU / 28.1M visits (single-pass, **unverified**) | Unverified | Fast update cadence | **Low-Med — median outcome.** A competent 2025 entrant plateaus near 1K CCU. Model this as your downside case. |\n| Anime Card Collection | Card-pack gacha idle collector | 4,746 CCU / 142.0M visits in ~7mo (single-pass, **unverified**) | Pack gacha | Binder completion; idle income | **Warning.** Near-zero combat depth out-acquires most combat games on early velocity. A weak pull layer loses the acquisition race. |\n| Brainrot Tower Defense | Brainrot-IP TD | 693 CCU / 234.1M visits / **1.65M favorites** (single-pass, **unverified**) | Gem gacha | 2x-diamond timed events | **Low, one lesson:** favorites-to-visits ~7× TDS at 693 CCU. **Never benchmark health on favorites.** |\n\n**Adjacent proof points cited later:** The Battle Bricks — unit-draft auto-battler, 7,420 CCU / 122.3M visits / 286,168 favs, and it surfaced in Roblox's own `top-revisited` Discover sort (source: https://apis.roblox.com/explore-api/v1/get-sort-content?sortId=top-revisited + https://games.roblox.com/v1/games?universeIds=3913007563, as of 2026-07-23). Pet Simulator 99 — 163,141 CCU / 2.558B visits, \"2,000+ pets to collect\". Sol's RNG — 31,010 CCU / 2.022B visits, roll-only loop + luck potions. RIVALS — 202,868 CCU / 16.78B visits / 84.76M favorites, discrete ~2–3mo ranked seasons. Blade Ball — 13,344 CCU / 6.286B visits, full Elo reset per season with rank-gated skins. Murder Mystery 2 — 296,610 CCU / 27.59B visits (2014 game, still). Adopt Me! — 261,565 CCU / 44.20B visits. Anime Defenders — 3.430B visits at **394 CCU**.\n\n## 2. The Gap\n\n**What exists on Roblox:** dozens of *path/lane* auto-fight games (Anime Expeditions, Vanguards, UTDZ, ASTD, all TD derivatives) and one grid-placement variant that scaled (Garden Tower Defense). What exists on the *loop* side: Anime Squadron's \"plan your lineup\" pre-battle phase and Anime Card Clash's roll→deck→auto-fight, both of which reached only 6–8K CCU and neither of which sells **positional skill** as the core fantasy.\n\n**What does not exist:** a Roblox game where **spatial arrangement on a bounded board is the primary skill expression and the primary progression axis**, married to an **Elo ladder with seasonal reset**. Every scaled title in the set resolves player agency into *which unit you own*, not *where you put it* — placement is a throughput puzzle against a fixed path, so the meta is a gacha meta. That is exactly why they decay: when the answer is \"own the 0.005% unit,\" the game is over once you own it (Anime Defenders: 3.43B visits → 394 CCU).\n\n**The unoccupied position:** *chess as the skill layer, gacha as the cosmetic/variant layer.* Four concrete openings:\n1. **Board positioning as the win condition** — no scaled Roblox competitor uses adjacency/line-of-attack/flanking as the decision surface. Garden TD proves the grid is not a comprehension barrier for the audience; nobody has made the grid *matter*.\n2. **Elo is native, and unclaimed in this genre.** RIVALS (202,868 CCU) and Blade Ball (13,344 CCU) prove Roblox kids accept seasonal rank resets; zero unit-collector auto-battlers in this set run a real ladder. Chess players already accept Elo as legitimate — you inherit the mental model free.\n3. **Evergreen IP.** Every competitor above 100K CCU rents a meme (Skibidi, brainrot) or an anime license. Toilet TD's `[LEGACY]` tag is what renting looks like at end of lease. Chess costs nothing, ages never, and is globally pre-taught.\n4. **Player-as-piece.** The brief's own hook — the avatar *is* the piece — is absent from every title in the set. It converts every cosmetic SKU into something the player literally embodies on the board, which is what makes cosmetic-first monetization viable (TDS's 4.9B-visit template).\n\n**Honest counter:** the gap may be unoccupied because it doesn't sell. Battle Pet is the nearest structural attempt — 157,828 likes but **445 CCU**. Players enjoy the auto-battler shape and leave. The gap is real; the burden of proof is retention, not novelty.\n\n## 3. Roblox-Specific Retention Hooks (ranked)\n\n1. **Seasonal Elo ladder with hard reset + rank-gated cosmetic.** Proof: Blade Ball resets every player's Elo to Rookie at season start and gates unique Sword Skins behind Champion / global-leaderboard placement (13,344 CCU / 6.286B visits); RIVALS runs Seasons 0–3 at ~2–3mo each with rewards keyed to highest rank reached and soft placement carry-over (202,868 CCU / 84.76M favorites) (sources: https://games.roblox.com/v1/games?universeIds=6035872082,4777817887 as of 2026-07-23; season mechanics from https://bladeball.fandom.com/wiki/Ranked and https://robloxrivals.fandom.com/wiki/Ranked_Seasons — community wikis, mechanic corroborated, **no published uplift figure**). **Adapt:** 8-week seasons, full Elo reset, one rank-gated piece skin per season per tier. This is the most native-fitting hook in the entire set and it feeds the cosmetics line directly.\n2. **Collection surface area / an index you can never finish.** Proof: Pet Simulator 99 — \"✨ Currently 2,000+ pets to collect!\" at 163,141 CCU / 2.558B visits; Sol's RNG — \"400+ unique auras\" at 31,010 CCU / 2.022B visits (source: https://games.roblox.com/v1/games?universeIds=3317771874,5361032378, as of 2026-07-23). **Adapt:** 6 piece types × N skins × rarity tiers = a completion grid with a visible denominator. Ship the dex UI in v1; the number of collectibles *is* the retention surface.\n3. **The pull itself as a loop, with luck sold as the accelerant.** Proof: Sol's RNG reduced the game to press-Roll-get-aura and still hit 2.02B visits; its dev description sells \"potions to increase your luck\". Anime Card Clash monetizes the same way via Luck / Cooldown tracks. **Adapt:** sell the **luck multiplier and the extra pull**, never the guaranteed unit. This is the single most important pattern in this document — it keeps the compulsion loop while dodging the pay-to-win read that will otherwise poison the ladder.\n4. **Return-rate over raw scale — the algorithm rewards it.** Proof: The Battle Bricks (7,420 CCU, single-player unit-draft auto-battler, explicitly Battle Cats-inspired) surfaced in Roblox's own `top-revisited` sort — Roblox's algorithmic label for games players come back to (source: https://apis.roblox.com/explore-api/v1/get-sort-content?sortId=top-revisited, as of 2026-07-23). **Adapt:** optimize D1/D7 return, not CCU spikes. `top-revisited` placement is free distribution and it is the metric DevEx actually pays on.\n5. **Daily login streak — table stakes, do not build it.** Roblox ships a first-party **Engagement Rewards** feature package with client+server logic, default UI, Time and Daily reward types, `isHiddenOnJoin` auto-popup, `isAlignedToStreakResetTime`, and a documented day-1→day-7 escalation example (source: https://create.roblox.com/docs/resources/feature-packages/engagement-rewards, as of 2026-07-23). ⚠ **The docs publish no retention statistics** — the uplift is inference. **Adapt:** drop the package in, spend zero engineering on it, spend all effort on reward *contents* (pull tickets, cosmetic shards).\n6. **Trading — strongest long-tail hook, free to operate, highest regulatory risk.** Proof: Murder Mystery 2 (2014) at 296,610 CCU / 27.59B visits and Adopt Me! at 261,565 CCU / 44.20B visits are both trading economies; MM2's friction-light trade UX spawned an out-of-game value ecosystem (Traderie, Dexerto value lists) that pulls players back in (sources: https://games.roblox.com/v1/games?universeIds=383310974,66654135 as of 2026-07-23; trade UX/value-list detail from secondary guides, **unverified**). **Adapt — with a hard constraint:** trading + paid gacha in one game is a loot-box-with-cash-out structure aimed at minors. If trading ships, **cosmetics only, and anything obtained from a paid pull is permanently untradeable.**\n7. **Timed multiplier events on a visible cadence.** Weakest-evidenced tier here (Brainrot TD bakes \"2x diamond\" into its title at 693 CCU; Grow a Garden's published weekly calendar was cited but arrived truncated — treat as **unverified**). **Adapt:** publish a weekly event calendar out-of-game; cheap to run, gives Discord/YouTube something to cover.\n\n## 4. Monetization Playbook\n\n**Base SKUs (ship all of these regardless of the gacha decision):**\n- **Piece skins** — the core cosmetic. Player-as-piece means every skin is worn, seen by opponents, and visible on the board every round. Tiered crates on the TDS model (Basic buyable with earned currency, Premium/Deluxe with Robux), with published rarity tables.\n- **Board / VFX / capture-animation skins** — second cosmetic axis, near-zero balance risk.\n- **Season Pass** (~400–800 Robux) keyed to the 8-week Elo season — recurring revenue that scales with the retention hook rather than fighting it.\n- **Luck & extra-pull SKUs** — the Anime Card Clash / Sol's RNG pattern. Sells *odds*, not outcomes.\n- **Event-exclusive crates that never re-release** — TDS's Bunny/Spooky FOMO mechanic, 7 years of evidence.\n- **Roblox Premium payout bonus** — Anime Card Clash grants Premium players Luck/Cooldown bonuses; free incremental revenue via Premium Payouts.\n\n### The Gacha Decision\n\n**(a) Cosmetics-only gacha.** Evidence for: Tower Defense Simulator, cosmetic-first crates, **7 years, 4.865B visits, and a *stable* 21,357 CCU in 2026**. That is the only title in this entire set that has neither collapsed nor spiked — cosmetic-only correlates with flat, durable revenue. Evidence against: ARPDAU ceiling is materially lower, and Anime Card Collection (142M visits in ~7 months on pure pull-and-collect) shows a weak pull layer loses the acquisition race outright.\n\n**(b) Units-in-gacha with F2P grind + pity + published odds.** Evidence for: Anime Vanguards, 2.0B visits / 1.97M favorites, with a verified 0.005% chase rate and a 20,000-summon one-time pity — that is the shape this audience tolerates and pays into. Evidence against, and it is severe: Anime Defenders sits at **394 CCU on 3.430B lifetime visits**; All Star Tower Defense at ~1,395 CCU on 7.875B. Unit-gacha games monetize violently then die. DevEx income tracks the spike years, not the tail — which is *tolerable* if you accept a 12–24 month revenue window, and fatal if you want a business.\n\n**Recommendation: (b), with a mandatory competitive carve-out.**\n\nRun unit gacha — pulls yield fighting pieces, with rarity tiers, pity, and a guaranteed F2P grind path — **but scope paid power strictly to the PvE ladder.** Ranked PvP draws from a **normalized shared pool**: every player enters ranked with the full roster available, so Elo measures positioning, never wallet. Sell luck, pull volume, cosmetics, and the Season Pass into that structure.\n\nJustification:\n- Cosmetics-only (a) is the safe answer and it caps you near TDS's profile — 21K CCU after *seven years* of live-ops. The brief asks for real DevEx income, and the acquisition data (Anime Card Collection, Sol's RNG) says the pull *is* the acquisition engine on Roblox. Shipping without a unit pull surrenders the top of the funnel.\n- The decay in (b) is not caused by unit gacha per se; it is caused by **the gacha being the entire meta**. When owning the 0.005% unit is the win condition, completing the collection is the exit. A chess ladder gives players a reason to log in that gacha cannot exhaust — and the seasonal reset (Blade Ball / RIVALS pattern) manufactures a re-grind the roster alone never provides. This is the specific mechanism that decouples you from the Anime Defenders curve.\n- The carve-out neutralizes the P2W read where it costs most. A ranked ladder that money can buy is worthless as a retention hook, and worthless as a marketing story.\n\n**Regulatory work required for (b) — non-negotiable:**\n- **Published probability disclosure.** Korea's Game Industry Promotion Act probability-disclosure mandate requires in-game and store-page odds disclosure for paid random items [Medium confidence — statutory requirement, **not verified in this research pass; get legal review before launch**]. Build the odds table as data, render it in-client, and version it per banner — retrofitting this later is expensive.\n- **Pity must be published, not just implemented.** Anime Vanguards's disclosed 20,000-summon pity is what makes a 0.005% rate socially acceptable.\n- **Paid-pull items are permanently untradeable.** Non-negotiable if trading ever ships (see hook #6).\n- **No Robux→tradeable-value path, ever.** That is the structure regulators target hardest with a minor audience.\n\n## 5. Minimal Addictive Core Loop\n\nThe MVP's only job is to answer one question: *does board positioning produce a compulsion to replay?* Everything that is not that question is cut — no gacha, no shop, no PvP, no seasons, no meta-progression beyond a single visible dex counter. Ship a single-player PvE run: the player drafts from a small offered set of chess pieces, places them on a bounded grid, presses Fight, watches a fully deterministic auto-resolve, and either advances to a harder wave or dies and restarts. Draft offers are randomized per round so the positioning problem is never the same twice — that RNG is the pull mechanic, delivered free, which is the cheapest possible test of whether the compulsion exists before any Robux code is written. Instrument exactly three things: **rounds per session, restart-after-loss rate, and D1/D7 return.** If restart-after-loss is weak, positioning is not fun and no monetization layer will save it — kill the project there rather than after the economy is built. Benchmark against Battle Pet's failure signature (high likes, 445 CCU): loved on first contact, abandoned by day two.\n\n**The loop:**\n- **Offer** — 3 random pieces from a pool of ~12, player picks 1 (this is the pull, unmonetized)\n- **Place** — position owned pieces on a small grid (start 5×5); adjacency and line-of-attack must visibly change outcomes\n- **Fight** — deterministic auto-resolve, ~20–30s, no player input\n- **Reward** — gold + a dex entry unlock on win; visible \"N / total collected\" counter\n- **Escalate** — next wave is harder; run ends on loss\n- **Restart** — one tap, back to Offer with a fresh randomized pool\n\nSkipped: gacha, Robux SKUs, PvP, Elo, seasons, trading, daily rewards. Add gacha and the ladder only after restart-after-loss and D7 clear the bar — the Roblox Engagement Rewards package covers dailies in an afternoon whenever you want it.\n\n## 6. Top Risks\n\n- **Gacha decay is the base case, not the tail risk.** Anime Defenders: 3.430B visits → **394 CCU**. All Star Tower Defense: 7.875B visits → ~1,395 CCU. Anime Vanguards: 2.0B visits → 10,060 CCU. Every unit-gacha title in this set is on the same curve. The seasonal-Elo layer is the *only* proposed mitigation, and it is unproven in combination with unit gacha on Roblox. If it fails, you get a 12–18 month revenue window and then a `[LEGACY]` tag.\n- **Retention, not acquisition, is the killer — and the nearest structural comp already failed it.** Battle Pet: 157,828 likes, 23.4M visits, **445 CCU**. Players like auto-battlers on contact and do not stay. Assume you will reproduce this unless the MVP metrics say otherwise.\n- **Pay-to-win poisons the one native hook.** Chess's entire value here is that Elo is credible. Any leakage of paid power into ranked destroys that credibility, and with it the seasonal-reset engine, the leaderboard, and the reason to log in on day 60. The normalized-pool carve-out must be a launch constraint, not a v2 fix.\n- **Regulation on units-in-gacha with a minor audience.** Korean probability-disclosure obligations [Medium, unverified — needs legal review], plus loot-box scrutiny generally, plus Roblox's own policy surface. The lethal combination is paid gacha + trading; if both ship, paid-pull items must be permanently untradeable. Budget real legal time, and build the odds table as versioned data from day one.\n- **Discovery in a saturated niche.** Anime Paradox X (1,137 CCU) is the median 2025-cohort outcome; Anime Squadron (~8K CCU in <1yr) is a good one; Anime Expeditions' 180,904 CCU is a **peak snapshot** and arithmetically inconsistent with its own visit history [Medium] — do not put it in a forecast. Chess has no meme velocity, so paid UGC/influencer distribution and `top-revisited` placement carry the whole load.\n- **Design risk on the load-bearing assumption.** The claim that Garden Tower Defense proves grid placement works for this audience is an **unverified gameplay reading** of a game whose metrics were confirmed but whose mechanics were not. Play it and confirm before the board design depends on it — and separately validate that *positioning* (not just grid placement) reads as fun to a 10-year-old, which no title in this set demonstrates."
+}
