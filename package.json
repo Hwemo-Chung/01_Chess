@@ -1,0 +1,15 @@
+{
+  "name": "chess",
+  "private": true,
+  "engines": {
+    "node": ">=24.13.1 <24.14.0"
+  },
+  "scripts": {
+    "verify:toolchain": "for tool in rojo lune selene stylua; do \"$tool\" --version; done",
+    "test": "lune run tests/run.luau",
+    "build": "mkdir -p build && rojo build default.project.json -o build/Chess.rbxlx",
+    "lint": "selene src/",
+    "format": "stylua src/ tests/",
+    "format:check": "stylua --check src/ tests/"
+  }
+}

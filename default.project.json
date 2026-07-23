@@ -1,0 +1,42 @@
+{
+  "name": "Chess",
+  "tree": {
+    "$className": "DataModel",
+    "Workspace": {
+      "$className": "Workspace",
+      "Floor": {
+        "$className": "Part",
+        "$properties": {
+          "Anchored": true,
+          "CanCollide": true,
+          "Color": [31, 35, 48],
+          "Material": "Slate",
+          "Position": [0, 0, 0],
+          "Size": [60, 1, 60]
+        }
+      },
+      "SpawnLocation": {
+        "$className": "SpawnLocation",
+        "$properties": {
+          "Anchored": true,
+          "CanCollide": true,
+          "Duration": 0,
+          "Neutral": true,
+          "Position": [0, 4, 0],
+          "Size": [6, 1, 6]
+        }
+      }
+    },
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "Chess": {
+        "$className": "Folder",
+        "Shared": { "$path": "src/shared" }
+      }
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "Chess": { "$path": "src/server" }
+    }
+  }
+}
