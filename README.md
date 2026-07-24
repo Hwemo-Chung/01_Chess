@@ -58,4 +58,6 @@ mkdir -p build && rojo build default.project.json -o build/Chess.rbxlx
 
 ## Docs
 
-[PRD](docs/PRD.md) · [BENCHMARK](docs/BENCHMARK.md) · [engine plan](docs/superpowers/plans/2026-07-24-mvp-core-engine.md)
+- **[다음 세션 핸드오프](docs/SESSION_HANDOFF.md)** ← 이어서 작업 시 여기부터
+- [PRD](docs/PRD.md) · [BENCHMARK](docs/BENCHMARK.md) · [BALANCE_SIM](docs/BALANCE_SIM.md)
+- [engine plan](docs/superpowers/plans/2026-07-24-mvp-core-engine.md)
