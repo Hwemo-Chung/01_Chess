@@ -8,8 +8,13 @@
 ## 1. 배경 / 현황
 
 - `assets/images/` 26장 존재 (기물 12, 보스 1, 강화 2, HUD 8, 스토어 3).
-- 현재 `HudController.luau` 전부 TextLabel/TextButton — 이미지 사용 없음.
-- `Config.luau`에 에셋 ID 테이블 없음.
+- **코드 적용 상태 (2026-07-24)**: **실이미지 3단 폴백 완료.**
+  1. `IconAssets` CLOUD 숫자 → `rbxassetid://` (배포)
+  2. `GeneratedAssets` asphalt studio → `rbxasset://`
+  3. `IconPixelPack` 64² 임베드 → EditableImage (**업로드/asphalt 없이 표시**)
+  - 단일 키 API: `IconAssets` + `IconSurface` / `AssetUi`
+  - 검증: `npm run verify`, `docs/OWNER-LIVE-QA.md`
+  - cloud 숫자 기입 지점: **`src/shared/IconAssets.luau` CLOUD 테이블** (Config.ASSET_IDS deprecated)
 - 보드 기물은 3D Part — 이 PRD 범위 아님 (아이콘은 UI 전용).
 
 ## 2. 범위
@@ -34,14 +39,14 @@
 - 사운드, 파티클, 애니메이션.
 - 코스메틱 수익화 (기존 PRD §8 별도).
 
-## 3. 업로드 파이프라인 (결정 필요 → 기본안 A)
+## 3. 업로드 파이프라인 — **안 A 채택**
 
-| 안 | 방법 | 비고 |
+| 안 | 방법 | 상태 |
 |----|------|------|
-| **A (기본)** | Studio Asset Manager → Bulk Import 26장 → rbxassetid 수동 기록 | 수동이지만 확실. 1회성 |
-| B | Open Cloud Assets API (`rbxcloud` CLI) 스크립트 업로드 | API 키 필요, 자동화 가능. 26장에 과설계 |
+| **A (채택)** | Studio Asset Manager → Bulk Import 26장 → rbxassetid 수동 기록 | **확정.** 1회성·확실 |
+| B (배제) | Open Cloud Assets API (`rbxcloud` CLI) 스크립트 업로드 | **배제.** 26장에 과설계, API 키/권한 비용 대비 이득 없음 |
 
-**결정**: A. 업로드 후 ID를 `Config.ASSET_IDS`에 기록.
+**결정**: A. 업로드 후 ID를 §7 기록표 → `Config.ASSET_IDS`에 기입.
 **제약**: 이미지 모더레이션 통과 필수 — 업로드 후 상태 확인. 실패 시 해당 슬롯 `0` 유지(폴백 동작).
 
 ## 4. 설계
@@ -111,14 +116,64 @@ local function iconOrText(parent, assetId, fallbackText, props) ... end
 
 ## 7. 업로드 ID 기록 (작업 1에서 채울 것)
 
-```
-piece_pawn_blue   = rbxassetid://________
-piece_knight_blue = rbxassetid://________
-... (26장 전부)
-```
+Studio Bulk Import 후 숫자 ID만 기입. Config에는 `숫자` 또는 `0` (rbxassetid:// 접두사 없이).
+
+### 7.1 기물 — 파란 (플레이어 / 상점 / 로스터)
+
+| 파일 | Config 키 | rbxassetid |
+|------|-----------|------------|
+| `piece_pawn_blue.png` | `pieces.Pawn.blue` | ________ |
+| `piece_knight_blue.png` | `pieces.Knight.blue` | ________ |
+| `piece_bishop_blue.png` | `pieces.Bishop.blue` | ________ |
+| `piece_rook_blue.png` | `pieces.Rook.blue` | ________ |
+| `piece_queen_blue.png` | `pieces.Queen.blue` | ________ |
+| `piece_king_blue.png` | `pieces.King.blue` | ________ |
+
+### 7.2 기물 — 빨간 (적 티어)
+
+| 파일 | Config 키 | rbxassetid |
+|------|-----------|------------|
+| `piece_pawn_red.png` | `pieces.Pawn.red` | ________ |
+| `piece_knight_red.png` | `pieces.Knight.red` | ________ |
+| `piece_bishop_red.png` | `pieces.Bishop.red` | ________ |
+| `piece_rook_red.png` | `pieces.Rook.red` | ________ |
+| `piece_queen_red.png` | `pieces.Queen.red` | ________ |
+| `piece_king_red.png` | `pieces.King.red` | ________ |
+
+### 7.3 보스 / 강화
+
+| 파일 | Config 키 | rbxassetid |
+|------|-----------|------------|
+| `boss_king.png` | `boss.king` | ________ |
+| `upgrade_might.png` | `upgrades.Might` | ________ |
+| `upgrade_vitality.png` | `upgrades.Vitality` | ________ |
+
+### 7.4 HUD / 시스템 아이콘
+
+| 파일 | Config 키 | rbxassetid |
+|------|-----------|------------|
+| `icon_gold.png` | `icons.gold` | ________ |
+| `icon_reroll.png` | `icons.reroll` | ________ |
+| `icon_restart.png` | `icons.restart` | ________ |
+| `icon_transcend.png` | `icons.transcend` | ________ |
+| `icon_hp.png` | `icons.hp` | ________ |
+| `icon_atk.png` | `icons.atk` | ________ |
+| `icon_level.png` | `icons.level` | ________ |
+| `icon_crit.png` | `icons.crit` | ________ |
+
+### 7.5 스토어 (코드 외 — Roblox 게임 설정)
+
+| 파일 | 용도 | 반영 완료 |
+|------|------|-----------|
+| `game_icon.png` | 게임 아이콘 512×512 | [ ] |
+| `thumbnail_main.png` | 메인 썸네일 | [ ] |
+| `thumbnail_boss.png` | 보조 썸네일 | [ ] |
+
+### 7.6 체크리스트
 
 - [ ] 26장 업로드 완료
 - [ ] 모더레이션 전부 통과
+- [ ] §7.1–7.4 ID → `Config.ASSET_IDS` 기입
 - [ ] game_icon / thumbnail 게임 설정 반영
 
 ## 8. 리스크

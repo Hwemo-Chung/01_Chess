@@ -1,4 +1,15 @@
--- ScreenGui HUD: combat status, metrics, shop buttons, reroll/restart.
+-- ScreenGui HUD: combat status, metrics, shop, reroll/restart/transcend.
+-- Icons via IconAssets keys + IconSurface (cloud → asphalt → pixel embed → text).
+-- Never converts TextButton → ImageButton (PRD §4.2).
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local AssetUi = require(script.Parent:WaitForChild("AssetUi"))
+local IconSurface = require(script.Parent:WaitForChild("IconSurface"))
+local Shared = ReplicatedStorage:WaitForChild("Chess"):WaitForChild("Shared")
+local AssetIds = require(Shared:WaitForChild("AssetIds"))
+local Config = require(Shared:WaitForChild("Config"))
+
 local HudController = {}
 HudController.__index = HudController
 
@@ -9,6 +20,12 @@ local ACCENT = Color3.fromRGB(90, 180, 255)
 local DANGER = Color3.fromRGB(244, 114, 140)
 local OK = Color3.fromRGB(110, 220, 150)
 local GOLD = Color3.fromRGB(240, 200, 90)
+
+local ICON_STAT = 18
+local ICON_BUTTON = 26
+local ICON_SHOP = 22
+local ICON_ROSTER = 22
+local BOSS_BANNER_SECONDS = 2
 
 local function create(className: string, props)
 	local instance = Instance.new(className)
@@ -33,7 +50,7 @@ function HudController.new(player: Player)
 		BackgroundTransparency = 0.12,
 		BorderSizePixel = 0,
 		Position = UDim2.fromOffset(16, 16),
-		Size = UDim2.fromOffset(380, 150),
+		Size = UDim2.fromOffset(400, 168),
 		Parent = gui,
 	})
 	create("UICorner", { CornerRadius = UDim.new(0, 10), Parent = top })
@@ -59,7 +76,7 @@ function HudController.new(player: Player)
 		TextColor3 = TEXT,
 		TextSize = 18,
 		TextXAlignment = Enum.TextXAlignment.Left,
-		Position = UDim2.fromOffset(14, 32),
+		Position = UDim2.fromOffset(14, 30),
 		Size = UDim2.new(1, -28, 0, 22),
 		Parent = top,
 	})
@@ -72,8 +89,21 @@ function HudController.new(player: Player)
 		TextColor3 = TEXT,
 		TextSize = 16,
 		TextXAlignment = Enum.TextXAlignment.Left,
-		Position = UDim2.fromOffset(14, 56),
-		Size = UDim2.new(1, -28, 0, 20),
+		Position = UDim2.fromOffset(14, 52),
+		Size = UDim2.new(0.55, -16, 0, 20),
+		Parent = top,
+	})
+
+	local atkLabel = create("TextLabel", {
+		Name = "ATK",
+		BackgroundTransparency = 1,
+		Font = Enum.Font.Gotham,
+		Text = "ATK: —",
+		TextColor3 = TEXT,
+		TextSize = 16,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Position = UDim2.new(0.55, 0, 0, 52),
+		Size = UDim2.new(0.45, -14, 0, 20),
 		Parent = top,
 	})
 
@@ -85,7 +115,7 @@ function HudController.new(player: Player)
 		TextColor3 = MUTED,
 		TextSize = 14,
 		TextXAlignment = Enum.TextXAlignment.Left,
-		Position = UDim2.fromOffset(14, 78),
+		Position = UDim2.fromOffset(14, 74),
 		Size = UDim2.new(1, -28, 0, 18),
 		Parent = top,
 	})
@@ -98,8 +128,16 @@ function HudController.new(player: Player)
 		TextColor3 = GOLD,
 		TextSize = 14,
 		TextXAlignment = Enum.TextXAlignment.Left,
-		Position = UDim2.fromOffset(14, 98),
+		Position = UDim2.fromOffset(14, 94),
 		Size = UDim2.new(1, -28, 0, 18),
+		Parent = top,
+	})
+
+	local livesStrip = create("Frame", {
+		Name = "LivesStrip",
+		BackgroundTransparency = 1,
+		Position = UDim2.fromOffset(14, 116),
+		Size = UDim2.new(1, -28, 0, ICON_ROSTER + 2),
 		Parent = top,
 	})
 
@@ -111,7 +149,7 @@ function HudController.new(player: Player)
 		TextColor3 = MUTED,
 		TextSize = 12,
 		TextXAlignment = Enum.TextXAlignment.Left,
-		Position = UDim2.fromOffset(14, 120),
+		Position = UDim2.fromOffset(14, 140),
 		Size = UDim2.new(1, -28, 0, 18),
 		Parent = top,
 	})
@@ -227,12 +265,65 @@ function HudController.new(player: Player)
 		Parent = shopList,
 	})
 
+	local bossBanner = create("Frame", {
+		Name = "BossBanner",
+		BackgroundColor3 = Color3.fromRGB(40, 12, 18),
+		BackgroundTransparency = 0.08,
+		BorderSizePixel = 0,
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 80),
+		Size = UDim2.fromOffset(360, 88),
+		Visible = false,
+		ZIndex = 20,
+		Parent = gui,
+	})
+	create("UICorner", { CornerRadius = UDim.new(0, 12), Parent = bossBanner })
+	local bossIcon = create("ImageLabel", {
+		Name = "Icon",
+		BackgroundTransparency = 1,
+		Size = UDim2.fromOffset(64, 64),
+		Position = UDim2.fromOffset(12, 12),
+		ScaleType = Enum.ScaleType.Fit,
+		Visible = false,
+		Active = false,
+		ZIndex = 21,
+		Parent = bossBanner,
+	})
+	local bossTitle = create("TextLabel", {
+		Name = "Title",
+		BackgroundTransparency = 1,
+		Font = Enum.Font.GothamBold,
+		Text = "KING BOSS",
+		TextColor3 = Color3.fromRGB(255, 180, 80),
+		TextSize = 22,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Position = UDim2.fromOffset(88, 18),
+		Size = UDim2.new(1, -100, 0, 28),
+		ZIndex = 21,
+		Parent = bossBanner,
+	})
+	local bossSubtitle = create("TextLabel", {
+		Name = "Subtitle",
+		BackgroundTransparency = 1,
+		Font = Enum.Font.Gotham,
+		Text = "Final encounter — survive and clear.",
+		TextColor3 = TEXT,
+		TextSize = 14,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Position = UDim2.fromOffset(88, 48),
+		Size = UDim2.new(1, -100, 0, 22),
+		ZIndex = 21,
+		Parent = bossBanner,
+	})
+
 	local self = setmetatable({
 		_gui = gui,
 		_pieceLabel = pieceLabel,
 		_hpLabel = hpLabel,
+		_atkLabel = atkLabel,
 		_metaLabel = metaLabel,
 		_currencyLabel = currencyLabel,
+		_livesStrip = livesStrip,
 		_metricsLabel = metricsLabel,
 		_logLabel = logLabel,
 		_rerollButton = rerollButton,
@@ -240,6 +331,12 @@ function HudController.new(player: Player)
 		_transcendButton = transcendButton,
 		_shopFrame = shopFrame,
 		_shopList = shopList,
+		_bossBanner = bossBanner,
+		_bossIcon = bossIcon,
+		_bossTitle = bossTitle,
+		_bossSubtitle = bossSubtitle,
+		_bossBannerShown = false,
+		_bossBannerToken = 0,
 		_onReroll = nil :: (() -> ())?,
 		_onRestart = nil :: (() -> ())?,
 		_onBuy = nil :: ((string) -> ())?,
@@ -262,6 +359,11 @@ function HudController.new(player: Player)
 			self._onTranscend()
 		end
 	end)
+
+	-- Static action-button icons (IconSurface: cloud / asphalt / pixel pack).
+	AssetUi.decorateButton(rerollButton, "Reroll", ICON_BUTTON)
+	AssetUi.decorateButton(restartButton, "Restart", ICON_BUTTON)
+	AssetUi.decorateButton(transcendButton, "Transcend", ICON_BUTTON)
 
 	return self
 end
@@ -286,19 +388,76 @@ function HudController.onTranscend(self, callback: () -> ())
 	self._onTranscend = callback
 end
 
+local function renderLivesStrip(parent: Frame, roster: { string })
+	parent:ClearAllChildren()
+	local x = 0
+	for index, pieceName in ipairs(roster) do
+		local key = AssetUi.pieceBlueKey(pieceName)
+		local icon = AssetUi.setIcon(
+			parent,
+			"Life_" .. tostring(index),
+			key,
+			ICON_ROSTER,
+			UDim2.fromOffset(x, 0)
+		)
+		if icon == nil then
+			-- Color chip fallback (02_add style) when pixels/URI unavailable.
+			create("TextLabel", {
+				Name = "Life_" .. tostring(index),
+				BackgroundColor3 = Color3.fromRGB(40, 55, 80),
+				BackgroundTransparency = 0.2,
+				BorderSizePixel = 0,
+				Font = Enum.Font.GothamBold,
+				Text = string.sub(tostring(pieceName), 1, 1),
+				TextColor3 = TEXT,
+				TextSize = 12,
+				Size = UDim2.fromOffset(ICON_ROSTER, ICON_ROSTER),
+				Position = UDim2.fromOffset(x, 0),
+				Parent = parent,
+			})
+		end
+		x += ICON_ROSTER + 4
+	end
+end
+
+function HudController._applyStatIcons(self, snapshot)
+	AssetUi.decorateLabel(self._hpLabel, "Hp", ICON_STAT)
+	AssetUi.decorateLabel(self._atkLabel, "Atk", ICON_STAT)
+	AssetUi.decorateLabel(self._currencyLabel, "Gold", ICON_STAT)
+	AssetUi.decorateLabel(self._metaLabel, "Level", ICON_STAT)
+
+	local active = snapshot.activePiece
+	local blueKey = if type(active) == "string" then AssetUi.pieceBlueKey(active) else nil
+	AssetUi.decorateLabel(self._pieceLabel, blueKey, ICON_STAT)
+
+	local tier = snapshot.currentTier
+	local redKey = if type(tier) == "string" then AssetUi.pieceRedKey(tier) else nil
+	AssetUi.setIcon(
+		self._metaLabel,
+		"TierIcon",
+		redKey,
+		ICON_STAT,
+		UDim2.new(1, -(ICON_STAT + 2), 0, 0)
+	)
+end
+
 function HudController._renderShop(self, snapshot)
 	for _, child in ipairs(self._shopList:GetChildren()) do
-		if child:IsA("TextButton") or child:IsA("TextLabel") then
-			if child.Name ~= "UIListLayout" then
-				child:Destroy()
-			end
+		if not child:IsA("UIListLayout") then
+			child:Destroy()
 		end
 	end
+
 	local meta = snapshot.phase == "GameOver" or snapshot.phase == "Victory" or snapshot.runOver
 	self._shopFrame.Visible = meta == true
 	local order = 0
+	local canvas = 0
 
-	local livesHeader = create("TextLabel", {
+	local function pushHeight(h: number)
+		canvas += h + 6
+	end
+
+	create("TextLabel", {
 		Name = "LivesHeader",
 		BackgroundTransparency = 1,
 		Font = Enum.Font.GothamBold,
@@ -311,10 +470,23 @@ function HudController._renderShop(self, snapshot)
 		Parent = self._shopList,
 	})
 	order += 1
-	livesHeader.LayoutOrder = 0
+	pushHeight(18)
+
+	local roster = snapshot.roster or {}
+	if #roster > 0 then
+		local rosterRow = create("Frame", {
+			Name = "RosterIcons",
+			BackgroundTransparency = 1,
+			Size = UDim2.new(1, -4, 0, ICON_ROSTER + 4),
+			LayoutOrder = order,
+			Parent = self._shopList,
+		})
+		order += 1
+		pushHeight(ICON_ROSTER + 4)
+		renderLivesStrip(rosterRow, roster)
+	end
 
 	for _, entry in ipairs(snapshot.shop or {}) do
-		order += 1
 		local canBuy = entry.canBuy == true
 		local button = create("TextButton", {
 			Name = "Buy_" .. entry.piece,
@@ -332,6 +504,7 @@ function HudController._renderShop(self, snapshot)
 			Parent = self._shopList,
 		})
 		create("UICorner", { CornerRadius = UDim.new(0, 6), Parent = button })
+		AssetUi.decorateButton(button, AssetUi.pieceBlueKey(entry.piece), ICON_SHOP)
 		if canBuy then
 			button.MouseButton1Click:Connect(function()
 				if self._onBuy ~= nil then
@@ -339,9 +512,10 @@ function HudController._renderShop(self, snapshot)
 				end
 			end)
 		end
+		order += 1
+		pushHeight(32)
 	end
 
-	order += 1
 	create("TextLabel", {
 		Name = "UpgradesHeader",
 		BackgroundTransparency = 1,
@@ -354,9 +528,10 @@ function HudController._renderShop(self, snapshot)
 		TextXAlignment = Enum.TextXAlignment.Left,
 		Parent = self._shopList,
 	})
+	order += 1
+	pushHeight(18)
 
 	for _, entry in ipairs(snapshot.upgradeShop or {}) do
-		order += 1
 		local canBuy = entry.canBuy == true
 		local button = create("TextButton", {
 			Name = "Upgrade_" .. entry.id,
@@ -374,6 +549,7 @@ function HudController._renderShop(self, snapshot)
 			Parent = self._shopList,
 		})
 		create("UICorner", { CornerRadius = UDim.new(0, 6), Parent = button })
+		AssetUi.decorateButton(button, AssetUi.upgradeKey(entry.id), ICON_SHOP)
 		if canBuy then
 			button.MouseButton1Click:Connect(function()
 				if self._onBuyUpgrade ~= nil then
@@ -381,8 +557,75 @@ function HudController._renderShop(self, snapshot)
 				end
 			end)
 		end
+		order += 1
+		pushHeight(32)
 	end
-	self._shopList.CanvasSize = UDim2.fromOffset(0, order * 38)
+
+	self._shopList.CanvasSize = UDim2.fromOffset(0, canvas)
+end
+
+function HudController._maybeShowBossBanner(self, snapshot)
+	local bossLevel = AssetIds.bossLevel(Config)
+	local level = snapshot.level or 0
+	if level < bossLevel then
+		self._bossBannerShown = false
+		return
+	end
+
+	local hasBoss = false
+	for _, enemy in ipairs(snapshot.enemies or {}) do
+		if enemy.isBoss == true then
+			hasBoss = true
+			break
+		end
+	end
+	if not hasBoss or self._bossBannerShown then
+		return
+	end
+
+	self._bossBannerShown = true
+	self._bossBannerToken += 1
+	local token = self._bossBannerToken
+
+	local ok = IconSurface.apply(self._bossIcon, AssetUi.bossKey())
+	if ok then
+		self._bossIcon.Visible = true
+		self._bossTitle.Position = UDim2.fromOffset(88, 18)
+		self._bossSubtitle.Position = UDim2.fromOffset(88, 48)
+	else
+		self._bossIcon.Visible = false
+		self._bossTitle.Position = UDim2.fromOffset(20, 18)
+		self._bossSubtitle.Position = UDim2.fromOffset(20, 48)
+	end
+
+	self._bossBanner.Visible = true
+	task.delay(BOSS_BANNER_SECONDS, function()
+		if self._bossBannerToken == token and self._bossBanner ~= nil then
+			self._bossBanner.Visible = false
+		end
+	end)
+end
+
+local function activeAttack(snapshot): number?
+	local piece = snapshot.activePiece
+	if type(piece) ~= "string" then
+		return nil
+	end
+	local base = Config.PIECES and Config.PIECES[piece]
+	if type(base) ~= "table" or type(base.attack) ~= "number" then
+		return nil
+	end
+	local attack = base.attack
+	local profile = snapshot.profile
+	if type(profile) == "table" and type(profile.upgrades) == "table" then
+		local might = profile.upgrades.Might
+		local def = Config.UPGRADES and Config.UPGRADES.Might
+		if type(might) == "number" and might > 0 and type(def) == "table" then
+			local per = def.perLevel or 0.06
+			attack = attack * (1 + per * might)
+		end
+	end
+	return math.floor(attack + 0.5)
 end
 
 function HudController.render(self, snapshot)
@@ -398,6 +641,9 @@ function HudController.render(self, snapshot)
 		tostring(snapshot.activeHealth or 0),
 		tostring(snapshot.activeMaxHealth or 0)
 	)
+	local atk = activeAttack(snapshot)
+	self._atkLabel.Text = if atk ~= nil then string.format("ATK: %d", atk) else "ATK: —"
+
 	self._metaLabel.Text = string.format(
 		"Lv %s  ·  Tier %s  ·  Lives %d  ·  E %d",
 		tostring(snapshot.level or 0),
@@ -432,6 +678,9 @@ function HudController.render(self, snapshot)
 		self._metricsLabel.Text = "Metrics: waiting…"
 	end
 
+	-- Top-bar lives (always during play; text chip fallback when no ids).
+	renderLivesStrip(self._livesStrip, snapshot.roster or {})
+
 	local rerolls = snapshot.rerollsRemaining or 0
 	self._rerollButton.Text = string.format("Reroll (%d)", rerolls)
 	self._rerollButton.Visible = not snapshot.runOver
@@ -448,7 +697,10 @@ function HudController.render(self, snapshot)
 		then "Continue (same T)"
 		else "Restart Run"
 	self._transcendButton.Visible = snapshot.victory == true or snapshot.phase == "Victory"
+
 	self:_renderShop(snapshot)
+	self:_applyStatIcons(snapshot)
+	self:_maybeShowBossBanner(snapshot)
 
 	if snapshot.victory or snapshot.phase == "Victory" then
 		self._logLabel.Text = "VICTORY — King boss down. Shop, continue, or Transcend."

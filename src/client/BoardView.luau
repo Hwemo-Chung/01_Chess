@@ -1,10 +1,13 @@
--- Renders the 6x6 board, player piece, enemies, legal-move highlights + damage preview labels.
+-- Renders the 6x6 board, player piece, enemies, legal-move highlights + damage preview.
+-- Crit preview icon from Config.ASSET_IDS.icons.crit (0 → text-only summary).
+
 local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Shared = ReplicatedStorage:WaitForChild("Chess"):WaitForChild("Shared")
 local Config = require(Shared:WaitForChild("Config"))
 local BoardLayout = require(Shared:WaitForChild("BoardLayout"))
+local IconSurface = require(script.Parent:WaitForChild("IconSurface"))
 
 local BoardView = {}
 BoardView.__index = BoardView
@@ -36,13 +39,20 @@ local function makePart(props)
 	return part
 end
 
-local function attachBillboard(part: BasePart, text: string, textColor: Color3, studsY: number?)
+local function attachBillboard(
+	part: BasePart,
+	text: string,
+	textColor: Color3,
+	studsY: number?,
+	showCrit: boolean?
+)
 	local gui = Instance.new("BillboardGui")
 	gui.Name = "Label"
 	gui.Size = UDim2.fromOffset(110, 48)
 	gui.StudsOffset = Vector3.new(0, studsY or 2.2, 0)
 	gui.AlwaysOnTop = true
 	gui.Parent = part
+
 	local label = Instance.new("TextLabel")
 	label.BackgroundTransparency = 1
 	label.Size = UDim2.fromScale(1, 1)
@@ -53,6 +63,20 @@ local function attachBillboard(part: BasePart, text: string, textColor: Color3, 
 	label.TextWrapped = true
 	label.Text = text
 	label.Parent = gui
+
+	if showCrit == true and IconSurface.has("Crit") then
+		local critIcon = Instance.new("ImageLabel")
+		critIcon.Name = "CritIcon"
+		critIcon.BackgroundTransparency = 1
+		critIcon.Size = UDim2.fromOffset(18, 18)
+		critIcon.Position = UDim2.new(1, -18, 0, 0)
+		critIcon.ScaleType = Enum.ScaleType.Fit
+		critIcon.Active = false
+		critIcon.Parent = gui
+		if not IconSurface.apply(critIcon, "Crit") then
+			critIcon:Destroy()
+		end
+	end
 	return label
 end
 
@@ -162,7 +186,14 @@ function BoardView.setHighlights(self, legalMoves, enemies, previews)
 		marker:SetAttribute("GridX", move.x)
 		marker:SetAttribute("GridZ", move.z)
 		if preview ~= nil and preview.kind == "attack" then
-			attachBillboard(marker, preview.summary, Color3.fromRGB(255, 245, 220), 1.4)
+			local canCrit = type(preview.critChance) == "number" and preview.critChance > 0
+			attachBillboard(
+				marker,
+				preview.summary,
+				Color3.fromRGB(255, 245, 220),
+				1.4,
+				canCrit
+			)
 		end
 	end
 end
@@ -174,7 +205,6 @@ function BoardView.render(self, snapshot)
 
 	if snapshot.activePosition == nil or snapshot.activePiece == nil then
 		self:clearHighlights()
-		-- Keep empty board visible; server has not assigned a piece yet.
 		return
 	end
 

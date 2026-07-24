@@ -102,4 +102,34 @@ return {
 			incomingDamageMultiplier = 0.5,
 		},
 	},
+
+	-- DEPRECATED for cloud ids: use src/shared/IconAssets.luau CLOUD table.
+	-- Kept for AssetIds.bossLevel / legacy tests. Prefer IconAssets keys.
+	ASSET_IDS = {
+		pieces = {
+			Pawn = { blue = 0, red = 0 },
+			Knight = { blue = 0, red = 0 },
+			Bishop = { blue = 0, red = 0 },
+			Rook = { blue = 0, red = 0 },
+			Queen = { blue = 0, red = 0 },
+			King = { blue = 0, red = 0 },
+		},
+		upgrades = {
+			Might = 0,
+			Vitality = 0,
+		},
+		icons = {
+			hp = 0,
+			atk = 0,
+			gold = 0,
+			level = 0,
+			crit = 0,
+			reroll = 0,
+			restart = 0,
+			transcend = 0,
+		},
+		boss = {
+			king = 0,
+		},
+	},
 }

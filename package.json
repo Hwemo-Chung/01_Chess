@@ -10,8 +10,13 @@
     "sim": "lune run scripts/balance_sim.luau",
     "sim:fast": "lune run scripts/balance_sim.luau -- --runs 40",
     "build": "mkdir -p build && rojo build default.project.json -o build/Chess.rbxlx",
+    "assets:studio": "asphalt sync studio",
+    "assets:cloud": "asphalt sync cloud",
+    "assets:pixels": "python3 scripts/assets/generate_icon_pixel_pack.py",
+    "audit:assets": "lune run scripts/audit-assets.luau",
     "lint": "selene src/",
     "format": "stylua src/ tests/",
-    "format:check": "stylua --check src/ tests/"
+    "format:check": "stylua --check src/ tests/",
+    "verify": "npm run test && npm run lint && npm run audit:assets && npm run build"
   }
 }

@@ -13,7 +13,9 @@
 **플레이 가능한 v1 루프 구현됨** — pure 규칙 엔진 + 서버 권위 + Studio 클라 + 상점/강화/초월 + 밸런스 시뮬.  
 Studio Play 시 **초기 StateSync 유실** 문제를 `RequestStateSync` + 재전송으로 수정함 (`ded614c`). **반드시 최신 `build/Chess.rbxlx`로 재빌드 후 플레이.**
 
-**[2026-07-24 추가]** 이미지 에셋 26장 생성 완료 (`assets/images/`). **다음 세션 최우선 작업 = 에셋 게임 적용** — `docs/PRD_ASSET_INTEGRATION.md` 참조. 아래 §8-1 지침 따를 것.
+**[2026-07-24 에셋 P0]** `IconAssets` 단일 키 + `IconPixelPack`(64² 임베드) + `IconSurface`(cloud→asphalt→픽셀).  
+**asphalt 없이** Studio Play에서도 아이콘 표시 (EditableImage).  
+클라우드: `IconAssets` CLOUD 숫자 기입. 검증: `npm run verify` + `docs/OWNER-LIVE-QA.md`.
 
 ---
 
@@ -177,17 +179,32 @@ mkdir -p build && rojo build default.project.json -o build/Chess.rbxlx
 
 **단일 소스**: `docs/PRD_ASSET_INTEGRATION.md`. 아래는 실행 순서 요약.
 
-1. **시작 절차** §11 그대로 수행 (pull → 테스트 80 PASS 확인).
-2. `assets/images/` 26장 존재 확인 (`ls assets/images | wc -l` → 26).
-3. **작업 1 (수동, 유저 개입 필요)**: Studio Asset Manager → Bulk Import 26장 → rbxassetid를 PRD §7 기록표에 기입. **유저에게 업로드 요청 후 ID 수령이 첫 블로커** — ID 없으면 작업 2의 폴백(`0`) 구조까지만 진행하고 대기.
-4. **작업 2–5** PRD §6 커밋 단위 준수:
-   - `Config.ASSET_IDS` + `iconOrText` 폴백 헬퍼 (ID `0` = 텍스트 폴백, PRD §4.1)
-   - HUD 스탯/버튼 아이콘 → 상점/로스터 → 크리 아이콘 + 보스 배너
-   - **버튼을 ImageButton으로 교체 금지** — 기존 TextButton 유지 + ImageLabel 삽입 (PRD §4.2)
-5. **서버/엔진 파일 수정 금지** — 클라 + Config만. 테스트 80 PASS 불변이 검증 기준.
-6. 각 커밋 전: `lune run tests/run.luau` + Selene + `rojo build` 후 Studio Play 육안 확인 (AC는 PRD §5).
-7. 게임 아이콘/썸네일은 Roblox 게임 설정에서 유저가 직접 업로드 (코드 외).
-8. 완료 시 PRD §7 체크박스 갱신 + 본 문서 §1 상태 줄 갱신.
+### 첫 블로커
+
+**`rbxassetid`는 유저 Studio Bulk Import 필요.** 에이전트가 ID를 만들 수 없음.  
+→ 유저에게 업로드 요청 → ID 수령 전: **폴백 구조(`ASSET_IDS` 전부 `0` + `iconOrText`)까지만** 구현 후 대기. ID 꽂는 커밋은 수령 후.
+
+### 금지 사항 (위반 시 즉시 롤백)
+
+| 금지 | 이유 |
+|------|------|
+| `src/server/**` 수정 | 서버/엔진 변경 0 — 테스트 80 무영향 유지 |
+| `src/shared/**` 중 Config 외 수정 | pure 규칙 엔진 불변 |
+| TextButton → ImageButton 교체 | 레이아웃 붕괴 방지. **ImageLabel 삽입만** |
+| 3D 보드 기물 메시/텍스처 교체 | PRD out of scope |
+| Open Cloud API 업로드 자동화 | 안 B 배제 (과설계) |
+
+### 실행 순서
+
+1. **시작 절차** §11 그대로 (pull → 테스트 80 PASS).
+2. `assets/images/` 26장 확인 (`ls assets/images \| wc -l` → 26).
+3. **작업 1 (유저)**: Studio Asset Manager → Bulk Import 26장 → ID를 PRD §7 기록표 기입.
+4. **작업 2–5** PRD §6 커밋 단위:
+   - `Config.ASSET_IDS` + `iconOrText` 폴백 (ID `0` = 텍스트, PRD §4.1)
+   - HUD 스탯/버튼 → 상점/로스터 → 크리 + 보스 배너
+5. 각 커밋 전: `lune run tests/run.luau` + Selene + `rojo build` + Studio Play 육안 (AC = PRD §5).
+6. 게임 아이콘/썸네일: Roblox 게임 설정에서 유저 직접 업로드 (코드 외).
+7. 완료 시 PRD §7 체크박스 + 본 문서 §1 상태 줄 갱신.
 
 ## 8. 의도적 미구현 / 다음 작업 후보
 
@@ -220,6 +237,8 @@ a45e6d9  feat: client board/HUD
 4e1b47b  balance: soft transcendence curve
 ded614c  fix: StateSync resync (empty board)
 2d6e0c5  chore: ignore .DS_Store
+b1e8a5a  assets: image prompts + 26 generated PNGs
+8e11284  docs: PRD_ASSET_INTEGRATION + handoff §8-1
 ```
 
 ---
@@ -230,15 +249,18 @@ ded614c  fix: StateSync resync (empty board)
 01_Chess/
 ├── default.project.json      # Rojo → SSS/Chess, RS/Chess/Shared, SPS/Chess
 ├── rokit.toml / package.json
-├── src/shared/               # pure Luau
-├── src/server/               # ServerMain + controllers
-├── src/client/               # GameClient + view
+├── assets/images/            # 26 PNG (생성 완료, rbxassetid 미업로드)
+├── src/shared/               # pure Luau — Config.ASSET_IDS 추가 예정
+├── src/server/               # ServerMain + controllers (에셋 작업 시 수정 금지)
+├── src/client/               # GameClient + HudController + BoardView
 ├── tests/                    # Lune unit suites (80 cases)
 ├── scripts/balance_sim.luau
 ├── docs/
 │   ├── PRD.md
+│   ├── PRD_ASSET_INTEGRATION.md  # 에셋 적용 PRD (다음 작업 단일 소스)
+│   ├── ASSET_PROMPTS.md
 │   ├── BENCHMARK.md
-│   ├── BALANCE_SIM.md        # 시뮬 출력 (재생성 가능)
+│   ├── BALANCE_SIM.md
 │   ├── SESSION_HANDOFF.md    # 본 문서
 │   └── superpowers/plans/…
 └── build/Chess.rbxlx         # gitignore 대상일 수 있음 — 로컬 빌드
@@ -249,12 +271,12 @@ ded614c  fix: StateSync resync (empty board)
 ## 11. 다음 세션 시작 절차 (복붙)
 
 1. `cd …/01_Chess && git pull && git log -3 --oneline`
-2. 본 문서 + `docs/PRD.md` §3.2 / §6 / §11 스코프 확인
-3. `export PATH="$HOME/.rokit/bin:$PATH"`
-4. `lune run tests/run.luau` → 80 PASS 확인
-5. 작업 고르기: §8 표 또는 유저 지시
-6. 커밋 시 **항상** `Chung Hwemo <tolaria@naver.com>` (Author+Committer)
-7. Studio 검증 시 `rojo build` 후 **Output `[CHESS]`** 필수 확인
+2. 본 문서 + `docs/PRD_ASSET_INTEGRATION.md` 확인
+3. `export PATH="$HOME/.rokit/bin:/opt/homebrew/bin:$PATH"`
+4. `asphalt sync studio` — Studio content에 이미지 복사 (아이콘 실표시 필수)
+5. `lune run tests/run.luau` → 100+ PASS
+6. `rojo build default.project.json -o build/Chess.rbxlx` → Studio Play
+7. 커밋 시 **항상** `Chung Hwemo <tolaria@naver.com>` (Author+Committer)
 
 ---
 
@@ -266,5 +288,8 @@ ded614c  fix: StateSync resync (empty board)
 | Selene | 0 errors (직전 세션) |
 | 시뮬 리포트 | `docs/BALANCE_SIM.md` 존재 |
 | Play 빈 판 이슈 | 수정 커밋됨 — 최신 빌드로 수동 확인 권장 |
+| 에셋 PNG 26장 | `assets/images/` 존재 (`b1e8a5a`) |
+| 에셋 적용 PRD | `docs/PRD_ASSET_INTEGRATION.md` (코드 적용 전) |
+| rbxassetid | **미확보** — 다음 세션 첫 블로커 (유저 Studio 업로드) |
 
-**세션 종료.**
+**세션 종료.** 커밋 안 함 (명시 요청 없음). 다음 세션: 로컬 diff 있으면 `git add docs/` 후 커밋 판단.

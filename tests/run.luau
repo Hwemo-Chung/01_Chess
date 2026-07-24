@@ -45,6 +45,12 @@ local suites = {
 	Transcendence = function()
 		return require("./Transcendence.spec")
 	end,
+	AssetIds = function()
+		return require("./AssetIds.spec")
+	end,
+	IconAssets = function()
+		return require("./IconAssets.spec")
+	end,
 }
 
 local total = 0
