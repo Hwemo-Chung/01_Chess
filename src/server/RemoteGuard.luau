@@ -86,11 +86,15 @@ function RemoteGuard.validateReroll(self, playerUserId: number, wire, snapshot)
 	return result(true, "ok")
 end
 
+local function isMetaPhase(phase: string?): boolean
+	return phase == "GameOver" or phase == "Victory" or phase == "Lobby"
+end
+
 function RemoteGuard.validateRestart(self, playerUserId: number, wire, snapshot)
 	if not exactArgs(wire, 0) then
 		return result(false, "bad_arguments")
 	end
-	if type(snapshot) ~= "table" or snapshot.phase ~= "GameOver" then
+	if type(snapshot) ~= "table" or not isMetaPhase(snapshot.phase) then
 		return result(false, "wrong_phase")
 	end
 	if
@@ -111,14 +115,31 @@ function RemoteGuard.validateBuy(self, playerUserId: number, wire, snapshot)
 	if not exactArgs(wire, 1) or type(wire.args[1]) ~= "string" then
 		return result(false, "bad_arguments")
 	end
-	-- Shop is available between runs only (GameOver / Lobby).
-	if type(snapshot) ~= "table" then
-		return result(false, "wrong_phase")
-	end
-	if snapshot.phase ~= "GameOver" and snapshot.phase ~= "Lobby" then
+	if type(snapshot) ~= "table" or not isMetaPhase(snapshot.phase) then
 		return result(false, "wrong_phase")
 	end
 	if not acceptedAt(self._clock, self._buyWindows, playerUserId, BUY_LIMIT, WINDOW_SECONDS) then
+		return result(false, "rate_limited")
+	end
+	return result(true, "ok")
+end
+
+function RemoteGuard.validateTranscend(self, playerUserId: number, wire, snapshot)
+	if not exactArgs(wire, 0) then
+		return result(false, "bad_arguments")
+	end
+	if type(snapshot) ~= "table" or snapshot.phase ~= "Victory" then
+		return result(false, "wrong_phase")
+	end
+	if
+		not acceptedAt(
+			self._clock,
+			self._restartWindows,
+			playerUserId,
+			RESTART_LIMIT,
+			WINDOW_SECONDS
+		)
+	then
 		return result(false, "rate_limited")
 	end
 	return result(true, "ok")

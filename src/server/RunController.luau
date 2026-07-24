@@ -21,9 +21,9 @@ function RunController.new(dependencies)
 	}, RunController)
 end
 
-function RunController.start(self, playerUserId: number, roster: { string })
+function RunController.start(self, playerUserId: number, roster: { string }, options: any?)
 	local seed = self._dependencies.seedForPlayer(playerUserId)
-	local state = self._RunState.new(roster, seed, self._Config)
+	local state = self._RunState.new(roster, seed, self._Config, options)
 	state:assignRandomPiece()
 	self.runs[playerUserId] = state
 end
@@ -37,12 +37,12 @@ end
 function RunController.requestReroll(self, playerUserId: number): boolean
 	local state = self.runs[playerUserId]
 	assert(state ~= nil, "no active run for player " .. tostring(playerUserId))
-	assert(not state.runOver, "run is over")
+	assert(not state.runOver and not state.victory, "run is finished")
 	return state:reroll()
 end
 
-function RunController.restart(self, playerUserId: number, roster: { string })
-	self:start(playerUserId, roster)
+function RunController.restart(self, playerUserId: number, roster: { string }, options: any?)
+	self:start(playerUserId, roster, options)
 end
 
 function RunController.snapshot(self, playerUserId: number)

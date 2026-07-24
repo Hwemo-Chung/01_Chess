@@ -16,6 +16,7 @@ local HIGHLIGHT_ATTACK = Color3.fromRGB(220, 80, 70)
 local HIGHLIGHT_LETHAL = Color3.fromRGB(255, 40, 40)
 local PLAYER_COLOR = Color3.fromRGB(90, 180, 255)
 local ENEMY_COLOR = Color3.fromRGB(220, 90, 90)
+local BOSS_COLOR = Color3.fromRGB(255, 200, 40)
 local INVULN_COLOR = Color3.fromRGB(255, 230, 100)
 
 local PIECE_LABEL = {
@@ -210,18 +211,25 @@ function BoardView.render(self, snapshot)
 	self._enemyParts = {}
 	for index, enemy in ipairs(snapshot.enemies or {}) do
 		local ex, ey, ez = BoardLayout.gridToPieceWorld(enemy.x, enemy.z)
+		local isBoss = enemy.isBoss == true
 		local part = makePart({
 			Name = "Enemy_" .. tostring(index),
 			Anchored = true,
 			CanCollide = false,
 			CanQuery = false,
-			Material = Enum.Material.SmoothPlastic,
-			Color = ENEMY_COLOR,
-			Size = Vector3.new(2.8, 2.8, 2.8),
+			Material = if isBoss then Enum.Material.Neon else Enum.Material.SmoothPlastic,
+			Color = if isBoss then BOSS_COLOR else ENEMY_COLOR,
+			Size = if isBoss then Vector3.new(3.4, 3.4, 3.4) else Vector3.new(2.8, 2.8, 2.8),
 			Position = Vector3.new(ex, ey, ez),
 			Parent = self._pieces,
 		})
-		local hpText = string.format("%d", math.max(0, math.floor(enemy.health)))
+		local label = PIECE_LABEL[enemy.pieceType or ""] or "E"
+		local hpText = string.format(
+			"%s%s\n%d",
+			if isBoss then "★" else "",
+			label,
+			math.max(0, math.floor(enemy.health))
+		)
 		attachBillboard(part, hpText, Color3.fromRGB(255, 220, 220))
 		table.insert(self._enemyParts, part)
 	end

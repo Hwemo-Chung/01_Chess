@@ -45,6 +45,30 @@ case("restartAfterLossRate / divides restarts by ended runs", function()
 	assert(ProfileRules.restartAfterLossRate(profile) == 0.5, "rate")
 end)
 
+case("buyUpgrade / spends and levels Might", function()
+	local profile = ProfileRules.default(Config)
+	profile.currency = 100
+	local ok, nextProfile = ProfileRules.buyUpgrade(profile, "Might", Config)
+	assert(ok, "upgrade buy")
+	assert(nextProfile.upgrades.Might == 1, "level 1")
+	assert(nextProfile.currency == 100 - Config.UPGRADES.Might.price, "spent")
+end)
+
+case("effectivePieceStats / applies Might and Vitality", function()
+	local base = Config.PIECES.Pawn
+	local stats = ProfileRules.effectivePieceStats(base, { Might = 2, Vitality = 2 }, Config)
+	assert(stats.attack > base.attack, "attack up")
+	assert(stats.maxHealth > base.maxHealth, "hp up")
+end)
+
+case("transcend / increments level and keeps roster", function()
+	local profile = ProfileRules.default(Config)
+	profile.roster = { "Pawn", "King" }
+	local nextProfile = ProfileRules.transcend(profile)
+	assert(nextProfile.transcendenceLevel == 2, "T2")
+	assert(#nextProfile.roster == 2, "roster kept")
+end)
+
 return function()
 	for _, entry in ipairs(cases) do
 		local ok, err = pcall(entry.body)

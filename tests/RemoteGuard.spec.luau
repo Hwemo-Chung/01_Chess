@@ -82,13 +82,24 @@ case(
 	end
 )
 
-case("validateRestart / accepts only during GameOver phase", function()
+case("validateRestart / accepts GameOver and Victory, rejects Turn", function()
 	local clock = fixedClock()
 	local guard = RemoteGuard.new(clock)
 	local bad = guard:validateRestart(1, { argc = 0, args = {} }, { phase = "Turn" })
 	assert(not bad.accepted and bad.reason == "wrong_phase", "restart during Turn must fail")
 	local ok = guard:validateRestart(1, { argc = 0, args = {} }, { phase = "GameOver" })
 	assert(ok.accepted, "restart during GameOver must succeed")
+	local ok2 = guard:validateRestart(1, { argc = 0, args = {} }, { phase = "Victory" })
+	assert(ok2.accepted, "restart during Victory must succeed")
+end)
+
+case("validateTranscend / Victory only", function()
+	local clock = fixedClock()
+	local guard = RemoteGuard.new(clock)
+	local bad = guard:validateTranscend(1, { argc = 0, args = {} }, { phase = "GameOver" })
+	assert(not bad.accepted, "no transcend on GameOver")
+	local ok = guard:validateTranscend(1, { argc = 0, args = {} }, { phase = "Victory" })
+	assert(ok.accepted, "transcend on Victory")
 end)
 
 return function()

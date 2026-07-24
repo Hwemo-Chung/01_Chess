@@ -1,9 +1,9 @@
--- Pure run-state machine tying BoardRules/CombatRules/SpawnRules/Rng together.
--- No Roblox dependencies -- server/RunController.luau is the only thing that
--- touches Players/DataStore/RemoteEvents.
+-- Pure run-state machine: turn combat, tier ladder, King-clear victory,
+-- permanent upgrades, transcendence enemy scaling.
 local BoardRules = require("./BoardRules")
 local CombatRules = require("./CombatRules")
 local SpawnRules = require("./SpawnRules")
+local ProfileRules = require("./ProfileRules")
 local Rng = require("./Rng")
 
 local RunState = {}
@@ -15,11 +15,19 @@ local function copyArray(source)
 	return table.clone(source)
 end
 
-function RunState.new(roster: { string }, seed: number, config: any)
+function RunState.new(roster: { string }, seed: number, config: any, options: any?)
 	assert(type(roster) == "table" and #roster > 0, "roster must be a non-empty array")
+	options = options or {}
+	local upgrades = options.upgrades or {}
+	local transcendenceLevel = options.transcendenceLevel or config.DEFAULT_TRANSCENDENCE or 1
+	if transcendenceLevel < 1 then
+		transcendenceLevel = 1
+	end
 	return setmetatable({
 		_config = config,
 		_rng = Rng.new(seed),
+		_upgrades = upgrades,
+		transcendenceLevel = transcendenceLevel,
 		roster = copyArray(roster),
 		activePiece = nil :: string?,
 		activeHealth = 0,
@@ -30,8 +38,15 @@ function RunState.new(roster: { string }, seed: number, config: any)
 		level = 1,
 		enemies = {},
 		runOver = false,
+		victory = false,
 		roundsPlayed = 0,
+		currentTier = "Pawn",
 	}, RunState)
+end
+
+local function activeStats(self)
+	local base = self._config.PIECES[self.activePiece]
+	return ProfileRules.effectivePieceStats(base, self._upgrades, self._config)
 end
 
 local function drawFromRoster(self, excludePiece: string?)
@@ -56,11 +71,57 @@ end
 
 local function enemyCountCap(self): number
 	local cap = self._config.ENEMY_COUNT_CAP
-	-- Bishop active: half cap (PRD §6.4.2 — half board usable).
 	if self.activePiece == "Bishop" then
 		cap = math.max(1, math.floor(cap / 2))
 	end
 	return cap
+end
+
+local function scaledEnemyStats(self, pieceType: string, isBoss: boolean)
+	local base = self._config.PIECES[pieceType] or self._config.ENEMY_BASE
+	local mult = self.transcendenceLevel
+	local hp = base.maxHealth * mult
+	local attack = base.attack * mult
+	if isBoss then
+		hp *= self._config.BOSS_HEALTH_MULTIPLIER or 3
+	end
+	return {
+		maxHealth = math.max(1, math.floor(hp + 0.5)),
+		attack = math.max(1, math.floor(attack + 0.5)),
+		critChance = base.critChance or 0.15,
+		incomingDamageMultiplier = base.incomingDamageMultiplier or 1,
+		critFromDistance = base.critFromDistance,
+	}
+end
+
+local function makeEnemy(self, x: number, z: number, pieceType: string, isBoss: boolean)
+	local stats = scaledEnemyStats(self, pieceType, isBoss)
+	return {
+		x = x,
+		z = z,
+		health = stats.maxHealth,
+		maxHealth = stats.maxHealth,
+		attack = stats.attack,
+		pieceType = pieceType,
+		isBoss = isBoss == true,
+		critChance = stats.critChance,
+		incomingDamageMultiplier = stats.incomingDamageMultiplier,
+		critFromDistance = stats.critFromDistance,
+	}
+end
+
+local function pickSpawnCell(self, occupied, colorFilter: number?): (number?, number?)
+	local config = self._config
+	for _ = 1, 400 do
+		local x = math.floor(self._rng:next() * config.BOARD_SIZE) + 1
+		local z = math.floor(self._rng:next() * config.BOARD_SIZE) + 1
+		local colorOk = colorFilter == nil or (x + z) % 2 == colorFilter
+		local key = x .. "," .. z
+		if colorOk and not occupied[key] then
+			return x, z
+		end
+	end
+	return nil, nil
 end
 
 local function spawnEnemiesForLevel(self)
@@ -74,6 +135,10 @@ local function spawnEnemiesForLevel(self)
 	)
 	assert(SpawnRules.fitsOnBoard(count, config.BOARD_SIZE), "enemy count must fit on the board")
 
+	local tier, isBossStage =
+		SpawnRules.tierForLevel(self.level, config.ENEMY_COUNT_CAP, config.ENEMY_TIER_ORDER)
+	self.currentTier = tier
+
 	local colorFilter: number? = nil
 	if self.activePiece == "Bishop" then
 		colorFilter = BoardRules.squareColor(self.activePosition)
@@ -81,29 +146,39 @@ local function spawnEnemiesForLevel(self)
 
 	local enemies = {}
 	local occupied = { [self.activePosition.x .. "," .. self.activePosition.z] = true }
-	local guard = 0
-	while #enemies < count do
-		guard += 1
-		assert(guard < 5000, "spawn loop failed to place enemies")
-		local x = math.floor(self._rng:next() * config.BOARD_SIZE) + 1
-		local z = math.floor(self._rng:next() * config.BOARD_SIZE) + 1
-		local colorOk = colorFilter == nil or (x + z) % 2 == colorFilter
-		local key = x .. "," .. z
-		if colorOk and not occupied[key] then
-			occupied[key] = true
-			table.insert(enemies, {
-				x = x,
-				z = z,
-				health = config.ENEMY_BASE.maxHealth,
-				maxHealth = config.ENEMY_BASE.maxHealth,
-				attack = config.ENEMY_BASE.attack,
-			})
+
+	if isBossStage then
+		-- King boss + lower-tier minions filling the rest of the cap count.
+		local bx, bz = pickSpawnCell(self, occupied, colorFilter)
+		assert(bx ~= nil, "failed to place King boss")
+		occupied[bx .. "," .. bz] = true
+		table.insert(enemies, makeEnemy(self, bx :: number, bz :: number, "King", true))
+		local minionType = "Queen"
+		local order = config.ENEMY_TIER_ORDER
+		for i, name in ipairs(order) do
+			if name == "King" and i > 1 then
+				minionType = order[i - 1]
+				break
+			end
+		end
+		while #enemies < count do
+			local x, z = pickSpawnCell(self, occupied, colorFilter)
+			assert(x ~= nil, "failed to place minion")
+			occupied[x .. "," .. z] = true
+			table.insert(enemies, makeEnemy(self, x :: number, z :: number, minionType, false))
+		end
+	else
+		while #enemies < count do
+			local x, z = pickSpawnCell(self, occupied, colorFilter)
+			assert(x ~= nil, "failed to place enemy")
+			occupied[x .. "," .. z] = true
+			table.insert(enemies, makeEnemy(self, x :: number, z :: number, tier, false))
 		end
 	end
+
 	self.enemies = enemies
 end
 
--- When switching onto Bishop, recolor-place existing enemies onto same color (PRD §6.4.2).
 local function recolorEnemiesForBishop(self)
 	if self.activePiece ~= "Bishop" then
 		return
@@ -140,8 +215,8 @@ end
 
 function RunState.assignRandomPiece(self)
 	local piece = drawFromRoster(self, nil)
-	local stats = self._config.PIECES[piece]
-	assert(stats ~= nil, "unknown piece in roster: " .. tostring(piece))
+	local stats =
+		ProfileRules.effectivePieceStats(self._config.PIECES[piece], self._upgrades, self._config)
 	self.activePiece = piece
 	self.activeHealth = stats.maxHealth
 	self.activeMaxHealth = stats.maxHealth
@@ -165,7 +240,8 @@ function RunState.reroll(self): boolean
 	local rejected = self.activePiece
 	table.insert(self.roster, rejected)
 	local piece = drawFromRoster(self, rejected)
-	local stats = self._config.PIECES[piece]
+	local stats =
+		ProfileRules.effectivePieceStats(self._config.PIECES[piece], self._upgrades, self._config)
 	self.activePiece = piece
 	self.activeHealth = stats.maxHealth
 	self.activeMaxHealth = stats.maxHealth
@@ -203,7 +279,7 @@ local function findEnemyAt(enemies, position)
 end
 
 function RunState.applyPlayerMove(self, destination: BoardRules.Position)
-	assert(not self.runOver, "run is over")
+	assert(not self.runOver and not self.victory, "run is finished")
 	assert(self.activePiece ~= nil, "no active piece assigned")
 	local legal = self:legalMovesForActive()
 	local isLegal = false
@@ -217,7 +293,7 @@ function RunState.applyPlayerMove(self, destination: BoardRules.Position)
 
 	self.roundsPlayed += 1
 
-	local pieceStats = self._config.PIECES[self.activePiece]
+	local pieceStats = activeStats(self)
 	local result = {
 		playerDamageDealt = 0,
 		playerDamageTaken = 0,
@@ -226,6 +302,8 @@ function RunState.applyPlayerMove(self, destination: BoardRules.Position)
 		enemyDied = false,
 		levelCleared = false,
 		runOver = false,
+		victory = false,
+		bossKilled = false,
 	}
 
 	local target = findEnemyAt(self.enemies, destination)
@@ -250,14 +328,37 @@ function RunState.applyPlayerMove(self, destination: BoardRules.Position)
 		self._rng
 	)
 	result.crit = attack.crit
-	result.playerDamageDealt = attack.damage
-	target.health -= attack.damage
+
+	-- Enemy incoming mult (enemy King takes half, enemy Queen takes 1.5x).
+	local damageToEnemy = attack.damage * (target.incomingDamageMultiplier or 1)
+	result.playerDamageDealt = damageToEnemy
+	target.health -= damageToEnemy
 	result.enemyDied = target.health <= 0
 
+	local killedBoss = result.enemyDied and target.isBoss == true
+
+	-- Mutual-KO: if King boss dies, victory is forced before lethal counter (PRD §6.2).
+	local counterDamage = 0
 	if not self.invulnerable then
-		local mult = pieceStats.incomingDamageMultiplier or 1
-		result.playerDamageTaken = target.attack * mult
-		self.activeHealth -= result.playerDamageTaken
+		counterDamage = target.attack * (pieceStats.incomingDamageMultiplier or 1)
+	end
+	result.playerDamageTaken = counterDamage
+
+	if killedBoss then
+		result.bossKilled = true
+		result.victory = true
+		result.enemyDied = true
+		self.victory = true
+		self.runOver = true
+		removeEnemyAt(self.enemies, destination)
+		self.activePosition = { x = destination.x, z = destination.z }
+		self.invulnerable = false
+		-- Counter is recorded for VFX only; does not flip victory.
+		return result
+	end
+
+	if not self.invulnerable then
+		self.activeHealth -= counterDamage
 	end
 	self.invulnerable = false
 
@@ -275,9 +376,18 @@ function RunState.applyPlayerMove(self, destination: BoardRules.Position)
 		if pierceTarget ~= nil then
 			local pierced = findEnemyAt(self.enemies, pierceTarget)
 			if pierced ~= nil then
-				pierced.health -= attack.damage
+				local pierceDamage = attack.damage * (pierced.incomingDamageMultiplier or 1)
+				pierced.health -= pierceDamage
 				result.pierced = true
 				if pierced.health <= 0 then
+					if pierced.isBoss then
+						result.bossKilled = true
+						result.victory = true
+						self.victory = true
+						self.runOver = true
+						removeEnemyAt(self.enemies, pierceTarget)
+						return result
+					end
 					removeEnemyAt(self.enemies, pierceTarget)
 				end
 			end
@@ -313,6 +423,9 @@ local function copyEnemies(enemies)
 			health = enemy.health,
 			maxHealth = enemy.maxHealth,
 			attack = enemy.attack,
+			pieceType = enemy.pieceType,
+			isBoss = enemy.isBoss,
+			incomingDamageMultiplier = enemy.incomingDamageMultiplier,
 		}
 	end
 	return result
@@ -327,20 +440,33 @@ local function copyPositions(positions)
 end
 
 function RunState.previewsForActive(self)
-	if self.activePiece == nil or self.runOver then
+	if self.activePiece == nil or self.runOver or self.victory then
 		return {}
 	end
-	local pieceStats = self._config.PIECES[self.activePiece]
+	local pieceStats = activeStats(self)
 	local origin = self.activePosition
 	local previews = {}
 	for _, move in ipairs(self:legalMovesForActive()) do
 		local enemy = findEnemyAt(self.enemies, move)
+		-- Preview uses enemy attack as-is; damage-to-enemy mult applied in summary via health.
+		local previewEnemy = enemy
+		if enemy ~= nil then
+			previewEnemy = table.clone(enemy)
+			-- Present effective HP from player damage perspective by scaling display health.
+			-- Keep real health; previewDestination compares base damage to health.
+			-- Adjust: expose health / incomingMult equivalent so killChance is accurate.
+			local mult = enemy.incomingDamageMultiplier or 1
+			if mult > 0 and mult ~= 1 then
+				previewEnemy = table.clone(enemy)
+				previewEnemy.health = enemy.health / mult
+			end
+		end
 		local preview = CombatRules.previewDestination(
 			self.activePiece,
 			pieceStats,
 			origin,
 			move,
-			enemy,
+			previewEnemy,
 			self.invulnerable,
 			self.activeHealth,
 			self._config
@@ -353,9 +479,16 @@ end
 function RunState.snapshot(self)
 	local legalMoves = {}
 	local previews = {}
-	if self.activePiece ~= nil and not self.runOver then
+	local finished = self.runOver or self.victory
+	if self.activePiece ~= nil and not finished then
 		legalMoves = copyPositions(self:legalMovesForActive())
 		previews = self:previewsForActive()
+	end
+	local phase = "Turn"
+	if self.victory then
+		phase = "Victory"
+	elseif self.runOver then
+		phase = "GameOver"
 	end
 	return {
 		roster = copyArray(self.roster),
@@ -369,9 +502,12 @@ function RunState.snapshot(self)
 		legalMoves = legalMoves,
 		previews = previews,
 		rerollsRemaining = math.max(0, self._config.REROLL_LIMIT - self.rerollsUsed),
-		runOver = self.runOver,
+		runOver = self.runOver or self.victory,
+		victory = self.victory,
 		roundsPlayed = self.roundsPlayed,
-		phase = if self.runOver then "GameOver" else "Turn",
+		currentTier = self.currentTier,
+		transcendenceLevel = self.transcendenceLevel,
+		phase = phase,
 	}
 end
 

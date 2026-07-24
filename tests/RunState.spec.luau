@@ -218,6 +218,68 @@ case("applyPlayerMove / Queen takes 1.5x incoming damage", function()
 	expectEqual(result.playerDamageTaken, 6, "Queen incoming ×1.5 on attack 4")
 end)
 
+case("applyPlayerMove / King boss kill forces victory over mutual KO", function()
+	local state = RunState.new({ "Pawn" }, 1, Config)
+	state:assignRandomPiece()
+	state:_debugSetInvulnerable(false)
+	state:_debugSetActiveHealth(1)
+	local origin = state:snapshot().activePosition
+	state:_debugSetEnemies({
+		{
+			x = origin.x + 1,
+			z = origin.z,
+			health = 1,
+			maxHealth = 1,
+			attack = 999,
+			pieceType = "King",
+			isBoss = true,
+			incomingDamageMultiplier = 1,
+		},
+	})
+	local result = state:applyPlayerMove({ x = origin.x + 1, z = origin.z })
+	assert(result.victory, "boss kill is victory")
+	assert(result.bossKilled, "bossKilled flag")
+	local snap = state:snapshot()
+	assert(snap.phase == "Victory", "Victory phase")
+	assert(snap.activeHealth == 1, "mutual KO must not kill player on boss clear")
+end)
+
+case("spawn / king boss stage has one boss", function()
+	local state = RunState.new({ "Pawn" }, 7, Config, { transcendenceLevel = 1 })
+	state:assignRandomPiece()
+	-- Jump to king-boss level by clearing and setting level
+	state.level = 17
+	state:_debugSetEnemies({})
+	-- force spawn via empty enemies + level clear path: call internal by clearing all
+	-- Use apply empty board level bump: set level 16, kill last enemy
+	state.level = 16
+	state:_debugSetEnemies({
+		{
+			x = 1,
+			z = 1,
+			health = 1,
+			maxHealth = 1,
+			attack = 0,
+			pieceType = "Queen",
+			isBoss = false,
+			incomingDamageMultiplier = 1,
+		},
+	})
+	state.activePosition = { x = 2, z = 1 }
+	state.activePiece = "Rook"
+	state:_debugSetInvulnerable(true)
+	state:applyPlayerMove({ x = 1, z = 1 })
+	local snap = state:snapshot()
+	assert(snap.level == 17, "advanced to 17")
+	local bosses = 0
+	for _, e in ipairs(snap.enemies) do
+		if e.isBoss then
+			bosses += 1
+		end
+	end
+	assert(bosses == 1, "exactly one king boss")
+end)
+
 return function()
 	for _, entry in ipairs(cases) do
 		local ok, err = pcall(entry.body)

@@ -7,6 +7,7 @@ local TEXT = Color3.fromRGB(240, 246, 255)
 local MUTED = Color3.fromRGB(160, 178, 205)
 local ACCENT = Color3.fromRGB(90, 180, 255)
 local DANGER = Color3.fromRGB(244, 114, 140)
+local OK = Color3.fromRGB(110, 220, 150)
 local GOLD = Color3.fromRGB(240, 200, 90)
 
 local function create(className: string, props)
@@ -163,12 +164,29 @@ function HudController.new(player: Player)
 		TextSize = 18,
 		Visible = false,
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.42),
-		Size = UDim2.fromOffset(220, 56),
+		Position = UDim2.fromScale(0.5, 0.40),
+		Size = UDim2.fromOffset(220, 52),
 		AutoButtonColor = true,
 		Parent = gui,
 	})
 	create("UICorner", { CornerRadius = UDim.new(0, 10), Parent = restartButton })
+
+	local transcendButton = create("TextButton", {
+		Name = "Transcend",
+		BackgroundColor3 = Color3.fromRGB(90, 50, 140),
+		BorderSizePixel = 0,
+		Font = Enum.Font.GothamBold,
+		Text = "Transcend (+T)",
+		TextColor3 = TEXT,
+		TextSize = 16,
+		Visible = false,
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.52),
+		Size = UDim2.fromOffset(220, 48),
+		AutoButtonColor = true,
+		Parent = gui,
+	})
+	create("UICorner", { CornerRadius = UDim.new(0, 10), Parent = transcendButton })
 
 	local shopFrame = create("Frame", {
 		Name = "Shop",
@@ -176,7 +194,7 @@ function HudController.new(player: Player)
 		BackgroundTransparency = 0.1,
 		BorderSizePixel = 0,
 		Position = UDim2.new(1, -220, 0, 72),
-		Size = UDim2.fromOffset(204, 280),
+		Size = UDim2.fromOffset(204, 360),
 		Visible = false,
 		Parent = gui,
 	})
@@ -185,7 +203,7 @@ function HudController.new(player: Player)
 		Name = "ShopTitle",
 		BackgroundTransparency = 1,
 		Font = Enum.Font.GothamBold,
-		Text = "Shop (lives)",
+		Text = "Shop",
 		TextColor3 = GOLD,
 		TextSize = 15,
 		Position = UDim2.fromOffset(10, 8),
@@ -203,7 +221,7 @@ function HudController.new(player: Player)
 		ScrollBarThickness = 4,
 		Parent = shopFrame,
 	})
-	local shopLayout = create("UIListLayout", {
+	create("UIListLayout", {
 		Padding = UDim.new(0, 6),
 		SortOrder = Enum.SortOrder.LayoutOrder,
 		Parent = shopList,
@@ -219,12 +237,14 @@ function HudController.new(player: Player)
 		_logLabel = logLabel,
 		_rerollButton = rerollButton,
 		_restartButton = restartButton,
+		_transcendButton = transcendButton,
 		_shopFrame = shopFrame,
 		_shopList = shopList,
-		_shopLayout = shopLayout,
 		_onReroll = nil :: (() -> ())?,
 		_onRestart = nil :: (() -> ())?,
 		_onBuy = nil :: ((string) -> ())?,
+		_onBuyUpgrade = nil :: ((string) -> ())?,
+		_onTranscend = nil :: (() -> ())?,
 	}, HudController)
 
 	rerollButton.MouseButton1Click:Connect(function()
@@ -235,6 +255,11 @@ function HudController.new(player: Player)
 	restartButton.MouseButton1Click:Connect(function()
 		if self._onRestart ~= nil then
 			self._onRestart()
+		end
+	end)
+	transcendButton.MouseButton1Click:Connect(function()
+		if self._onTranscend ~= nil then
+			self._onTranscend()
 		end
 	end)
 
@@ -253,16 +278,42 @@ function HudController.onBuy(self, callback: (string) -> ())
 	self._onBuy = callback
 end
 
+function HudController.onBuyUpgrade(self, callback: (string) -> ())
+	self._onBuyUpgrade = callback
+end
+
+function HudController.onTranscend(self, callback: () -> ())
+	self._onTranscend = callback
+end
+
 function HudController._renderShop(self, snapshot)
 	for _, child in ipairs(self._shopList:GetChildren()) do
-		if child:IsA("TextButton") then
-			child:Destroy()
+		if child:IsA("TextButton") or child:IsA("TextLabel") then
+			if child.Name ~= "UIListLayout" then
+				child:Destroy()
+			end
 		end
 	end
-	local shop = snapshot.shop or {}
-	self._shopFrame.Visible = snapshot.runOver == true or snapshot.phase == "GameOver"
+	local meta = snapshot.phase == "GameOver" or snapshot.phase == "Victory" or snapshot.runOver
+	self._shopFrame.Visible = meta == true
 	local order = 0
-	for _, entry in ipairs(shop) do
+
+	local livesHeader = create("TextLabel", {
+		Name = "LivesHeader",
+		BackgroundTransparency = 1,
+		Font = Enum.Font.GothamBold,
+		Text = "Lives",
+		TextColor3 = MUTED,
+		TextSize = 12,
+		Size = UDim2.new(1, -4, 0, 18),
+		LayoutOrder = order,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Parent = self._shopList,
+	})
+	order += 1
+	livesHeader.LayoutOrder = 0
+
+	for _, entry in ipairs(snapshot.shop or {}) do
 		order += 1
 		local canBuy = entry.canBuy == true
 		local button = create("TextButton", {
@@ -289,6 +340,48 @@ function HudController._renderShop(self, snapshot)
 			end)
 		end
 	end
+
+	order += 1
+	create("TextLabel", {
+		Name = "UpgradesHeader",
+		BackgroundTransparency = 1,
+		Font = Enum.Font.GothamBold,
+		Text = "Upgrades",
+		TextColor3 = MUTED,
+		TextSize = 12,
+		Size = UDim2.new(1, -4, 0, 18),
+		LayoutOrder = order,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Parent = self._shopList,
+	})
+
+	for _, entry in ipairs(snapshot.upgradeShop or {}) do
+		order += 1
+		local canBuy = entry.canBuy == true
+		local button = create("TextButton", {
+			Name = "Upgrade_" .. entry.id,
+			BackgroundColor3 = if canBuy
+				then Color3.fromRGB(60, 50, 90)
+				else Color3.fromRGB(45, 45, 55),
+			BorderSizePixel = 0,
+			Font = Enum.Font.Gotham,
+			Text = string.format("%s L%d  %dg", entry.displayName, entry.level, entry.price),
+			TextColor3 = if canBuy then TEXT else MUTED,
+			TextSize = 13,
+			Size = UDim2.new(1, -4, 0, 32),
+			LayoutOrder = order,
+			AutoButtonColor = canBuy,
+			Parent = self._shopList,
+		})
+		create("UICorner", { CornerRadius = UDim.new(0, 6), Parent = button })
+		if canBuy then
+			button.MouseButton1Click:Connect(function()
+				if self._onBuyUpgrade ~= nil then
+					self._onBuyUpgrade(entry.id)
+				end
+			end)
+		end
+	end
 	self._shopList.CanvasSize = UDim2.fromOffset(0, order * 38)
 end
 
@@ -306,19 +399,23 @@ function HudController.render(self, snapshot)
 		tostring(snapshot.activeMaxHealth or 0)
 	)
 	self._metaLabel.Text = string.format(
-		"Lv %s  ·  Lives left %d  ·  Enemies %d",
+		"Lv %s  ·  Tier %s  ·  Lives %d  ·  E %d",
 		tostring(snapshot.level or 0),
+		tostring(snapshot.currentTier or "—"),
 		#(snapshot.roster or {}),
 		#(snapshot.enemies or {})
 	)
 
 	local currency = 0
+	local tLevel = snapshot.transcendenceLevel or 1
 	if snapshot.profile and type(snapshot.profile.currency) == "number" then
 		currency = snapshot.profile.currency
+		tLevel = snapshot.profile.transcendenceLevel or tLevel
 	end
 	self._currencyLabel.Text = string.format(
-		"Gold: %d  ·  Roster lives: %d",
+		"Gold: %d  ·  T%d  ·  Roster %d",
 		currency,
+		tLevel,
 		snapshot.profile and #(snapshot.profile.roster or {}) or 0
 	)
 
@@ -343,11 +440,21 @@ function HudController.render(self, snapshot)
 		then Color3.fromRGB(40, 70, 110)
 		else Color3.fromRGB(40, 40, 50)
 
-	self._restartButton.Visible = snapshot.runOver == true
+	local finished = snapshot.runOver == true
+		or snapshot.phase == "Victory"
+		or snapshot.phase == "GameOver"
+	self._restartButton.Visible = finished
+	self._restartButton.Text = if snapshot.victory or snapshot.phase == "Victory"
+		then "Continue (same T)"
+		else "Restart Run"
+	self._transcendButton.Visible = snapshot.victory == true or snapshot.phase == "Victory"
 	self:_renderShop(snapshot)
 
-	if snapshot.runOver then
-		self._logLabel.Text = "Run over. Buy lives in the shop, then Restart."
+	if snapshot.victory or snapshot.phase == "Victory" then
+		self._logLabel.Text = "VICTORY — King boss down. Shop, continue, or Transcend."
+		self._logLabel.TextColor3 = OK
+	elseif snapshot.runOver or snapshot.phase == "GameOver" then
+		self._logLabel.Text = "Run over. Buy lives/upgrades, then Restart."
 		self._logLabel.TextColor3 = DANGER
 	else
 		self._logLabel.TextColor3 = TEXT

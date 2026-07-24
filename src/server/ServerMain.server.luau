@@ -35,6 +35,7 @@ local profileStore = ProfileStore.new({
 local sessionMetrics: { [number]: any } = {}
 local lastResults: { [number]: any } = {}
 local pendingLoss: { [number]: boolean } = {}
+local settled: { [number]: boolean } = {}
 
 local chess = ReplicatedStorage:FindFirstChild("Chess")
 if chess == nil then
@@ -67,6 +68,8 @@ local submitMove = ensureRemoteEvent(remotes, "SubmitMove")
 local requestReroll = ensureRemoteEvent(remotes, "RequestReroll")
 local requestRestart = ensureRemoteEvent(remotes, "RequestRestart")
 local requestBuy = ensureRemoteEvent(remotes, "RequestBuy")
+local requestBuyUpgrade = ensureRemoteEvent(remotes, "RequestBuyUpgrade")
+local requestTranscend = ensureRemoteEvent(remotes, "RequestTranscend")
 local stateSync = ensureRemoteEvent(remotes, "StateSync")
 
 local function logMetric(userId: number, metrics)
@@ -86,7 +89,7 @@ end
 
 local function applyEnemyTurn(playerUserId: number)
 	local state = controller.runs[playerUserId]
-	if state == nil or state.activePiece == nil or state.runOver then
+	if state == nil or state.activePiece == nil or state.runOver or state.victory then
 		return
 	end
 	local destinations = EnemyAI.planMoves(state.enemies, state.activePosition, Config.BOARD_SIZE)
@@ -99,6 +102,13 @@ local function applyEnemyTurn(playerUserId: number)
 	end
 end
 
+local function runOptions(profile)
+	return {
+		upgrades = profile.upgrades,
+		transcendenceLevel = profile.transcendenceLevel,
+	}
+end
+
 local function publish(player, lastResult: any?)
 	local snapshot = controller:snapshot(player.UserId)
 	local profile = profileStore:get(player.UserId)
@@ -108,6 +118,7 @@ local function publish(player, lastResult: any?)
 		snapshot = {
 			phase = "Lobby",
 			runOver = true,
+			victory = false,
 			legalMoves = {},
 			enemies = {},
 			previews = {},
@@ -120,6 +131,8 @@ local function publish(player, lastResult: any?)
 			invulnerable = false,
 			rerollsRemaining = 0,
 			roundsPlayed = 0,
+			currentTier = "Pawn",
+			transcendenceLevel = profile and profile.transcendenceLevel or 1,
 		}
 	end
 
@@ -129,9 +142,12 @@ local function publish(player, lastResult: any?)
 	snapshot.lastResult = lastResults[player.UserId]
 	snapshot.profile = profile
 	snapshot.metrics = if metrics then metrics:snapshot() else nil
+
 	snapshot.shop = {}
 	for pieceName, stats in pairs(Config.PIECES) do
 		table.insert(snapshot.shop, {
+			kind = "piece",
+			id = pieceName,
 			piece = pieceName,
 			price = stats.price,
 			canBuy = profile ~= nil and select(1, ProfileRules.canBuy(profile, pieceName, Config)),
@@ -139,6 +155,23 @@ local function publish(player, lastResult: any?)
 	end
 	table.sort(snapshot.shop, function(a, b)
 		return a.price < b.price
+	end)
+
+	snapshot.upgradeShop = {}
+	for name, def in pairs(Config.UPGRADES) do
+		local level = profile and profile.upgrades[name] or 0
+		table.insert(snapshot.upgradeShop, {
+			id = name,
+			displayName = def.displayName,
+			price = def.price,
+			level = level,
+			maxLevel = def.maxLevel,
+			canBuy = profile ~= nil
+				and select(1, ProfileRules.canBuyUpgrade(profile, name, Config)),
+		})
+	end
+	table.sort(snapshot.upgradeShop, function(a, b)
+		return a.id < b.id
 	end)
 
 	player:SetAttribute("ActivePiece", snapshot.activePiece)
@@ -151,15 +184,21 @@ local function publish(player, lastResult: any?)
 	player:SetAttribute("EnemyCount", snapshot.enemies and #snapshot.enemies or 0)
 	player:SetAttribute("Invulnerable", snapshot.invulnerable == true)
 	player:SetAttribute("RunOver", snapshot.runOver == true)
+	player:SetAttribute("Victory", snapshot.victory == true)
 	player:SetAttribute("RerollsRemaining", snapshot.rerollsRemaining or 0)
 	player:SetAttribute("Phase", snapshot.phase)
 	player:SetAttribute("Currency", profile and profile.currency or 0)
+	player:SetAttribute("Transcendence", profile and profile.transcendenceLevel or 1)
+	player:SetAttribute("CurrentTier", snapshot.currentTier or "")
 
 	stateSync:FireClient(player, snapshot)
 end
 
 local function settleRunEnd(player, reason: string)
 	local userId = player.UserId
+	if settled[userId] then
+		return
+	end
 	local snapshot = controller:snapshot(userId)
 	if snapshot == nil then
 		return
@@ -170,19 +209,27 @@ local function settleRunEnd(player, reason: string)
 		return
 	end
 
+	local outcome = if reason == "victory" then "victory" else "defeat"
 	local updated, payout =
-		ProfileRules.awardRunEnd(profile, snapshot.level, snapshot.roundsPlayed, Config)
+		ProfileRules.awardRunEnd(profile, snapshot.level, snapshot.roundsPlayed, Config, outcome)
 	profileStore:set(userId, updated)
 	profileStore:save(userId)
 	metrics:recordRunEnd(snapshot.level, reason)
-	pendingLoss[userId] = true
+	settled[userId] = true
+	if outcome == "defeat" then
+		pendingLoss[userId] = true
+	else
+		pendingLoss[userId] = false
+	end
 	logMetric(userId, metrics)
 	print(
 		string.format(
-			"[CHESS_ECONOMY] userId=%d payout=%d currency=%d",
+			"[CHESS_ECONOMY] userId=%d outcome=%s payout=%d currency=%d T=%d",
 			userId,
+			outcome,
 			payout,
-			updated.currency
+			updated.currency,
+			updated.transcendenceLevel
 		)
 	)
 end
@@ -208,7 +255,8 @@ local function startRun(player)
 	local started = ProfileRules.recordRunStart(profile)
 	profileStore:set(userId, started)
 	metrics:recordRunStart()
-	controller:start(userId, started.roster)
+	settled[userId] = false
+	controller:start(userId, started.roster, runOptions(started))
 	lastResults[userId] = nil
 	publish(player, nil)
 end
@@ -232,7 +280,7 @@ submitMove.OnServerEvent:Connect(function(player, ...)
 		if metrics ~= nil then
 			metrics:recordRound()
 		end
-		if moveResult ~= nil and not moveResult.runOver then
+		if moveResult ~= nil and not moveResult.runOver and not moveResult.victory then
 			applyEnemyTurn(player.UserId)
 		end
 	end)
@@ -240,8 +288,12 @@ submitMove.OnServerEvent:Connect(function(player, ...)
 		warn(string.format("[CHESS_SECURITY] SubmitMove failed: %s", tostring(err)))
 		return
 	end
-	if moveResult ~= nil and moveResult.runOver then
-		settleRunEnd(player, "roster_exhausted")
+	if moveResult ~= nil then
+		if moveResult.victory then
+			settleRunEnd(player, "victory")
+		elseif moveResult.runOver then
+			settleRunEnd(player, "roster_exhausted")
+		end
 	end
 	publish(player, moveResult)
 end)
@@ -321,11 +373,91 @@ requestBuy.OnServerEvent:Connect(function(player, ...)
 	publish(player, nil)
 end)
 
+requestBuyUpgrade.OnServerEvent:Connect(function(player, ...)
+	local packed = table.pack(...)
+	local snapshot = controller:snapshot(player.UserId)
+	local phase = if snapshot ~= nil then snapshot.phase else "Lobby"
+	local validated = guard:validateBuy(player.UserId, {
+		argc = select("#", ...),
+		args = packed,
+	}, { phase = phase })
+	if not validated.accepted then
+		warn(
+			string.format("[CHESS_SECURITY] rejected RequestBuyUpgrade reason=%s", validated.reason)
+		)
+		return
+	end
+	local upgradeName = packed[1]
+	local profile = profileStore:get(player.UserId)
+	if profile == nil then
+		return
+	end
+	local okBuy, nextProfile, reason = ProfileRules.buyUpgrade(profile, upgradeName, Config)
+	if not okBuy or nextProfile == nil then
+		warn(string.format("[CHESS_SHOP] upgrade failed reason=%s", tostring(reason)))
+		publish(player, nil)
+		return
+	end
+	profileStore:set(player.UserId, nextProfile)
+	profileStore:save(player.UserId)
+	print(
+		string.format(
+			"[CHESS_SHOP] userId=%d upgrade=%s level=%d currency=%d",
+			player.UserId,
+			upgradeName,
+			nextProfile.upgrades[upgradeName],
+			nextProfile.currency
+		)
+	)
+	publish(player, nil)
+end)
+
+requestTranscend.OnServerEvent:Connect(function(player, ...)
+	local packed = table.pack(...)
+	local snapshot = controller:snapshot(player.UserId)
+	local phase = if snapshot ~= nil then snapshot.phase else "NoRun"
+	local validated = guard:validateTranscend(player.UserId, {
+		argc = select("#", ...),
+		args = packed,
+	}, { phase = phase })
+	if not validated.accepted then
+		warn(
+			string.format("[CHESS_SECURITY] rejected RequestTranscend reason=%s", validated.reason)
+		)
+		return
+	end
+	local profile = profileStore:get(player.UserId)
+	if profile == nil then
+		return
+	end
+	local nextProfile = ProfileRules.transcend(profile)
+	profileStore:set(player.UserId, nextProfile)
+	profileStore:save(player.UserId)
+	print(
+		string.format(
+			"[CHESS_TRANSCEND] userId=%d T=%d",
+			player.UserId,
+			nextProfile.transcendenceLevel
+		)
+	)
+	-- Start a new run immediately at the higher transcendence.
+	pendingLoss[player.UserId] = false
+	settled[player.UserId] = false
+	local started = ProfileRules.recordRunStart(nextProfile)
+	profileStore:set(player.UserId, started)
+	local metrics = sessionMetrics[player.UserId]
+	if metrics ~= nil then
+		metrics:recordRunStart()
+	end
+	controller:start(player.UserId, started.roster, runOptions(started))
+	lastResults[player.UserId] = nil
+	publish(player, nil)
+end)
+
 Players.PlayerAdded:Connect(function(player)
 	local ok, _profile, err = profileStore:load(player.UserId)
 	if not ok then
 		warn("[CHESS_PROFILE] load failed: " .. tostring(err))
-		-- Fall back to default in memory
 		local _, fallback = ProfileRules.normalize(nil, Config)
 		profileStore._sessions[player.UserId] = { profile = fallback, dirty = true }
 	end
@@ -339,6 +471,7 @@ Players.PlayerRemoving:Connect(function(player)
 	sessionMetrics[player.UserId] = nil
 	lastResults[player.UserId] = nil
 	pendingLoss[player.UserId] = nil
+	settled[player.UserId] = nil
 end)
 
 for _, player in ipairs(Players:GetPlayers()) do

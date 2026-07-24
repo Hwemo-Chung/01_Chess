@@ -14,6 +14,25 @@ function SpawnRules.enemyCountForLevel(
 	return math.min(count, cap)
 end
 
+-- Returns (tierPieceType, isKingBossStage).
+-- Levels 1..cap: count ramps, tier stays Pawn.
+-- Levels cap+1..: count fixed at cap, tier climbs Knight→…→King.
+function SpawnRules.tierForLevel(
+	level: number,
+	cap: number,
+	tierOrder: { string }
+): (string, boolean)
+	assert(level >= 1, "level must be at least 1")
+	assert(type(tierOrder) == "table" and #tierOrder > 0, "tierOrder required")
+	if level <= cap then
+		return tierOrder[1], false
+	end
+	-- level = cap+1 → index 2 (Knight when order starts with Pawn)
+	local index = math.min(level - cap + 1, #tierOrder)
+	local tier = tierOrder[index]
+	return tier, tier == "King"
+end
+
 -- 36 tiles total, minus 1 for the player, is the hard ceiling this asserts.
 -- Proven necessary in the PRD (§6.2) via the pigeonhole principle: an
 -- uncapped count against a fixed board always eventually exceeds it.

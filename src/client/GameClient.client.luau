@@ -100,6 +100,25 @@ hud:onBuy(function(pieceType)
 	end
 end)
 
+hud:onBuyUpgrade(function(upgradeId)
+	local request = remote("RequestBuyUpgrade")
+	if request ~= nil then
+		request:FireServer(upgradeId)
+	end
+end)
+
+hud:onTranscend(function()
+	if
+		latestSnapshot == nil or not (latestSnapshot.victory or latestSnapshot.phase == "Victory")
+	then
+		return
+	end
+	local request = remote("RequestTranscend")
+	if request ~= nil then
+		request:FireServer()
+	end
+end)
+
 local stateSync = remote("StateSync")
 if stateSync ~= nil then
 	stateSync.OnClientEvent:Connect(applySnapshot)

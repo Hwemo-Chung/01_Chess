@@ -57,6 +57,18 @@ case("farthestSafeSquare / nil when the board has no safe square at all", functi
 	assert(target == nil, "expected nil when no safe square exists")
 end)
 
+case("tierForLevel / ramps Pawn then climbs after cap", function()
+	local order = { "Pawn", "Knight", "Bishop", "Rook", "Queen", "King" }
+	local t1, boss1 = SpawnRules.tierForLevel(1, 12, order)
+	assert(t1 == "Pawn" and not boss1, "level 1")
+	local t12, boss12 = SpawnRules.tierForLevel(12, 12, order)
+	assert(t12 == "Pawn" and not boss12, "level 12 still pawn")
+	local t13, boss13 = SpawnRules.tierForLevel(13, 12, order)
+	assert(t13 == "Knight" and not boss13, "level 13 knight")
+	local t17, boss17 = SpawnRules.tierForLevel(17, 12, order)
+	assert(t17 == "King" and boss17, "level 17 king boss")
+end)
+
 return function()
 	for _, entry in ipairs(cases) do
 		local ok, err = pcall(entry.body)
