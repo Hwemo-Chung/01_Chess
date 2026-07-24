@@ -73,6 +73,44 @@ case("resolvePierceTarget / Pawn and Knight never pierce", function()
 	assert(target == nil, "only Rook has a pierce ability in the MVP set")
 end)
 
+case("critChanceForAttack / Bishop scales with distance and caps", function()
+	local Config = require("../src/shared/Config")
+	local stats = Config.PIECES.Bishop
+	local near = CombatRules.critChanceForAttack(
+		"Bishop",
+		stats,
+		{ x = 1, z = 1 },
+		{ x = 2, z = 2 },
+		Config
+	)
+	assert(near == 0.15, "distance 1 crit should be base 15%")
+	local far = CombatRules.critChanceForAttack(
+		"Bishop",
+		stats,
+		{ x = 1, z = 1 },
+		{ x = 6, z = 6 },
+		Config
+	)
+	assert(far == 0.30, "long diagonal should cap at 30%, got " .. tostring(far))
+end)
+
+case("previewDestination / attack summarizes kill and take", function()
+	local Config = require("../src/shared/Config")
+	local preview = CombatRules.previewDestination(
+		"Pawn",
+		Config.PIECES.Pawn,
+		{ x = 1, z = 1 },
+		{ x = 2, z = 1 },
+		{ x = 2, z = 1, health = 10, attack = 3 },
+		false,
+		20,
+		Config
+	)
+	assert(preview.kind == "attack", "expected attack preview")
+	assert(preview.damageTaken == 3, "expected enemy attack as taken")
+	assert(preview.baseDamage == 5, "pawn base damage")
+end)
+
 return function()
 	for _, entry in ipairs(cases) do
 		local ok, err = pcall(entry.body)

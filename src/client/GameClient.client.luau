@@ -93,6 +93,13 @@ hud:onRestart(function()
 	end
 end)
 
+hud:onBuy(function(pieceType)
+	local request = remote("RequestBuy")
+	if request ~= nil then
+		request:FireServer(pieceType)
+	end
+end)
+
 local stateSync = remote("StateSync")
 if stateSync ~= nil then
 	stateSync.OnClientEvent:Connect(applySnapshot)

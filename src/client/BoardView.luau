@@ -1,4 +1,4 @@
--- Renders the 6x6 board, player piece, enemies, and legal-move highlights.
+-- Renders the 6x6 board, player piece, enemies, legal-move highlights + damage preview labels.
 local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -13,6 +13,7 @@ local LIGHT = Color3.fromRGB(232, 220, 196)
 local DARK = Color3.fromRGB(92, 72, 54)
 local HIGHLIGHT_MOVE = Color3.fromRGB(80, 200, 120)
 local HIGHLIGHT_ATTACK = Color3.fromRGB(220, 80, 70)
+local HIGHLIGHT_LETHAL = Color3.fromRGB(255, 40, 40)
 local PLAYER_COLOR = Color3.fromRGB(90, 180, 255)
 local ENEMY_COLOR = Color3.fromRGB(220, 90, 90)
 local INVULN_COLOR = Color3.fromRGB(255, 230, 100)
@@ -20,7 +21,10 @@ local INVULN_COLOR = Color3.fromRGB(255, 230, 100)
 local PIECE_LABEL = {
 	Pawn = "P",
 	Knight = "N",
+	Bishop = "B",
 	Rook = "R",
+	Queen = "Q",
+	King = "K",
 }
 
 local function makePart(props)
@@ -31,20 +35,21 @@ local function makePart(props)
 	return part
 end
 
-local function attachBillboard(part: BasePart, text: string, textColor: Color3)
+local function attachBillboard(part: BasePart, text: string, textColor: Color3, studsY: number?)
 	local gui = Instance.new("BillboardGui")
 	gui.Name = "Label"
-	gui.Size = UDim2.fromOffset(80, 40)
-	gui.StudsOffset = Vector3.new(0, 2.2, 0)
+	gui.Size = UDim2.fromOffset(110, 48)
+	gui.StudsOffset = Vector3.new(0, studsY or 2.2, 0)
 	gui.AlwaysOnTop = true
 	gui.Parent = part
 	local label = Instance.new("TextLabel")
 	label.BackgroundTransparency = 1
 	label.Size = UDim2.fromScale(1, 1)
 	label.Font = Enum.Font.GothamBold
-	label.TextSize = 22
+	label.TextSize = 16
 	label.TextColor3 = textColor
-	label.TextStrokeTransparency = 0.4
+	label.TextStrokeTransparency = 0.35
+	label.TextWrapped = true
 	label.Text = text
 	label.Parent = gui
 	return label
@@ -123,22 +128,31 @@ function BoardView.clearHighlights(self)
 	self._highlights:ClearAllChildren()
 end
 
-function BoardView.setHighlights(self, legalMoves, enemies)
+function BoardView.setHighlights(self, legalMoves, enemies, previews)
 	self:clearHighlights()
 	local enemySet: { [string]: boolean } = {}
 	for _, enemy in ipairs(enemies or {}) do
 		enemySet[enemy.x .. "," .. enemy.z] = true
 	end
+	previews = previews or {}
 	for _, move in ipairs(legalMoves or {}) do
+		local key = move.x .. "," .. move.z
 		local worldX, worldY, worldZ = BoardLayout.gridToWorld(move.x, move.z)
-		local isAttack = enemySet[move.x .. "," .. move.z] == true
+		local isAttack = enemySet[key] == true
+		local preview = previews[key]
+		local color = HIGHLIGHT_MOVE
+		if isAttack then
+			color = if preview and preview.playerDiesIfHit
+				then HIGHLIGHT_LETHAL
+				else HIGHLIGHT_ATTACK
+		end
 		local marker = makePart({
 			Name = string.format("Highlight_%d_%d", move.x, move.z),
 			Anchored = true,
 			CanCollide = false,
 			CanQuery = false,
 			Material = Enum.Material.Neon,
-			Color = if isAttack then HIGHLIGHT_ATTACK else HIGHLIGHT_MOVE,
+			Color = color,
 			Transparency = 0.35,
 			Size = Vector3.new(BoardLayout.TILE_SIZE - 1.2, 0.2, BoardLayout.TILE_SIZE - 1.2),
 			Position = Vector3.new(worldX, worldY + 0.45, worldZ),
@@ -146,6 +160,9 @@ function BoardView.setHighlights(self, legalMoves, enemies)
 		})
 		marker:SetAttribute("GridX", move.x)
 		marker:SetAttribute("GridZ", move.z)
+		if preview ~= nil and preview.kind == "attack" then
+			attachBillboard(marker, preview.summary, Color3.fromRGB(255, 245, 220), 1.4)
+		end
 	end
 end
 
@@ -154,7 +171,11 @@ function BoardView.render(self, snapshot)
 		return
 	end
 
-	-- Player piece
+	if snapshot.activePosition == nil or snapshot.activePiece == nil then
+		self:clearHighlights()
+		return
+	end
+
 	local pos = snapshot.activePosition
 	local px, py, pz = BoardLayout.gridToPieceWorld(pos.x, pos.z)
 	if self._playerPart == nil or self._playerPart.Parent == nil then
@@ -183,7 +204,6 @@ function BoardView.render(self, snapshot)
 		end
 	end
 
-	-- Enemies
 	for _, part in ipairs(self._enemyParts) do
 		part:Destroy()
 	end
@@ -209,7 +229,7 @@ function BoardView.render(self, snapshot)
 	if snapshot.runOver then
 		self:clearHighlights()
 	else
-		self:setHighlights(snapshot.legalMoves, snapshot.enemies)
+		self:setHighlights(snapshot.legalMoves, snapshot.enemies, snapshot.previews)
 	end
 end
 

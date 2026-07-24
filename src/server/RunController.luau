@@ -1,7 +1,4 @@
--- Server-authoritative wrapper around one RunState per player. All
--- Roblox-facing code (ServerMain) talks to this, never to RunState directly.
--- Prefer dependency injection for RunState/Config so Lune tests and Roblox
--- ServerMain resolve modules without runtime branching on `game`.
+-- Server-authoritative wrapper around one RunState per player.
 local RunController = {}
 RunController.__index = RunController
 
@@ -54,6 +51,10 @@ function RunController.snapshot(self, playerUserId: number)
 		return nil
 	end
 	return state:snapshot()
+end
+
+function RunController.clear(self, playerUserId: number)
+	self.runs[playerUserId] = nil
 end
 
 return RunController

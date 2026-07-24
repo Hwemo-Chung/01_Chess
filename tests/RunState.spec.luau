@@ -191,6 +191,31 @@ case("snapshot / exposes legalMoves, phase, and rerollsRemaining", function()
 	expectEqual(snapshot.phase, "Turn", "fresh run is Turn phase")
 	expectEqual(snapshot.rerollsRemaining, 1, "one reroll available after assign")
 	expectEqual(snapshot.runOver, false, "run is not over")
+	assert(type(snapshot.previews) == "table", "previews present")
+end)
+
+case("applyPlayerMove / King takes half incoming damage", function()
+	local state = RunState.new({ "King" }, 1, Config)
+	state:assignRandomPiece()
+	state:_debugSetInvulnerable(false)
+	local origin = state:snapshot().activePosition
+	state:_debugSetEnemies({
+		{ x = origin.x + 1, z = origin.z, health = 9999, maxHealth = 9999, attack = 10 },
+	})
+	local result = state:applyPlayerMove({ x = origin.x + 1, z = origin.z })
+	expectEqual(result.playerDamageTaken, 5, "King incoming ×0.5 on attack 10")
+end)
+
+case("applyPlayerMove / Queen takes 1.5x incoming damage", function()
+	local state = RunState.new({ "Queen" }, 1, Config)
+	state:assignRandomPiece()
+	state:_debugSetInvulnerable(false)
+	local origin = state:snapshot().activePosition
+	state:_debugSetEnemies({
+		{ x = origin.x + 1, z = origin.z, health = 9999, maxHealth = 9999, attack = 4 },
+	})
+	local result = state:applyPlayerMove({ x = origin.x + 1, z = origin.z })
+	expectEqual(result.playerDamageTaken, 6, "Queen incoming ×1.5 on attack 4")
 end)
 
 return function()

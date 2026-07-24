@@ -36,6 +36,12 @@ local suites = {
 	BoardLayout = function()
 		return require("./BoardLayout.spec")
 	end,
+	ProfileRules = function()
+		return require("./ProfileRules.spec")
+	end,
+	Metrics = function()
+		return require("./Metrics.spec")
+	end,
 }
 
 local total = 0

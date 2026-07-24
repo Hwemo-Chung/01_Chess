@@ -1,26 +1,40 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local DataStoreService = game:GetService("DataStoreService")
 
 local RunController = require(script.Parent.RunController)
 local RemoteGuard = require(script.Parent.RemoteGuard)
 local EnemyAI = require(script.Parent.EnemyAI)
+local ProfileStore = require(script.Parent.ProfileStore)
 
 local Shared = ReplicatedStorage:WaitForChild("Chess"):WaitForChild("Shared")
 local RunState = require(Shared:WaitForChild("RunState"))
 local Config = require(Shared:WaitForChild("Config"))
-
-local MVP_ROSTER = { "Pawn", "Knight", "Rook" }
+local ProfileRules = require(Shared:WaitForChild("ProfileRules"))
+local Metrics = require(Shared:WaitForChild("Metrics"))
 
 local controller = RunController.new({
 	clock = os.clock,
 	seedForPlayer = function(userId)
-		-- Mix wall clock so restarts don't replay the same seed forever.
 		return (userId * 10007 + math.floor(os.clock() * 1000)) % 2147483646 + 1
 	end,
 	RunState = RunState,
 	Config = Config,
 })
 local guard = RemoteGuard.new(os.clock)
+
+local profileStore = ProfileStore.new({
+	config = Config,
+	ProfileRules = ProfileRules,
+	getDataStore = function()
+		return DataStoreService:GetDataStore("ChessProfiles_v1")
+	end,
+	clock = os.clock,
+})
+
+local sessionMetrics: { [number]: any } = {}
+local lastResults: { [number]: any } = {}
+local pendingLoss: { [number]: boolean } = {}
 
 local chess = ReplicatedStorage:FindFirstChild("Chess")
 if chess == nil then
@@ -52,9 +66,23 @@ end
 local submitMove = ensureRemoteEvent(remotes, "SubmitMove")
 local requestReroll = ensureRemoteEvent(remotes, "RequestReroll")
 local requestRestart = ensureRemoteEvent(remotes, "RequestRestart")
+local requestBuy = ensureRemoteEvent(remotes, "RequestBuy")
 local stateSync = ensureRemoteEvent(remotes, "StateSync")
 
-local lastResults: { [number]: any } = {}
+local function logMetric(userId: number, metrics)
+	local snap = metrics:snapshot()
+	print(
+		string.format(
+			"[CHESS_METRICS] userId=%d runsStarted=%d runsEnded=%d restartsAfterLoss=%d rate=%.3f roundsSession=%d",
+			userId,
+			snap.runsStarted,
+			snap.runsEnded,
+			snap.restartsAfterLoss,
+			snap.restartAfterLossRate,
+			snap.roundsThisSession
+		)
+	)
+end
 
 local function applyEnemyTurn(playerUserId: number)
 	local state = controller.runs[playerUserId]
@@ -73,28 +101,116 @@ end
 
 local function publish(player, lastResult: any?)
 	local snapshot = controller:snapshot(player.UserId)
+	local profile = profileStore:get(player.UserId)
+	local metrics = sessionMetrics[player.UserId]
+
 	if snapshot == nil then
-		return
+		snapshot = {
+			phase = "Lobby",
+			runOver = true,
+			legalMoves = {},
+			enemies = {},
+			previews = {},
+			roster = profile and profile.roster or {},
+			level = 0,
+			activePiece = nil,
+			activeHealth = 0,
+			activeMaxHealth = 0,
+			activePosition = { x = 3, z = 3 },
+			invulnerable = false,
+			rerollsRemaining = 0,
+			roundsPlayed = 0,
+		}
 	end
+
 	if lastResult ~= nil then
 		lastResults[player.UserId] = lastResult
 	end
 	snapshot.lastResult = lastResults[player.UserId]
+	snapshot.profile = profile
+	snapshot.metrics = if metrics then metrics:snapshot() else nil
+	snapshot.shop = {}
+	for pieceName, stats in pairs(Config.PIECES) do
+		table.insert(snapshot.shop, {
+			piece = pieceName,
+			price = stats.price,
+			canBuy = profile ~= nil and select(1, ProfileRules.canBuy(profile, pieceName, Config)),
+		})
+	end
+	table.sort(snapshot.shop, function(a, b)
+		return a.price < b.price
+	end)
 
 	player:SetAttribute("ActivePiece", snapshot.activePiece)
-	player:SetAttribute("ActiveHealth", snapshot.activeHealth)
-	player:SetAttribute("ActiveMaxHealth", snapshot.activeMaxHealth)
-	player:SetAttribute("Level", snapshot.level)
-	player:SetAttribute("PositionX", snapshot.activePosition.x)
-	player:SetAttribute("PositionZ", snapshot.activePosition.z)
-	player:SetAttribute("RosterCount", #snapshot.roster)
-	player:SetAttribute("EnemyCount", #snapshot.enemies)
-	player:SetAttribute("Invulnerable", snapshot.invulnerable)
-	player:SetAttribute("RunOver", snapshot.runOver)
-	player:SetAttribute("RerollsRemaining", snapshot.rerollsRemaining)
+	player:SetAttribute("ActiveHealth", snapshot.activeHealth or 0)
+	player:SetAttribute("ActiveMaxHealth", snapshot.activeMaxHealth or 0)
+	player:SetAttribute("Level", snapshot.level or 0)
+	player:SetAttribute("PositionX", snapshot.activePosition and snapshot.activePosition.x or 0)
+	player:SetAttribute("PositionZ", snapshot.activePosition and snapshot.activePosition.z or 0)
+	player:SetAttribute("RosterCount", snapshot.roster and #snapshot.roster or 0)
+	player:SetAttribute("EnemyCount", snapshot.enemies and #snapshot.enemies or 0)
+	player:SetAttribute("Invulnerable", snapshot.invulnerable == true)
+	player:SetAttribute("RunOver", snapshot.runOver == true)
+	player:SetAttribute("RerollsRemaining", snapshot.rerollsRemaining or 0)
 	player:SetAttribute("Phase", snapshot.phase)
+	player:SetAttribute("Currency", profile and profile.currency or 0)
 
 	stateSync:FireClient(player, snapshot)
+end
+
+local function settleRunEnd(player, reason: string)
+	local userId = player.UserId
+	local snapshot = controller:snapshot(userId)
+	if snapshot == nil then
+		return
+	end
+	local profile = profileStore:get(userId)
+	local metrics = sessionMetrics[userId]
+	if profile == nil or metrics == nil then
+		return
+	end
+
+	local updated, payout =
+		ProfileRules.awardRunEnd(profile, snapshot.level, snapshot.roundsPlayed, Config)
+	profileStore:set(userId, updated)
+	profileStore:save(userId)
+	metrics:recordRunEnd(snapshot.level, reason)
+	pendingLoss[userId] = true
+	logMetric(userId, metrics)
+	print(
+		string.format(
+			"[CHESS_ECONOMY] userId=%d payout=%d currency=%d",
+			userId,
+			payout,
+			updated.currency
+		)
+	)
+end
+
+local function startRun(player)
+	local userId = player.UserId
+	local profile = profileStore:get(userId)
+	assert(profile ~= nil, "profile required")
+	local metrics = sessionMetrics[userId]
+	if metrics == nil then
+		metrics = Metrics.new(os.clock)
+		sessionMetrics[userId] = metrics
+	end
+
+	if pendingLoss[userId] then
+		local nextProfile = ProfileRules.recordRestartAfterLoss(profile)
+		profileStore:set(userId, nextProfile)
+		profile = nextProfile
+		metrics:recordRestartAfterLoss()
+		pendingLoss[userId] = false
+	end
+
+	local started = ProfileRules.recordRunStart(profile)
+	profileStore:set(userId, started)
+	metrics:recordRunStart()
+	controller:start(userId, started.roster)
+	lastResults[userId] = nil
+	publish(player, nil)
 end
 
 submitMove.OnServerEvent:Connect(function(player, ...)
@@ -112,6 +228,10 @@ submitMove.OnServerEvent:Connect(function(player, ...)
 	local moveResult = nil
 	local ok, err = pcall(function()
 		moveResult = controller:submitMove(player.UserId, packed[1], packed[2])
+		local metrics = sessionMetrics[player.UserId]
+		if metrics ~= nil then
+			metrics:recordRound()
+		end
 		if moveResult ~= nil and not moveResult.runOver then
 			applyEnemyTurn(player.UserId)
 		end
@@ -119,6 +239,9 @@ submitMove.OnServerEvent:Connect(function(player, ...)
 	if not ok then
 		warn(string.format("[CHESS_SECURITY] SubmitMove failed: %s", tostring(err)))
 		return
+	end
+	if moveResult ~= nil and moveResult.runOver then
+		settleRunEnd(player, "roster_exhausted")
 	end
 	publish(player, moveResult)
 end)
@@ -158,24 +281,73 @@ requestRestart.OnServerEvent:Connect(function(player, ...)
 		warn(string.format("[CHESS_SECURITY] rejected RequestRestart reason=%s", validated.reason))
 		return
 	end
-	controller:restart(player.UserId, MVP_ROSTER)
-	lastResults[player.UserId] = nil
+	startRun(player)
+end)
+
+requestBuy.OnServerEvent:Connect(function(player, ...)
+	local packed = table.pack(...)
+	local snapshot = controller:snapshot(player.UserId)
+	local phase = if snapshot ~= nil then snapshot.phase else "Lobby"
+	local validated = guard:validateBuy(player.UserId, {
+		argc = select("#", ...),
+		args = packed,
+	}, { phase = phase })
+	if not validated.accepted then
+		warn(string.format("[CHESS_SECURITY] rejected RequestBuy reason=%s", validated.reason))
+		return
+	end
+	local pieceType = packed[1]
+	local profile = profileStore:get(player.UserId)
+	if profile == nil then
+		return
+	end
+	local okBuy, nextProfile, reason = ProfileRules.buy(profile, pieceType, Config)
+	if not okBuy or nextProfile == nil then
+		warn(string.format("[CHESS_SHOP] buy failed reason=%s", tostring(reason)))
+		publish(player, nil)
+		return
+	end
+	profileStore:set(player.UserId, nextProfile)
+	profileStore:save(player.UserId)
+	print(
+		string.format(
+			"[CHESS_SHOP] userId=%d bought=%s currency=%d roster=%d",
+			player.UserId,
+			pieceType,
+			nextProfile.currency,
+			#nextProfile.roster
+		)
+	)
 	publish(player, nil)
 end)
 
 Players.PlayerAdded:Connect(function(player)
-	controller:start(player.UserId, MVP_ROSTER)
-	lastResults[player.UserId] = nil
-	publish(player, nil)
+	local ok, _profile, err = profileStore:load(player.UserId)
+	if not ok then
+		warn("[CHESS_PROFILE] load failed: " .. tostring(err))
+		-- Fall back to default in memory
+		local _, fallback = ProfileRules.normalize(nil, Config)
+		profileStore._sessions[player.UserId] = { profile = fallback, dirty = true }
+	end
+	sessionMetrics[player.UserId] = Metrics.new(os.clock)
+	startRun(player)
 end)
 
 Players.PlayerRemoving:Connect(function(player)
-	controller.runs[player.UserId] = nil
+	profileStore:release(player.UserId)
+	controller:clear(player.UserId)
+	sessionMetrics[player.UserId] = nil
 	lastResults[player.UserId] = nil
+	pendingLoss[player.UserId] = nil
 end)
 
 for _, player in ipairs(Players:GetPlayers()) do
-	controller:start(player.UserId, MVP_ROSTER)
-	lastResults[player.UserId] = nil
-	publish(player, nil)
+	local ok, _, err = profileStore:load(player.UserId)
+	if not ok then
+		warn("[CHESS_PROFILE] load failed: " .. tostring(err))
+		local _, fallback = ProfileRules.normalize(nil, Config)
+		profileStore._sessions[player.UserId] = { profile = fallback, dirty = true }
+	end
+	sessionMetrics[player.UserId] = Metrics.new(os.clock)
+	startRun(player)
 end

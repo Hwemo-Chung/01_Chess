@@ -1,4 +1,4 @@
--- ScreenGui HUD: piece/HP/level/roster + reroll + restart + last combat log.
+-- ScreenGui HUD: combat status, metrics, shop buttons, reroll/restart.
 local HudController = {}
 HudController.__index = HudController
 
@@ -7,7 +7,7 @@ local TEXT = Color3.fromRGB(240, 246, 255)
 local MUTED = Color3.fromRGB(160, 178, 205)
 local ACCENT = Color3.fromRGB(90, 180, 255)
 local DANGER = Color3.fromRGB(244, 114, 140)
-local OK = Color3.fromRGB(110, 220, 150)
+local GOLD = Color3.fromRGB(240, 200, 90)
 
 local function create(className: string, props)
 	local instance = Instance.new(className)
@@ -29,16 +29,15 @@ function HudController.new(player: Player)
 	local top = create("Frame", {
 		Name = "TopBar",
 		BackgroundColor3 = PANEL,
-		BackgroundTransparency = 0.15,
+		BackgroundTransparency = 0.12,
 		BorderSizePixel = 0,
 		Position = UDim2.fromOffset(16, 16),
-		Size = UDim2.fromOffset(360, 132),
+		Size = UDim2.fromOffset(380, 150),
 		Parent = gui,
 	})
 	create("UICorner", { CornerRadius = UDim.new(0, 10), Parent = top })
-	create("UIStroke", { Color = Color3.fromRGB(60, 85, 120), Thickness = 1, Parent = top })
 
-	local title = create("TextLabel", {
+	create("TextLabel", {
 		Name = "Title",
 		BackgroundTransparency = 1,
 		Font = Enum.Font.GothamBold,
@@ -59,7 +58,7 @@ function HudController.new(player: Player)
 		TextColor3 = TEXT,
 		TextSize = 18,
 		TextXAlignment = Enum.TextXAlignment.Left,
-		Position = UDim2.fromOffset(14, 34),
+		Position = UDim2.fromOffset(14, 32),
 		Size = UDim2.new(1, -28, 0, 22),
 		Parent = top,
 	})
@@ -72,7 +71,7 @@ function HudController.new(player: Player)
 		TextColor3 = TEXT,
 		TextSize = 16,
 		TextXAlignment = Enum.TextXAlignment.Left,
-		Position = UDim2.fromOffset(14, 58),
+		Position = UDim2.fromOffset(14, 56),
 		Size = UDim2.new(1, -28, 0, 20),
 		Parent = top,
 	})
@@ -81,24 +80,37 @@ function HudController.new(player: Player)
 		Name = "Meta",
 		BackgroundTransparency = 1,
 		Font = Enum.Font.Gotham,
-		Text = "Lv —  ·  Lives —",
+		Text = "Lv —",
 		TextColor3 = MUTED,
 		TextSize = 14,
 		TextXAlignment = Enum.TextXAlignment.Left,
-		Position = UDim2.fromOffset(14, 82),
+		Position = UDim2.fromOffset(14, 78),
 		Size = UDim2.new(1, -28, 0, 18),
 		Parent = top,
 	})
 
-	local statusLabel = create("TextLabel", {
-		Name = "Status",
+	local currencyLabel = create("TextLabel", {
+		Name = "Currency",
+		BackgroundTransparency = 1,
+		Font = Enum.Font.GothamMedium,
+		Text = "Gold: 0",
+		TextColor3 = GOLD,
+		TextSize = 14,
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Position = UDim2.fromOffset(14, 98),
+		Size = UDim2.new(1, -28, 0, 18),
+		Parent = top,
+	})
+
+	local metricsLabel = create("TextLabel", {
+		Name = "Metrics",
 		BackgroundTransparency = 1,
 		Font = Enum.Font.Gotham,
-		Text = "Waiting for server…",
+		Text = "Metrics: —",
 		TextColor3 = MUTED,
-		TextSize = 13,
+		TextSize = 12,
 		TextXAlignment = Enum.TextXAlignment.Left,
-		Position = UDim2.fromOffset(14, 104),
+		Position = UDim2.fromOffset(14, 120),
 		Size = UDim2.new(1, -28, 0, 18),
 		Parent = top,
 	})
@@ -110,7 +122,7 @@ function HudController.new(player: Player)
 		BorderSizePixel = 0,
 		AnchorPoint = Vector2.new(0.5, 1),
 		Position = UDim2.new(0.5, 0, 1, -24),
-		Size = UDim2.fromOffset(520, 40),
+		Size = UDim2.fromOffset(560, 40),
 		Parent = gui,
 	})
 	create("UICorner", { CornerRadius = UDim.new(0, 8), Parent = logPanel })
@@ -118,7 +130,7 @@ function HudController.new(player: Player)
 		Name = "Text",
 		BackgroundTransparency = 1,
 		Font = Enum.Font.Gotham,
-		Text = "Click a highlighted square to move. Red = attack.",
+		Text = "Hover red tiles: damage preview. Click to move/attack.",
 		TextColor3 = TEXT,
 		TextSize = 14,
 		TextXAlignment = Enum.TextXAlignment.Center,
@@ -151,25 +163,68 @@ function HudController.new(player: Player)
 		TextSize = 18,
 		Visible = false,
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.42),
 		Size = UDim2.fromOffset(220, 56),
 		AutoButtonColor = true,
 		Parent = gui,
 	})
 	create("UICorner", { CornerRadius = UDim.new(0, 10), Parent = restartButton })
 
+	local shopFrame = create("Frame", {
+		Name = "Shop",
+		BackgroundColor3 = PANEL,
+		BackgroundTransparency = 0.1,
+		BorderSizePixel = 0,
+		Position = UDim2.new(1, -220, 0, 72),
+		Size = UDim2.fromOffset(204, 280),
+		Visible = false,
+		Parent = gui,
+	})
+	create("UICorner", { CornerRadius = UDim.new(0, 10), Parent = shopFrame })
+	create("TextLabel", {
+		Name = "ShopTitle",
+		BackgroundTransparency = 1,
+		Font = Enum.Font.GothamBold,
+		Text = "Shop (lives)",
+		TextColor3 = GOLD,
+		TextSize = 15,
+		Position = UDim2.fromOffset(10, 8),
+		Size = UDim2.new(1, -20, 0, 20),
+		TextXAlignment = Enum.TextXAlignment.Left,
+		Parent = shopFrame,
+	})
+	local shopList = create("ScrollingFrame", {
+		Name = "List",
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		Position = UDim2.fromOffset(8, 34),
+		Size = UDim2.new(1, -16, 1, -42),
+		CanvasSize = UDim2.fromOffset(0, 0),
+		ScrollBarThickness = 4,
+		Parent = shopFrame,
+	})
+	local shopLayout = create("UIListLayout", {
+		Padding = UDim.new(0, 6),
+		SortOrder = Enum.SortOrder.LayoutOrder,
+		Parent = shopList,
+	})
+
 	local self = setmetatable({
 		_gui = gui,
-		_title = title,
 		_pieceLabel = pieceLabel,
 		_hpLabel = hpLabel,
 		_metaLabel = metaLabel,
-		_statusLabel = statusLabel,
+		_currencyLabel = currencyLabel,
+		_metricsLabel = metricsLabel,
 		_logLabel = logLabel,
 		_rerollButton = rerollButton,
 		_restartButton = restartButton,
+		_shopFrame = shopFrame,
+		_shopList = shopList,
+		_shopLayout = shopLayout,
 		_onReroll = nil :: (() -> ())?,
 		_onRestart = nil :: (() -> ())?,
+		_onBuy = nil :: ((string) -> ())?,
 	}, HudController)
 
 	rerollButton.MouseButton1Click:Connect(function()
@@ -194,6 +249,49 @@ function HudController.onRestart(self, callback: () -> ())
 	self._onRestart = callback
 end
 
+function HudController.onBuy(self, callback: (string) -> ())
+	self._onBuy = callback
+end
+
+function HudController._renderShop(self, snapshot)
+	for _, child in ipairs(self._shopList:GetChildren()) do
+		if child:IsA("TextButton") then
+			child:Destroy()
+		end
+	end
+	local shop = snapshot.shop or {}
+	self._shopFrame.Visible = snapshot.runOver == true or snapshot.phase == "GameOver"
+	local order = 0
+	for _, entry in ipairs(shop) do
+		order += 1
+		local canBuy = entry.canBuy == true
+		local button = create("TextButton", {
+			Name = "Buy_" .. entry.piece,
+			BackgroundColor3 = if canBuy
+				then Color3.fromRGB(50, 80, 50)
+				else Color3.fromRGB(45, 45, 55),
+			BorderSizePixel = 0,
+			Font = Enum.Font.Gotham,
+			Text = string.format("%s  %d g", entry.piece, entry.price),
+			TextColor3 = if canBuy then TEXT else MUTED,
+			TextSize = 14,
+			Size = UDim2.new(1, -4, 0, 32),
+			LayoutOrder = order,
+			AutoButtonColor = canBuy,
+			Parent = self._shopList,
+		})
+		create("UICorner", { CornerRadius = UDim.new(0, 6), Parent = button })
+		if canBuy then
+			button.MouseButton1Click:Connect(function()
+				if self._onBuy ~= nil then
+					self._onBuy(entry.piece)
+				end
+			end)
+		end
+	end
+	self._shopList.CanvasSize = UDim2.fromOffset(0, order * 38)
+end
+
 function HudController.render(self, snapshot)
 	if snapshot == nil then
 		return
@@ -204,15 +302,38 @@ function HudController.render(self, snapshot)
 	self._pieceLabel.Text = string.format("Piece: %s%s", piece, inv)
 	self._hpLabel.Text = string.format(
 		"HP: %s / %s",
-		tostring(snapshot.activeHealth),
-		tostring(snapshot.activeMaxHealth)
+		tostring(snapshot.activeHealth or 0),
+		tostring(snapshot.activeMaxHealth or 0)
 	)
 	self._metaLabel.Text = string.format(
 		"Lv %s  ·  Lives left %d  ·  Enemies %d",
-		tostring(snapshot.level),
+		tostring(snapshot.level or 0),
 		#(snapshot.roster or {}),
 		#(snapshot.enemies or {})
 	)
+
+	local currency = 0
+	if snapshot.profile and type(snapshot.profile.currency) == "number" then
+		currency = snapshot.profile.currency
+	end
+	self._currencyLabel.Text = string.format(
+		"Gold: %d  ·  Roster lives: %d",
+		currency,
+		snapshot.profile and #(snapshot.profile.roster or {}) or 0
+	)
+
+	local m = snapshot.metrics
+	if type(m) == "table" then
+		self._metricsLabel.Text = string.format(
+			"Session rounds %d · restart-after-loss %d/%d (%.0f%%)",
+			m.roundsThisSession or 0,
+			m.restartsAfterLoss or 0,
+			m.runsEnded or 0,
+			(m.restartAfterLossRate or 0) * 100
+		)
+	else
+		self._metricsLabel.Text = "Metrics: waiting…"
+	end
 
 	local rerolls = snapshot.rerollsRemaining or 0
 	self._rerollButton.Text = string.format("Reroll (%d)", rerolls)
@@ -223,14 +344,13 @@ function HudController.render(self, snapshot)
 		else Color3.fromRGB(40, 40, 50)
 
 	self._restartButton.Visible = snapshot.runOver == true
+	self:_renderShop(snapshot)
 
 	if snapshot.runOver then
-		self._statusLabel.Text = "Run over — roster exhausted"
-		self._statusLabel.TextColor3 = DANGER
-		self._logLabel.Text = "All pieces lost. Restart to try again."
+		self._logLabel.Text = "Run over. Buy lives in the shop, then Restart."
+		self._logLabel.TextColor3 = DANGER
 	else
-		self._statusLabel.Text = "Your turn — click a green/red square"
-		self._statusLabel.TextColor3 = OK
+		self._logLabel.TextColor3 = TEXT
 	end
 
 	local last = snapshot.lastResult

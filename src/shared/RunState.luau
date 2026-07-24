@@ -30,6 +30,7 @@ function RunState.new(roster: { string }, seed: number, config: any)
 		level = 1,
 		enemies = {},
 		runOver = false,
+		roundsPlayed = 0,
 	}, RunState)
 end
 
@@ -40,8 +41,6 @@ local function drawFromRoster(self, excludePiece: string?)
 			table.insert(candidates, piece)
 		end
 	end
-	-- If excluding would empty the pool (e.g. a single-piece roster), fall
-	-- back to drawing from the full roster instead of erroring.
 	local pool = #candidates > 0 and candidates or self.roster
 	local index = math.floor(self._rng:next() * #pool) + 1
 	index = math.min(index, #pool)
@@ -55,22 +54,42 @@ local function drawFromRoster(self, excludePiece: string?)
 	return drawn
 end
 
+local function enemyCountCap(self): number
+	local cap = self._config.ENEMY_COUNT_CAP
+	-- Bishop active: half cap (PRD §6.4.2 — half board usable).
+	if self.activePiece == "Bishop" then
+		cap = math.max(1, math.floor(cap / 2))
+	end
+	return cap
+end
+
 local function spawnEnemiesForLevel(self)
 	local config = self._config
+	local cap = enemyCountCap(self)
 	local count = SpawnRules.enemyCountForLevel(
 		self.level,
-		config.ENEMY_COUNT_CAP,
+		cap,
 		config.ENEMY_START_COUNT,
 		config.ENEMY_COUNT_PER_LEVEL
 	)
 	assert(SpawnRules.fitsOnBoard(count, config.BOARD_SIZE), "enemy count must fit on the board")
+
+	local colorFilter: number? = nil
+	if self.activePiece == "Bishop" then
+		colorFilter = BoardRules.squareColor(self.activePosition)
+	end
+
 	local enemies = {}
 	local occupied = { [self.activePosition.x .. "," .. self.activePosition.z] = true }
+	local guard = 0
 	while #enemies < count do
+		guard += 1
+		assert(guard < 5000, "spawn loop failed to place enemies")
 		local x = math.floor(self._rng:next() * config.BOARD_SIZE) + 1
 		local z = math.floor(self._rng:next() * config.BOARD_SIZE) + 1
+		local colorOk = colorFilter == nil or (x + z) % 2 == colorFilter
 		local key = x .. "," .. z
-		if not occupied[key] then
+		if colorOk and not occupied[key] then
 			occupied[key] = true
 			table.insert(enemies, {
 				x = x,
@@ -84,9 +103,45 @@ local function spawnEnemiesForLevel(self)
 	self.enemies = enemies
 end
 
+-- When switching onto Bishop, recolor-place existing enemies onto same color (PRD §6.4.2).
+local function recolorEnemiesForBishop(self)
+	if self.activePiece ~= "Bishop" then
+		return
+	end
+	local color = BoardRules.squareColor(self.activePosition)
+	local config = self._config
+	local occupied = { [self.activePosition.x .. "," .. self.activePosition.z] = true }
+	for _, enemy in ipairs(self.enemies) do
+		if BoardRules.squareColor(enemy) == color then
+			occupied[enemy.x .. "," .. enemy.z] = true
+		end
+	end
+	for _, enemy in ipairs(self.enemies) do
+		if BoardRules.squareColor(enemy) ~= color then
+			local placed = false
+			for _ = 1, 200 do
+				local x = math.floor(self._rng:next() * config.BOARD_SIZE) + 1
+				local z = math.floor(self._rng:next() * config.BOARD_SIZE) + 1
+				if (x + z) % 2 == color then
+					local key = x .. "," .. z
+					if not occupied[key] then
+						occupied[key] = true
+						enemy.x = x
+						enemy.z = z
+						placed = true
+						break
+					end
+				end
+			end
+			assert(placed, "failed to recolor enemy for Bishop")
+		end
+	end
+end
+
 function RunState.assignRandomPiece(self)
 	local piece = drawFromRoster(self, nil)
 	local stats = self._config.PIECES[piece]
+	assert(stats ~= nil, "unknown piece in roster: " .. tostring(piece))
 	self.activePiece = piece
 	self.activeHealth = stats.maxHealth
 	self.activeMaxHealth = stats.maxHealth
@@ -97,6 +152,8 @@ function RunState.assignRandomPiece(self)
 	end
 	if #self.enemies == 0 then
 		spawnEnemiesForLevel(self)
+	else
+		recolorEnemiesForBishop(self)
 	end
 end
 
@@ -113,6 +170,7 @@ function RunState.reroll(self): boolean
 	self.activeHealth = stats.maxHealth
 	self.activeMaxHealth = stats.maxHealth
 	self.invulnerable = true
+	recolorEnemiesForBishop(self)
 	return true
 end
 
@@ -157,6 +215,8 @@ function RunState.applyPlayerMove(self, destination: BoardRules.Position)
 	end
 	assert(isLegal, "destination is not a legal move for the active piece")
 
+	self.roundsPlayed += 1
+
 	local pieceStats = self._config.PIECES[self.activePiece]
 	local result = {
 		playerDamageDealt = 0,
@@ -175,11 +235,17 @@ function RunState.applyPlayerMove(self, destination: BoardRules.Position)
 		return result
 	end
 
-	-- Origin BEFORE capture/land — pierce direction is origin → destination.
 	local origin = { x = self.activePosition.x, z = self.activePosition.z }
+	local critChance = CombatRules.critChanceForAttack(
+		self.activePiece,
+		pieceStats,
+		origin,
+		destination,
+		self._config
+	)
 
 	local attack = CombatRules.resolveAttack(
-		{ attack = pieceStats.attack, critChance = pieceStats.critChance },
+		{ attack = pieceStats.attack, critChance = critChance },
 		self._config.CRIT_DAMAGE_MULTIPLIER,
 		self._rng
 	)
@@ -189,8 +255,9 @@ function RunState.applyPlayerMove(self, destination: BoardRules.Position)
 	result.enemyDied = target.health <= 0
 
 	if not self.invulnerable then
-		result.playerDamageTaken = target.attack
-		self.activeHealth -= target.attack
+		local mult = pieceStats.incomingDamageMultiplier or 1
+		result.playerDamageTaken = target.attack * mult
+		self.activeHealth -= result.playerDamageTaken
 	end
 	self.invulnerable = false
 
@@ -259,10 +326,36 @@ local function copyPositions(positions)
 	return result
 end
 
+function RunState.previewsForActive(self)
+	if self.activePiece == nil or self.runOver then
+		return {}
+	end
+	local pieceStats = self._config.PIECES[self.activePiece]
+	local origin = self.activePosition
+	local previews = {}
+	for _, move in ipairs(self:legalMovesForActive()) do
+		local enemy = findEnemyAt(self.enemies, move)
+		local preview = CombatRules.previewDestination(
+			self.activePiece,
+			pieceStats,
+			origin,
+			move,
+			enemy,
+			self.invulnerable,
+			self.activeHealth,
+			self._config
+		)
+		previews[move.x .. "," .. move.z] = preview
+	end
+	return previews
+end
+
 function RunState.snapshot(self)
 	local legalMoves = {}
+	local previews = {}
 	if self.activePiece ~= nil and not self.runOver then
 		legalMoves = copyPositions(self:legalMovesForActive())
+		previews = self:previewsForActive()
 	end
 	return {
 		roster = copyArray(self.roster),
@@ -274,15 +367,14 @@ function RunState.snapshot(self)
 		level = self.level,
 		enemies = copyEnemies(self.enemies),
 		legalMoves = legalMoves,
+		previews = previews,
 		rerollsRemaining = math.max(0, self._config.REROLL_LIMIT - self.rerollsUsed),
 		runOver = self.runOver,
+		roundsPlayed = self.roundsPlayed,
 		phase = if self.runOver then "GameOver" else "Turn",
 	}
 end
 
--- Test-only seams. Never called outside tests/server RunController in ways
--- that bypass legality -- these exist purely so combat-resolution tests
--- don't have to depend on RNG-driven spawn placement to set up scenarios.
 function RunState._debugSetEnemies(self, enemies)
 	self.enemies = enemies
 end

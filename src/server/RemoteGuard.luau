@@ -1,12 +1,12 @@
 -- Pure validation and per-player accepted-request windows for untrusted
--- remote ingress. Mirrors 00_VS's RemoteGuard shape (sliding-window rate
--- limits, deterministic rejection precedence) for a different wire schema.
+-- remote ingress.
 local RemoteGuard = {}
 RemoteGuard.__index = RemoteGuard
 
 local MOVE_LIMIT = 4
 local REROLL_LIMIT = 1
 local RESTART_LIMIT = 1
+local BUY_LIMIT = 2
 local WINDOW_SECONDS = 1
 
 local function result(accepted: boolean, reason: string)
@@ -50,6 +50,7 @@ function RemoteGuard.new(clock: () -> number)
 		_moveWindows = {},
 		_rerollWindows = {},
 		_restartWindows = {},
+		_buyWindows = {},
 	}, RemoteGuard)
 end
 
@@ -101,6 +102,23 @@ function RemoteGuard.validateRestart(self, playerUserId: number, wire, snapshot)
 			WINDOW_SECONDS
 		)
 	then
+		return result(false, "rate_limited")
+	end
+	return result(true, "ok")
+end
+
+function RemoteGuard.validateBuy(self, playerUserId: number, wire, snapshot)
+	if not exactArgs(wire, 1) or type(wire.args[1]) ~= "string" then
+		return result(false, "bad_arguments")
+	end
+	-- Shop is available between runs only (GameOver / Lobby).
+	if type(snapshot) ~= "table" then
+		return result(false, "wrong_phase")
+	end
+	if snapshot.phase ~= "GameOver" and snapshot.phase ~= "Lobby" then
+		return result(false, "wrong_phase")
+	end
+	if not acceptedAt(self._clock, self._buyWindows, playerUserId, BUY_LIMIT, WINDOW_SECONDS) then
 		return result(false, "rate_limited")
 	end
 	return result(true, "ok")
