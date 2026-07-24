@@ -13,6 +13,8 @@
 **플레이 가능한 v1 루프 구현됨** — pure 규칙 엔진 + 서버 권위 + Studio 클라 + 상점/강화/초월 + 밸런스 시뮬.  
 Studio Play 시 **초기 StateSync 유실** 문제를 `RequestStateSync` + 재전송으로 수정함 (`ded614c`). **반드시 최신 `build/Chess.rbxlx`로 재빌드 후 플레이.**
 
+**[2026-07-24 추가]** 이미지 에셋 26장 생성 완료 (`assets/images/`). **다음 세션 최우선 작업 = 에셋 게임 적용** — `docs/PRD_ASSET_INTEGRATION.md` 참조. 아래 §8-1 지침 따를 것.
+
 ---
 
 ## 2. 제품 요약 (PRD v1.0)
@@ -170,6 +172,22 @@ mkdir -p build && rojo build default.project.json -o build/Chess.rbxlx
    → soft HP/ATK 분리 (`4e1b47b`)
 
 ---
+
+## 8-1. 다음 세션 작업 지침 — 에셋 적용 (최우선, 2026-07-24 지정)
+
+**단일 소스**: `docs/PRD_ASSET_INTEGRATION.md`. 아래는 실행 순서 요약.
+
+1. **시작 절차** §11 그대로 수행 (pull → 테스트 80 PASS 확인).
+2. `assets/images/` 26장 존재 확인 (`ls assets/images | wc -l` → 26).
+3. **작업 1 (수동, 유저 개입 필요)**: Studio Asset Manager → Bulk Import 26장 → rbxassetid를 PRD §7 기록표에 기입. **유저에게 업로드 요청 후 ID 수령이 첫 블로커** — ID 없으면 작업 2의 폴백(`0`) 구조까지만 진행하고 대기.
+4. **작업 2–5** PRD §6 커밋 단위 준수:
+   - `Config.ASSET_IDS` + `iconOrText` 폴백 헬퍼 (ID `0` = 텍스트 폴백, PRD §4.1)
+   - HUD 스탯/버튼 아이콘 → 상점/로스터 → 크리 아이콘 + 보스 배너
+   - **버튼을 ImageButton으로 교체 금지** — 기존 TextButton 유지 + ImageLabel 삽입 (PRD §4.2)
+5. **서버/엔진 파일 수정 금지** — 클라 + Config만. 테스트 80 PASS 불변이 검증 기준.
+6. 각 커밋 전: `lune run tests/run.luau` + Selene + `rojo build` 후 Studio Play 육안 확인 (AC는 PRD §5).
+7. 게임 아이콘/썸네일은 Roblox 게임 설정에서 유저가 직접 업로드 (코드 외).
+8. 완료 시 PRD §7 체크박스 갱신 + 본 문서 §1 상태 줄 갱신.
 
 ## 8. 의도적 미구현 / 다음 작업 후보
 
