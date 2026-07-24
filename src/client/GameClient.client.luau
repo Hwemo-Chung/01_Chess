@@ -4,9 +4,11 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
-local BoardView = require(script.Parent.BoardView)
-local CameraController = require(script.Parent.CameraController)
-local HudController = require(script.Parent.HudController)
+print("[CHESS] GameClient starting…")
+
+local BoardView = require(script.Parent:WaitForChild("BoardView"))
+local CameraController = require(script.Parent:WaitForChild("CameraController"))
+local HudController = require(script.Parent:WaitForChild("HudController"))
 
 local player = Players.LocalPlayer
 local board = BoardView.new()
@@ -17,11 +19,12 @@ local latestSnapshot = nil
 local cleaned = false
 
 local function remotesFolder()
-	local chess = ReplicatedStorage:WaitForChild("Chess", 10)
+	local chess = ReplicatedStorage:WaitForChild("Chess", 30)
 	if chess == nil then
+		warn("[CHESS] ReplicatedStorage.Chess missing")
 		return nil
 	end
-	return chess:WaitForChild("Remotes", 10)
+	return chess:WaitForChild("Remotes", 30)
 end
 
 local function remote(name: string): RemoteEvent?
@@ -33,7 +36,11 @@ local function remote(name: string): RemoteEvent?
 	if value ~= nil and value:IsA("RemoteEvent") then
 		return value
 	end
-	return folder:WaitForChild(name, 5) :: RemoteEvent?
+	local waited = folder:WaitForChild(name, 15)
+	if waited ~= nil and waited:IsA("RemoteEvent") then
+		return waited
+	end
+	return nil
 end
 
 local function applySnapshot(snapshot)
@@ -43,6 +50,15 @@ local function applySnapshot(snapshot)
 	latestSnapshot = snapshot
 	board:render(snapshot)
 	hud:render(snapshot)
+	camera:apply()
+	print(
+		string.format(
+			"[CHESS] snapshot phase=%s piece=%s enemies=%s",
+			tostring(snapshot.phase),
+			tostring(snapshot.activePiece),
+			tostring(snapshot.enemies and #snapshot.enemies)
+		)
+	)
 end
 
 local function isLegalMove(x: number, z: number): boolean
@@ -119,12 +135,34 @@ hud:onTranscend(function()
 	end
 end)
 
+-- Wire StateSync BEFORE requesting a snapshot (critical race fix).
 local stateSync = remote("StateSync")
 if stateSync ~= nil then
 	stateSync.OnClientEvent:Connect(applySnapshot)
+	print("[CHESS] StateSync connected")
+else
+	warn("[CHESS] StateSync remote missing — board will stay empty")
 end
 
--- Click → raycast board plane / tiles
+local function askServerForState()
+	local req = remote("RequestStateSync")
+	if req ~= nil then
+		req:FireServer()
+	end
+end
+
+askServerForState()
+task.spawn(function()
+	for _ = 1, 10 do
+		if latestSnapshot ~= nil and latestSnapshot.activePiece ~= nil then
+			return
+		end
+		task.wait(0.4)
+		askServerForState()
+		camera:apply()
+	end
+end)
+
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	if gameProcessed then
 		return
@@ -143,7 +181,11 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	local ray = cameraObj:ViewportPointToRay(position.X, position.Y)
 	local params = RaycastParams.new()
 	params.FilterType = Enum.RaycastFilterType.Exclude
-	params.FilterDescendantsInstances = { player.Character }
+	local exclude = {}
+	if player.Character ~= nil then
+		table.insert(exclude, player.Character)
+	end
+	params.FilterDescendantsInstances = exclude
 	local result = Workspace:Raycast(ray.Origin, ray.Direction * 500, params)
 	if result == nil then
 		return
@@ -151,7 +193,6 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	board:handleClickPosition(result.Position)
 end)
 
--- Hide default character so it doesn't clutter the board view.
 local function hideCharacter(character: Model)
 	for _, descendant in ipairs(character:GetDescendants()) do
 		if descendant:IsA("BasePart") then
@@ -165,6 +206,10 @@ local function hideCharacter(character: Model)
 		humanoid.JumpPower = 0
 		humanoid.JumpHeight = 0
 	end
+	-- Character spawn resets camera — reclaim top-down view.
+	task.defer(function()
+		camera:apply()
+	end)
 end
 
 if player.Character ~= nil then
@@ -183,3 +228,4 @@ local function cleanup()
 end
 
 script.Destroying:Connect(cleanup)
+print("[CHESS] GameClient ready")

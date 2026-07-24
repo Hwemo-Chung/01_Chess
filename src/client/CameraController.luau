@@ -24,7 +24,8 @@ function CameraController.new(player: Player)
 end
 
 function CameraController.apply(self)
-	local camera = self._camera
+	local camera = Workspace.CurrentCamera
+	self._camera = camera
 	if camera == nil then
 		return
 	end

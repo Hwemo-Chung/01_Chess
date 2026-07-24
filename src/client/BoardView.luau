@@ -174,6 +174,7 @@ function BoardView.render(self, snapshot)
 
 	if snapshot.activePosition == nil or snapshot.activePiece == nil then
 		self:clearHighlights()
+		-- Keep empty board visible; server has not assigned a piece yet.
 		return
 	end
 

@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataStoreService = game:GetService("DataStoreService")
+local RunService = game:GetService("RunService")
 
 local RunController = require(script.Parent.RunController)
 local RemoteGuard = require(script.Parent.RemoteGuard)
@@ -13,6 +14,8 @@ local Config = require(Shared:WaitForChild("Config"))
 local ProfileRules = require(Shared:WaitForChild("ProfileRules"))
 local Metrics = require(Shared:WaitForChild("Metrics"))
 
+print("[CHESS] ServerMain starting…")
+
 local controller = RunController.new({
 	clock = os.clock,
 	seedForPlayer = function(userId)
@@ -23,14 +26,22 @@ local controller = RunController.new({
 })
 local guard = RemoteGuard.new(os.clock)
 
+-- Studio without "Enable Studio Access to API Services" cannot use DataStores.
+-- Always soft-fail to in-memory profiles so Play Solo still works.
+local useDataStore = not RunService:IsStudio()
 local profileStore = ProfileStore.new({
 	config = Config,
 	ProfileRules = ProfileRules,
-	getDataStore = function()
-		return DataStoreService:GetDataStore("ChessProfiles_v1")
-	end,
+	getDataStore = if useDataStore
+		then function()
+			return DataStoreService:GetDataStore("ChessProfiles_v1")
+		end
+		else nil,
 	clock = os.clock,
 })
+if RunService:IsStudio() then
+	print("[CHESS] Studio mode: in-memory profiles (DataStore disabled)")
+end
 
 local sessionMetrics: { [number]: any } = {}
 local lastResults: { [number]: any } = {}
@@ -70,7 +81,9 @@ local requestRestart = ensureRemoteEvent(remotes, "RequestRestart")
 local requestBuy = ensureRemoteEvent(remotes, "RequestBuy")
 local requestBuyUpgrade = ensureRemoteEvent(remotes, "RequestBuyUpgrade")
 local requestTranscend = ensureRemoteEvent(remotes, "RequestTranscend")
+local requestStateSync = ensureRemoteEvent(remotes, "RequestStateSync")
 local stateSync = ensureRemoteEvent(remotes, "StateSync")
+print("[CHESS] Remotes ready under ReplicatedStorage.Chess.Remotes")
 
 local function logMetric(userId: number, metrics)
 	local snap = metrics:snapshot()
@@ -193,6 +206,15 @@ local function publish(player, lastResult: any?)
 	player:SetAttribute("CurrentTier", snapshot.currentTier or "")
 
 	stateSync:FireClient(player, snapshot)
+	print(
+		string.format(
+			"[CHESS] publish userId=%d phase=%s piece=%s enemies=%d",
+			player.UserId,
+			tostring(snapshot.phase),
+			tostring(snapshot.activePiece),
+			snapshot.enemies and #snapshot.enemies or 0
+		)
+	)
 end
 
 local function settleRunEnd(player, reason: string)
@@ -455,15 +477,51 @@ requestTranscend.OnServerEvent:Connect(function(player, ...)
 	publish(player, nil)
 end)
 
-Players.PlayerAdded:Connect(function(player)
-	local ok, _profile, err = profileStore:load(player.UserId)
-	if not ok then
-		warn("[CHESS_PROFILE] load failed: " .. tostring(err))
-		local _, fallback = ProfileRules.normalize(nil, Config)
-		profileStore._sessions[player.UserId] = { profile = fallback, dirty = true }
+local function bootstrapPlayer(player: Player)
+	if sessionMetrics[player.UserId] == nil then
+		local ok, _profile, err = profileStore:load(player.UserId)
+		if not ok then
+			warn("[CHESS_PROFILE] load failed: " .. tostring(err))
+			local _, fallback = ProfileRules.normalize(nil, Config)
+			profileStore._sessions[player.UserId] = { profile = fallback, dirty = true }
+		end
+		sessionMetrics[player.UserId] = Metrics.new(os.clock)
 	end
-	sessionMetrics[player.UserId] = Metrics.new(os.clock)
-	startRun(player)
+	if controller.runs[player.UserId] == nil then
+		startRun(player)
+	else
+		-- Client often connects after the first FireClient — re-send state.
+		publish(player, nil)
+	end
+end
+
+-- Client asks for snapshot after it wires OnClientEvent (fixes empty board-only view).
+requestStateSync.OnServerEvent:Connect(function(player)
+	bootstrapPlayer(player)
+	publish(player, nil)
+end)
+
+Players.PlayerAdded:Connect(function(player)
+	print("[CHESS] PlayerAdded", player.Name, player.UserId)
+	bootstrapPlayer(player)
+	-- Re-publish after character exists (camera/client scripts fully up).
+	player.CharacterAdded:Connect(function()
+		task.defer(function()
+			if player.Parent ~= nil then
+				publish(player, nil)
+			end
+		end)
+	end)
+	-- Safety net: a few delayed resyncs for slow clients.
+	task.spawn(function()
+		for _, delaySec in ipairs({ 0.5, 1.5, 3 }) do
+			task.wait(delaySec)
+			if player.Parent == nil then
+				return
+			end
+			publish(player, nil)
+		end
+	end)
 end)
 
 Players.PlayerRemoving:Connect(function(player)
@@ -476,12 +534,7 @@ Players.PlayerRemoving:Connect(function(player)
 end)
 
 for _, player in ipairs(Players:GetPlayers()) do
-	local ok, _, err = profileStore:load(player.UserId)
-	if not ok then
-		warn("[CHESS_PROFILE] load failed: " .. tostring(err))
-		local _, fallback = ProfileRules.normalize(nil, Config)
-		profileStore._sessions[player.UserId] = { profile = fallback, dirty = true }
-	end
-	sessionMetrics[player.UserId] = Metrics.new(os.clock)
-	startRun(player)
+	bootstrapPlayer(player)
 end
+
+print("[CHESS] ServerMain ready")
