@@ -13,10 +13,20 @@ case("planMoves / steps one square closer to the player", function()
 	assert(moves[1].x == 2 and moves[1].z == 1, "expected a step toward the player along x")
 end)
 
-case("planMoves / already-adjacent enemy does not move", function()
-	local enemies = { { x = 3, z = 3, health = 10 } }
-	local moves = EnemyAI.planMoves(enemies, { x = 4, z = 3 }, 6)
-	assert(moves[1].x == 3 and moves[1].z == 3, "adjacent enemy should stay put, not move")
+case("planMoves / already-adjacent enemy does not move (capturable by Pawn)", function()
+	local enemies = { { x = 3, z = 3, health = 10, pieceType = "Pawn" } }
+	-- playerPieceType=Pawn can capture orthogonal adjacent → freeze.
+	local moves = EnemyAI.planMoves(enemies, { x = 4, z = 3 }, 6, "Pawn")
+	assert(moves[1].x == 3 and moves[1].z == 3, "adjacent capturable enemy should stay put")
+end)
+
+case("planMoves / adjacent uncapturable vs Knight keeps moving", function()
+	local enemies = { { x = 3, z = 3, health = 10, pieceType = "Pawn" } }
+	local moves = EnemyAI.planMoves(enemies, { x = 4, z = 3 }, 6, "Knight")
+	assert(
+		not (moves[1].x == 3 and moves[1].z == 3),
+		"Knight cannot capture adjacent; enemy must not freeze (softlock guard)"
+	)
 end)
 
 case("planMoves / never proposes a destination another enemy already occupies", function()

@@ -92,7 +92,8 @@ local function applyEnemyTurn(playerUserId: number)
 	if state == nil or state.activePiece == nil or state.runOver or state.victory then
 		return
 	end
-	local destinations = EnemyAI.planMoves(state.enemies, state.activePosition, Config.BOARD_SIZE)
+	local destinations =
+		EnemyAI.planMoves(state.enemies, state.activePosition, Config.BOARD_SIZE, state.activePiece)
 	for index, destination in ipairs(destinations) do
 		local enemy = state.enemies[index]
 		if enemy ~= nil then

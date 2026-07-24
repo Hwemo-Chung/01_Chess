@@ -1,4 +1,6 @@
 -- Fixed deterministic gameplay configuration. No Roblox dependencies.
+-- Balance pass 2026-07-24: early ladder reachable with 3 lives under greedy AI;
+-- King boss (~Lv17) still gated by lives/upgrades (see docs/BALANCE_SIM.md).
 return {
 	BOARD_SIZE = 6,
 
@@ -11,86 +13,83 @@ return {
 	ENEMY_START_COUNT = 1,
 	ENEMY_COUNT_PER_LEVEL = 1,
 
-	-- Flat fallback when tier table missing a piece (should not happen).
-	ENEMY_BASE = { maxHealth = 10, attack = 3 },
+	-- Tuned down so trades are survivable (was HP10/ATK3 → wipe ~Lv3).
+	ENEMY_BASE = { maxHealth = 6, attack = 1 },
 
-	-- After count-cap levels, tier climbs Pawn→…→King (PRD §6.2).
 	ENEMY_TIER_ORDER = { "Pawn", "Knight", "Bishop", "Rook", "Queen", "King" },
 
-	-- King boss HP cushion so the life-swap race is meaningful (placeholder).
-	BOSS_HEALTH_MULTIPLIER = 3,
+	-- Boss is tanky but not a multi-life sponge at T1.
+	BOSS_HEALTH_MULTIPLIER = 2.5,
 
 	STARTING_ROSTER = { "Pawn", "Knight", "Rook" },
 
-	CURRENCY_PER_LEVEL = 5,
-	-- Extra gold on King-clear victory.
-	VICTORY_BONUS = 50,
+	CURRENCY_PER_LEVEL = 8,
+	VICTORY_BONUS = 80,
 
 	BISHOP_CRIT_BASE = 0.15,
 	BISHOP_CRIT_STEP = 0.05,
 	BISHOP_CRIT_CAP = 0.30,
 
-	-- Permanent upgrades (PRD §6.3 / §6.5 transcendence wall answer).
 	UPGRADES = {
 		Might = {
 			displayName = "Might",
 			stat = "attackPercent",
-			perLevel = 0.05,
-			price = 20,
+			perLevel = 0.06,
+			price = 15,
 			maxLevel = 25,
 		},
 		Vitality = {
 			displayName = "Vitality",
 			stat = "healthPercent",
-			perLevel = 0.05,
-			price = 20,
+			perLevel = 0.06,
+			price = 15,
 			maxLevel = 25,
 		},
 	},
 
-	-- Transcendence: enemy base HP/ATK × level (PRD §6.5). Min 1.
 	DEFAULT_TRANSCENDENCE = 1,
 
+	-- Player ATK high enough to one-shot base pawns; HP supports multi-kill chains.
 	PIECES = {
 		Pawn = {
-			maxHealth = 20,
-			attack = 5,
+			maxHealth = 24,
+			attack = 6,
 			critChance = 0.15,
 			price = 10,
 			incomingDamageMultiplier = 1,
 		},
 		Knight = {
-			maxHealth = 20,
-			attack = 5,
+			maxHealth = 24,
+			attack = 6,
 			critChance = 0.30,
 			price = 25,
 			incomingDamageMultiplier = 1,
 		},
 		Bishop = {
-			maxHealth = 18,
-			attack = 5,
+			maxHealth = 22,
+			attack = 6,
 			critChance = 0.15,
 			price = 30,
 			incomingDamageMultiplier = 1,
 			critFromDistance = true,
 		},
 		Rook = {
-			maxHealth = 20,
-			attack = 5,
+			maxHealth = 24,
+			attack = 7,
 			critChance = 0.15,
 			price = 40,
 			incomingDamageMultiplier = 1,
 		},
 		Queen = {
-			maxHealth = 16,
-			attack = 7,
+			maxHealth = 20,
+			attack = 9,
 			critChance = 0.15,
 			price = 70,
 			incomingDamageMultiplier = 1.5,
 		},
 		King = {
-			maxHealth = 28,
-			attack = 3,
+			maxHealth = 32,
+			attack = 5,
 			critChance = 0.15,
 			price = 90,
 			incomingDamageMultiplier = 0.5,

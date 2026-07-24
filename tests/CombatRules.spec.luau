@@ -98,7 +98,7 @@ case("previewDestination / attack summarizes kill and take", function()
 	local Config = require("../src/shared/Config")
 	local preview = CombatRules.previewDestination(
 		"Pawn",
-		Config.PIECES.Pawn,
+		{ attack = 6, critChance = 0.15, incomingDamageMultiplier = 1 },
 		{ x = 1, z = 1 },
 		{ x = 2, z = 1 },
 		{ x = 2, z = 1, health = 10, attack = 3 },
@@ -108,7 +108,7 @@ case("previewDestination / attack summarizes kill and take", function()
 	)
 	assert(preview.kind == "attack", "expected attack preview")
 	assert(preview.damageTaken == 3, "expected enemy attack as taken")
-	assert(preview.baseDamage == 5, "pawn base damage")
+	assert(preview.baseDamage == 6, "expected explicit base damage")
 end)
 
 return function()

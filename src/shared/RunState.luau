@@ -77,20 +77,36 @@ local function enemyCountCap(self): number
 	return cap
 end
 
+local function tierStatMultiplier(config, pieceType: string): number
+	-- Small climb by rank; HP/ATK still base on ENEMY_BASE (not player PIECES).
+	local order = config.ENEMY_TIER_ORDER or { "Pawn" }
+	local index = 1
+	for i, name in ipairs(order) do
+		if name == pieceType then
+			index = i
+			break
+		end
+	end
+	return 1 + 0.12 * (index - 1)
+end
+
 local function scaledEnemyStats(self, pieceType: string, isBoss: boolean)
-	local base = self._config.PIECES[pieceType] or self._config.ENEMY_BASE
-	local mult = self.transcendenceLevel
+	local config = self._config
+	local base = config.ENEMY_BASE
+	local piece = config.PIECES[pieceType]
+	local mult = self.transcendenceLevel * tierStatMultiplier(config, pieceType)
 	local hp = base.maxHealth * mult
 	local attack = base.attack * mult
 	if isBoss then
-		hp *= self._config.BOSS_HEALTH_MULTIPLIER or 3
+		hp *= config.BOSS_HEALTH_MULTIPLIER or 3
 	end
 	return {
 		maxHealth = math.max(1, math.floor(hp + 0.5)),
 		attack = math.max(1, math.floor(attack + 0.5)),
-		critChance = base.critChance or 0.15,
-		incomingDamageMultiplier = base.incomingDamageMultiplier or 1,
-		critFromDistance = base.critFromDistance,
+		-- Abilities (frailty/toughness/distance-crit) come from the piece table.
+		critChance = if piece then piece.critChance else 0.15,
+		incomingDamageMultiplier = if piece then (piece.incomingDamageMultiplier or 1) else 1,
+		critFromDistance = if piece then piece.critFromDistance else nil,
 	}
 end
 
