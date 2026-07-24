@@ -7,6 +7,8 @@
   "scripts": {
     "verify:toolchain": "for tool in rojo lune selene stylua; do \"$tool\" --version; done",
     "test": "lune run tests/run.luau",
+    "sim": "lune run scripts/balance_sim.luau",
+    "sim:fast": "lune run scripts/balance_sim.luau -- --runs 40",
     "build": "mkdir -p build && rojo build default.project.json -o build/Chess.rbxlx",
     "lint": "selene src/",
     "format": "stylua src/ tests/",

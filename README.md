@@ -43,13 +43,16 @@ rojo build default.project.json -o build/Chess.rbxlx
 
 Remotes: `SubmitMove` · `RequestReroll` · `RequestRestart` · `RequestBuy` · `RequestBuyUpgrade` · `RequestTranscend` · `StateSync`
 
-## Verify
+## Verify / Sim / Build
 
 ```bash
 export PATH="$HOME/.rokit/bin:$PATH"
 lune run tests/run.luau
-selene src/
-stylua --check src/ tests/
+lune run scripts/balance_sim.luau -- --runs 50
+# report → docs/BALANCE_SIM.md
+
+mkdir -p build && rojo build default.project.json -o build/Chess.rbxlx
+# open build/Chess.rbxlx in Roblox Studio → Play
 ```
 
 ## Docs

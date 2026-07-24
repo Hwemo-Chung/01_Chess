@@ -394,20 +394,32 @@ function RunState.applyPlayerMove(self, destination: BoardRules.Position)
 		end
 	end
 
+	-- Level-clear before life-loss handling: killing the last enemy must advance
+	-- the stage even if the counterattack also drops the player (otherwise
+	-- assignRandomPiece respawns the *same* level forever).
+	local boardCleared = #self.enemies == 0
+	if boardCleared then
+		result.levelCleared = true
+		self.level += 1
+	end
+
 	if self.activeHealth <= 0 then
 		if #self.roster == 0 then
 			result.runOver = true
 			self.runOver = true
+			-- Don't leave an empty board mid-ladder after a dead-end mutual clear.
+			if boardCleared and not self.victory then
+				spawnEnemiesForLevel(self)
+			end
 		else
 			self:assignRandomPiece()
+			-- assignRandomPiece spawns if enemies empty (new level after clear).
 			local safeSquare = SpawnRules.farthestSafeSquare(self._config.BOARD_SIZE, self.enemies)
 			if safeSquare ~= nil then
 				self.activePosition = safeSquare
 			end
 		end
-	elseif #self.enemies == 0 then
-		result.levelCleared = true
-		self.level += 1
+	elseif boardCleared then
 		spawnEnemiesForLevel(self)
 	end
 
