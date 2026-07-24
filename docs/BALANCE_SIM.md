@@ -18,10 +18,10 @@ Policy: greedy SimAI (prefer safe kills / boss priority) + SimEnemy chase.
 | solo-Rook x3 M10V10 T1 | 40 | 55.0% | 45.0% | 0.0% | 17.0 | 17 | 115 | 1.8 |
 | solo-Rook x8 M15V15 T1 | 40 | 100.0% | 0.0% | 0.0% | 17.0 | 17 | 114 | 1.8 |
 | solo-Rook x3 T1 | 40 | 0.0% | 100.0% | 0.0% | 13.0 | 14 | 77 | 1.9 |
-| solo-Rook x3 T2 | 40 | 0.0% | 100.0% | 0.0% | 6.1 | 7 | 40 | 1.9 |
-| solo-Rook x3 T3 | 40 | 0.0% | 100.0% | 0.0% | 4.0 | 5 | 29 | 1.9 |
-| solo-Rook x8 M15V15 T2 | 40 | 100.0% | 0.0% | 0.0% | 17.0 | 17 | 139 | 1.8 |
-| solo-Rook x8 M15V15 T3 | 40 | 0.0% | 100.0% | 0.0% | 12.8 | 13 | 138 | 1.8 |
+| solo-Rook x3 T2 | 40 | 0.0% | 100.0% | 0.0% | 9.1 | 10 | 76 | 1.9 |
+| solo-Rook x3 T3 | 40 | 0.0% | 100.0% | 0.0% | 6.1 | 7 | 40 | 1.9 |
+| solo-Rook x8 M15V15 T2 | 40 | 100.0% | 0.0% | 0.0% | 17.0 | 17 | 117 | 1.8 |
+| solo-Rook x8 M15V15 T3 | 40 | 100.0% | 0.0% | 0.0% | 17.0 | 17 | 140 | 1.8 |
 
 ## Notes
 
@@ -33,7 +33,7 @@ Policy: greedy SimAI (prefer safe kills / boss priority) + SimEnemy chase.
 
 ## Observed signals (auto)
 
-- Rook x3 avg level T1→T3: **13.0 → 4.0** (transcendence wall).
+- Rook x3 avg level T1→T3: **13.0 → 6.1** (transcendence wall).
 - Pawn vs Queen avg level (x3 T1): **12.0 vs 9.6**.
 - King vs Pawn avg level (x3 T1): **14.9 vs 12.0** (safety premium).
 - Knight timeout rate: **0%** — L-move cannot capture adjacent enemies that park on you (design softlock risk).

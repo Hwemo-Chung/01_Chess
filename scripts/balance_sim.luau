@@ -152,6 +152,8 @@ local cli = parseArgs(process.args)
 local config = Config
 local lives = 3
 
+local Transcendence = require("../src/shared/Transcendence")
+
 print("=== 01_Chess Balance Sim ===")
 print(
 	string.format(
@@ -162,6 +164,11 @@ print(
 		cli.seedBase
 	)
 )
+print("Transcendence soft curve (trash HP/ATK, boss HP composite):")
+for t = 1, 5 do
+	local p = Transcendence.preview(t, config)
+	print(string.format("  T%d  hp×%.2f  atk×%.2f  bossHp×%.2f", p.level, p.hp, p.atk, p.bossHp))
+end
 print("")
 
 local rows = {}

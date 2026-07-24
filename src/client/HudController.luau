@@ -413,7 +413,7 @@ function HudController.render(self, snapshot)
 		tLevel = snapshot.profile.transcendenceLevel or tLevel
 	end
 	self._currencyLabel.Text = string.format(
-		"Gold: %d  ·  T%d  ·  Roster %d",
+		"Gold: %d  ·  T%d (soft)  ·  Roster %d",
 		currency,
 		tLevel,
 		snapshot.profile and #(snapshot.profile.roster or {}) or 0

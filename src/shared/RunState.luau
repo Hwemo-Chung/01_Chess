@@ -4,6 +4,7 @@ local BoardRules = require("./BoardRules")
 local CombatRules = require("./CombatRules")
 local SpawnRules = require("./SpawnRules")
 local ProfileRules = require("./ProfileRules")
+local Transcendence = require("./Transcendence")
 local Rng = require("./Rng")
 
 local RunState = {}
@@ -94,11 +95,14 @@ local function scaledEnemyStats(self, pieceType: string, isBoss: boolean)
 	local config = self._config
 	local base = config.ENEMY_BASE
 	local piece = config.PIECES[pieceType]
-	local mult = self.transcendenceLevel * tierStatMultiplier(config, pieceType)
-	local hp = base.maxHealth * mult
-	local attack = base.attack * mult
+	local tier = tierStatMultiplier(config, pieceType)
+	local t = self.transcendenceLevel
+	local hpMult = Transcendence.enemyHpMultiplier(t, config) * tier
+	local atkMult = Transcendence.enemyAtkMultiplier(t, config) * tier
+	local hp = base.maxHealth * hpMult
+	local attack = base.attack * atkMult
 	if isBoss then
-		hp *= config.BOSS_HEALTH_MULTIPLIER or 3
+		hp *= Transcendence.bossHpMultiplier(t, config)
 	end
 	return {
 		maxHealth = math.max(1, math.floor(hp + 0.5)),

@@ -21,7 +21,8 @@ Standalone project. Unrelated to `00_VS`.
 | 13–16 | Count capped, tier Knight→Queen |
 | 17+ | King **boss** + Queen minions |
 
-Transcendence level T multiplies enemy base HP/ATK by T (abilities unscaled).
+Transcendence uses a **soft curve** (not raw ×T): HP +0.50/step, ATK +0.35/step
+(T1=1, T2≈1.5/1.35, T3≈2.0/1.7). Abilities unscaled. See `Transcendence.luau`.
 
 ## Pieces
 

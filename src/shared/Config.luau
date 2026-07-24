@@ -48,6 +48,13 @@ return {
 	},
 
 	DEFAULT_TRANSCENDENCE = 1,
+	-- Soft transcendence curve (was raw ×T). T1=1 always.
+	-- HP:  T1=1.00  T2=1.50  T3=2.00  T4=2.50
+	-- ATK:  T1=1.00  T2=1.35  T3=1.70  T4=2.05  (slower — less one-shot pressure)
+	-- Boss HP multiplies base boss cushion × mild T extra (see Transcendence.luau).
+	TRANSCENDENCE_HP_PER_LEVEL = 0.50,
+	TRANSCENDENCE_ATK_PER_LEVEL = 0.35,
+	TRANSCENDENCE_BOSS_PER_LEVEL = 0.12,
 
 	-- Player ATK high enough to one-shot base pawns; HP supports multi-kill chains.
 	PIECES = {

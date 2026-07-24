@@ -42,6 +42,9 @@ local suites = {
 	Metrics = function()
 		return require("./Metrics.spec")
 	end,
+	Transcendence = function()
+		return require("./Transcendence.spec")
+	end,
 }
 
 local total = 0
