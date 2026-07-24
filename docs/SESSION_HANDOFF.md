@@ -17,6 +17,26 @@ Studio Play 시 **초기 StateSync 유실** 문제를 `RequestStateSync` + 재�
 **asphalt 없이** Studio Play에서도 아이콘 표시 (EditableImage).  
 클라우드: `IconAssets` CLOUD 숫자 기입. 검증: `npm run verify` + `docs/OWNER-LIVE-QA.md`.
 
+**[2026-07-24 아이콘 버그픽스]** Roblox 엔진은 문자열 require 미지원 — `IconAssets`/`IconPixels`의
+`require("./…")`가 pcall에 조용히 삼켜져 아이콘 3단 폴백 전멸(텍스트만 표시)했던 버그 수정.
+`script ~= nil` 분기로 Roblox=인스턴스 require / Lune=문자열 require. **shared 신규 모듈도 이 패턴 필수.**
+
+**[2026-07-24~25 타격감/UIUX 패키지]** `src/client/Fx.luau` 신규 + BoardView/GameClient/HudController 배선.
+근거·매핑표: `docs/JUICE_BENCHMARK.md`. **서버/엔진 무변경, 테스트 141 PASS 유지.**
+
+- **전투 시퀀스 (오너 지시)**: 방어(피격) 즉시 → **1초 후** 공격 처리. 동시 재생 금지.
+- **사운드 (오너 지시)**: 공격·피격 둘 다 폭발음(`impact_explosion_03`, 공격 1.3x 고음 / 피격 0.8x 저음).
+  목소리류(ouch/oof) 금지. 처치는 파티클+셰이크만. 이동 착지음, 업그레이드/기물 구매 성공음.
+  **내장 사운드는 11개 파일뿐** — 클래식(swordslash 등) 없음. `content/sounds/` 실존 확인 필수.
+- **모션**: 말 이동 = 포물선 arcMove(Knight 고점 4, 그 외 1). 적 이동도 파트 재사용 매칭으로 애니메이션.
+  **공격 런지**: 플레이어 말 대상 칸으로 대시-복귀, 적 반격/적 페이즈도 런지 (`Fx.lunge`, 홈 복귀 보장).
+  스폰 스케일-인, 사망 축소-페이드.
+- **이펙트**: 데미지 플로팅 텍스트(크리 주황 대형), 처치 fire+smoke 이중 버스트, 크리 sparkles,
+  클릭 즉시 핑, 적 피격 Highlight 플래시, 적 HP바(최고 관측치로 max 추정), 하이라이트 숨쉬기 펄스,
+  카메라 감쇠 셰이크, 피격 빨간 풀스크린 플래시, HUD HP/Gold 펄스, 버튼 hover/press.
+- **아바타 숨김**: 액세서리 늦은 로드도 DescendantAdded로 숨김.
+- QA 절차: `build/ChessQA.rbxlx` 사본으로 Studio 자동 오픈(`open`) — 본 파일 잠금 회피.
+
 ---
 
 ## 2. 제품 요약 (PRD v1.0)

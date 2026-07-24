@@ -116,7 +116,11 @@ local function loadGenerated(): any
 		return generatedCache
 	end
 	generatedTried = true
+	-- Roblox engine rejects string requires; Lune (tests) has no `script` global.
 	local ok, mod = pcall(function()
+		if script ~= nil then
+			return require(script.Parent:FindFirstChild("GeneratedAssets")) :: any
+		end
 		return require("./GeneratedAssets")
 	end)
 	if ok and type(mod) == "table" then

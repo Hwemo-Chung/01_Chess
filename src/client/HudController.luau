@@ -5,6 +5,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local AssetUi = require(script.Parent:WaitForChild("AssetUi"))
+local Fx = require(script.Parent:WaitForChild("Fx"))
 local IconSurface = require(script.Parent:WaitForChild("IconSurface"))
 local Shared = ReplicatedStorage:WaitForChild("Chess"):WaitForChild("Shared")
 local AssetIds = require(Shared:WaitForChild("AssetIds"))
@@ -337,6 +338,10 @@ function HudController.new(player: Player)
 		_bossSubtitle = bossSubtitle,
 		_bossBannerShown = false,
 		_bossBannerToken = 0,
+		_lastHp = nil :: number?,
+		_lastGold = nil :: number?,
+		_lastUpgradeTotal = nil :: number?,
+		_lastRosterCount = nil :: number?,
 		_onReroll = nil :: (() -> ())?,
 		_onRestart = nil :: (() -> ())?,
 		_onBuy = nil :: ((string) -> ())?,
@@ -364,6 +369,10 @@ function HudController.new(player: Player)
 	AssetUi.decorateButton(rerollButton, "Reroll", ICON_BUTTON)
 	AssetUi.decorateButton(restartButton, "Restart", ICON_BUTTON)
 	AssetUi.decorateButton(transcendButton, "Transcend", ICON_BUTTON)
+
+	Fx.wireButton(rerollButton)
+	Fx.wireButton(restartButton)
+	Fx.wireButton(transcendButton)
 
 	return self
 end
@@ -506,6 +515,7 @@ function HudController._renderShop(self, snapshot)
 		create("UICorner", { CornerRadius = UDim.new(0, 6), Parent = button })
 		AssetUi.decorateButton(button, AssetUi.pieceBlueKey(entry.piece), ICON_SHOP)
 		if canBuy then
+			Fx.wireButton(button, true)
 			button.MouseButton1Click:Connect(function()
 				if self._onBuy ~= nil then
 					self._onBuy(entry.piece)
@@ -551,6 +561,7 @@ function HudController._renderShop(self, snapshot)
 		create("UICorner", { CornerRadius = UDim.new(0, 6), Parent = button })
 		AssetUi.decorateButton(button, AssetUi.upgradeKey(entry.id), ICON_SHOP)
 		if canBuy then
+			Fx.wireButton(button, true)
 			button.MouseButton1Click:Connect(function()
 				if self._onBuyUpgrade ~= nil then
 					self._onBuyUpgrade(entry.id)
@@ -644,6 +655,15 @@ function HudController.render(self, snapshot)
 	local atk = activeAttack(snapshot)
 	self._atkLabel.Text = if atk ~= nil then string.format("ATK: %d", atk) else "ATK: —"
 
+	local hp = tonumber(snapshot.activeHealth) or 0
+	if self._lastHp ~= nil and hp ~= self._lastHp then
+		Fx.pulseText(
+			self._hpLabel,
+			if hp < self._lastHp then Color3.fromRGB(255, 80, 70) else Color3.fromRGB(120, 230, 130)
+		)
+	end
+	self._lastHp = hp
+
 	self._metaLabel.Text = string.format(
 		"Lv %s  ·  Tier %s  ·  Lives %d  ·  E %d",
 		tostring(snapshot.level or 0),
@@ -664,6 +684,33 @@ function HudController.render(self, snapshot)
 		tLevel,
 		snapshot.profile and #(snapshot.profile.roster or {}) or 0
 	)
+	if self._lastGold ~= nil and currency ~= self._lastGold then
+		Fx.pulseText(self._currencyLabel, GOLD)
+	end
+	self._lastGold = currency
+
+	-- Purchase feedback: upgrade level or roster size going up = confirmed buy.
+	local upgradeTotal = 0
+	local rosterCount = 0
+	if type(snapshot.profile) == "table" then
+		if type(snapshot.profile.upgrades) == "table" then
+			for _, level in pairs(snapshot.profile.upgrades) do
+				if type(level) == "number" then
+					upgradeTotal += level
+				end
+			end
+		end
+		rosterCount = #(snapshot.profile.roster or {})
+	end
+	if self._lastUpgradeTotal ~= nil and upgradeTotal > self._lastUpgradeTotal then
+		Fx.sound("upgrade")
+		Fx.pulseText(self._atkLabel, OK)
+	end
+	if self._lastRosterCount ~= nil and rosterCount > self._lastRosterCount then
+		Fx.sound("buy")
+	end
+	self._lastUpgradeTotal = upgradeTotal
+	self._lastRosterCount = rosterCount
 
 	local m = snapshot.metrics
 	if type(m) == "table" then

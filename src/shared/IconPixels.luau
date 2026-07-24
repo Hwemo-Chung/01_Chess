@@ -2,7 +2,11 @@
 -- No rbxassetid; used when IconAssets.image is nil (cloud 0 + no asphalt URI).
 
 local function requirePack()
+	-- Roblox engine rejects string requires; Lune (tests) has no `script` global.
 	local ok, mod = pcall(function()
+		if script ~= nil then
+			return require(script.Parent:FindFirstChild("IconPixelPack")) :: any
+		end
 		return require("./IconPixelPack")
 	end)
 	if ok then

@@ -3,10 +3,12 @@
 
 local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 
 local Shared = ReplicatedStorage:WaitForChild("Chess"):WaitForChild("Shared")
 local Config = require(Shared:WaitForChild("Config"))
 local BoardLayout = require(Shared:WaitForChild("BoardLayout"))
+local Fx = require(script.Parent:WaitForChild("Fx"))
 local IconSurface = require(script.Parent:WaitForChild("IconSurface"))
 
 local BoardView = {}
@@ -80,6 +82,27 @@ local function attachBillboard(
 	return label
 end
 
+-- Slim HP bar under an enemy billboard label. Returns the fill frame.
+local function addHpBar(gui: BillboardGui): Frame
+	local back = Instance.new("Frame")
+	back.Name = "HpBack"
+	back.AnchorPoint = Vector2.new(0.5, 1)
+	back.Position = UDim2.new(0.5, 0, 1, -2)
+	back.Size = UDim2.new(0.6, 0, 0, 5)
+	back.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+	back.BackgroundTransparency = 0.25
+	back.BorderSizePixel = 0
+	back.Parent = gui
+
+	local fill = Instance.new("Frame")
+	fill.Name = "HpFill"
+	fill.Size = UDim2.fromScale(1, 1)
+	fill.BackgroundColor3 = Color3.fromRGB(235, 90, 90)
+	fill.BorderSizePixel = 0
+	fill.Parent = back
+	return fill
+end
+
 function BoardView.new()
 	local folder = Workspace:FindFirstChild("ChessBoard")
 	if folder ~= nil then
@@ -130,7 +153,7 @@ function BoardView.new()
 		_highlights = highlightsFolder,
 		_pieces = piecesFolder,
 		_playerPart = nil :: BasePart?,
-		_enemyParts = {} :: { BasePart },
+		_enemyEntries = {} :: { any },
 		_onTileClick = nil :: ((number, number) -> ())?,
 	}, BoardView)
 end
@@ -185,15 +208,15 @@ function BoardView.setHighlights(self, legalMoves, enemies, previews)
 		})
 		marker:SetAttribute("GridX", move.x)
 		marker:SetAttribute("GridZ", move.z)
+		-- Breathing pulse so playable squares read at a glance.
+		TweenService:Create(
+			marker,
+			TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
+			{ Transparency = 0.65 }
+		):Play()
 		if preview ~= nil and preview.kind == "attack" then
 			local canCrit = type(preview.critChance) == "number" and preview.critChance > 0
-			attachBillboard(
-				marker,
-				preview.summary,
-				Color3.fromRGB(255, 245, 220),
-				1.4,
-				canCrit
-			)
+			attachBillboard(marker, preview.summary, Color3.fromRGB(255, 245, 220), 1.4, canCrit)
 		end
 	end
 end
@@ -222,11 +245,15 @@ function BoardView.render(self, snapshot)
 			Parent = self._pieces,
 		})
 		part.Orientation = Vector3.new(0, 0, 90)
+		part.Position = Vector3.new(px, py, pz)
 		attachBillboard(part, "?", Color3.new(1, 1, 1))
 		self._playerPart = part
 	end
 	local playerPart = self._playerPart :: BasePart
-	playerPart.Position = Vector3.new(px, py, pz)
+	local targetPos = Vector3.new(px, py, pz)
+	-- Piece-flavored motion: Knight vaults, everything else glides with a low hop.
+	local hopHeight = if snapshot.activePiece == "Knight" then 4 else 1
+	Fx.arcMove(playerPart, targetPos, hopHeight, 0.22)
 	playerPart.Color = if snapshot.invulnerable then INVULN_COLOR else PLAYER_COLOR
 	local playerLabel = playerPart:FindFirstChild("Label")
 	if playerLabel ~= nil then
@@ -236,33 +263,70 @@ function BoardView.render(self, snapshot)
 		end
 	end
 
-	for _, part in ipairs(self._enemyParts) do
-		part:Destroy()
-	end
-	self._enemyParts = {}
-	for index, enemy in ipairs(snapshot.enemies or {}) do
+	-- Reuse nearest same-type enemy part so moves animate instead of teleporting.
+	local remaining = self._enemyEntries
+	self._enemyEntries = {}
+	for _, enemy in ipairs(snapshot.enemies or {}) do
 		local ex, ey, ez = BoardLayout.gridToPieceWorld(enemy.x, enemy.z)
+		local enemyPos = Vector3.new(ex, ey, ez)
 		local isBoss = enemy.isBoss == true
-		local part = makePart({
-			Name = "Enemy_" .. tostring(index),
-			Anchored = true,
-			CanCollide = false,
-			CanQuery = false,
-			Material = if isBoss then Enum.Material.Neon else Enum.Material.SmoothPlastic,
-			Color = if isBoss then BOSS_COLOR else ENEMY_COLOR,
-			Size = if isBoss then Vector3.new(3.4, 3.4, 3.4) else Vector3.new(2.8, 2.8, 2.8),
-			Position = Vector3.new(ex, ey, ez),
-			Parent = self._pieces,
-		})
-		local label = PIECE_LABEL[enemy.pieceType or ""] or "E"
-		local hpText = string.format(
+		local pieceType = enemy.pieceType or ""
+
+		local bestIdx, bestDist = nil, math.huge
+		for idx, entry in pairs(remaining) do
+			if entry.pieceType == pieceType and entry.isBoss == isBoss then
+				local dx = entry.x - enemy.x
+				local dz = entry.z - enemy.z
+				local dist = dx * dx + dz * dz
+				if dist < bestDist then
+					bestIdx, bestDist = idx, dist
+				end
+			end
+		end
+
+		local entry
+		if bestIdx ~= nil then
+			entry = remaining[bestIdx]
+			remaining[bestIdx] = nil
+			local hop = if pieceType == "Knight" then 3.5 elseif isBoss then 0.4 else 0.8
+			Fx.arcMove(entry.part, enemyPos, hop, 0.2)
+		else
+			local part = makePart({
+				Name = "Enemy_" .. pieceType,
+				Anchored = true,
+				CanCollide = false,
+				CanQuery = false,
+				Material = if isBoss then Enum.Material.Neon else Enum.Material.SmoothPlastic,
+				Color = if isBoss then BOSS_COLOR else ENEMY_COLOR,
+				Size = if isBoss then Vector3.new(3.4, 3.4, 3.4) else Vector3.new(2.8, 2.8, 2.8),
+				Position = enemyPos,
+				Parent = self._pieces,
+			})
+			local textLabel = attachBillboard(part, "", Color3.fromRGB(255, 220, 220))
+			local gui = part:FindFirstChild("Label")
+			local hpFill = if gui ~= nil and gui:IsA("BillboardGui") then addHpBar(gui) else nil
+			Fx.spawnIn(part)
+			entry = { part = part, label = textLabel, hpFill = hpFill }
+		end
+
+		local label = PIECE_LABEL[pieceType] or "E"
+		entry.label.Text = string.format(
 			"%s%s\n%d",
 			if isBoss then "★" else "",
 			label,
 			math.max(0, math.floor(enemy.health))
 		)
-		attachBillboard(part, hpText, Color3.fromRGB(255, 220, 220))
-		table.insert(self._enemyParts, part)
+		entry.x, entry.z = enemy.x, enemy.z
+		entry.pieceType, entry.isBoss = pieceType, isBoss
+		-- Client-side max-HP guess (snapshot has no maxHealth): highest seen wins.
+		entry.maxHp = math.max(entry.maxHp or 0, enemy.health)
+		if entry.hpFill ~= nil and entry.maxHp > 0 then
+			entry.hpFill.Size = UDim2.fromScale(math.clamp(enemy.health / entry.maxHp, 0, 1), 1)
+		end
+		table.insert(self._enemyEntries, entry)
+	end
+	for _, entry in pairs(remaining) do
+		Fx.dieOut(entry.part)
 	end
 
 	if snapshot.runOver then
@@ -270,6 +334,45 @@ function BoardView.render(self, snapshot)
 	else
 		self:setHighlights(snapshot.legalMoves, snapshot.enemies, snapshot.previews)
 	end
+end
+
+function BoardView.getPlayerPart(self): BasePart?
+	return self._playerPart
+end
+
+-- Enemy nearest to (x,z) lunges at targetWorld — attack motion for counters/enemy phase.
+function BoardView.lungeEnemyToward(self, x: number, z: number, targetWorld: Vector3)
+	local bestEntry, bestDist = nil, 9
+	for _, entry in ipairs(self._enemyEntries) do
+		local dx = entry.x - x
+		local dz = entry.z - z
+		local dist = dx * dx + dz * dz
+		if dist < bestDist then
+			bestEntry, bestDist = entry, dist
+		end
+	end
+	if bestEntry == nil then
+		return
+	end
+	local hx, hy, hz = BoardLayout.gridToPieceWorld(bestEntry.x, bestEntry.z)
+	Fx.lunge(bestEntry.part, targetWorld, Vector3.new(hx, hy, hz))
+end
+
+-- White hit-flash on the enemy nearest to the attacked square (within ~3 tiles).
+function BoardView.flashEnemyNear(self, x: number, z: number)
+	local bestEntry, bestDist = nil, 9
+	for _, entry in ipairs(self._enemyEntries) do
+		local dx = entry.x - x
+		local dz = entry.z - z
+		local dist = dx * dx + dz * dz
+		if dist < bestDist then
+			bestEntry, bestDist = entry, dist
+		end
+	end
+	if bestEntry == nil then
+		return
+	end
+	Fx.hitFlash(bestEntry.part)
 end
 
 function BoardView.destroy(self)
